@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.post("/register", register);
 router.post("/login", login);
-router.get("/profile", authMiddleware, getProfile);  // مسیر محافظت‌شده
+router.get("/profile", authMiddleware, getProfile);  // protected with token ()
 
 module.exports = router;
