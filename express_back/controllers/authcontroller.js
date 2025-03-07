@@ -22,6 +22,11 @@ exports.register = async (req, res) => {
   }
 };
 
+
+
+
+
+
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -35,6 +40,20 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
+  } catch (error) {
+    res.status(500).json({ message: "خطای سرور" });
+  }
+};
+
+
+
+
+exports.getProfile = async (req, res) => {
+  try {
+    res.json({ 
+      message: "پروفایل کاربر", 
+      user: { id: req.user.id, name: req.user.name, email: req.user.email } 
+    });
   } catch (error) {
     res.status(500).json({ message: "خطای سرور" });
   }
