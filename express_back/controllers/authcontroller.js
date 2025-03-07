@@ -1,4 +1,4 @@
-const User = require("/models/User");
+const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -16,6 +16,8 @@ exports.register = async (req, res) => {
 
     res.status(201).json({ message: "ثبت‌نام با موفقیت انجام شد" });
   } catch (error) {
+    console.log(error);
+    console.log(req.body);
     res.status(500).json({ message: "خطای سرور" });
   }
 };
