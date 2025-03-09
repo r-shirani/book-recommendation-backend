@@ -1,0 +1,21 @@
+USE [BookWormDB]
+GO
+
+/****** Object:  Table [Book].[Language]    Script Date: 19/12/1403 12:57:18 ق.ظ ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [Book].[Language](
+	[LanguageID] [int] NOT NULL,
+	[Title] [nvarchar](50) NOT NULL,
+	[ISOCode] [varchar](3) NULL,
+ CONSTRAINT [PK_Language] PRIMARY KEY CLUSTERED 
+(
+	[LanguageID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
