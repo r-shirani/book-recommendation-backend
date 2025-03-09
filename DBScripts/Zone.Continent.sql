@@ -1,0 +1,20 @@
+USE [BookWormDB]
+GO
+
+/****** Object:  Table [Zone].[Continent]    Script Date: 19/12/1403 12:58:17 ق.ظ ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [Zone].[Continent](
+	[ContinentID] [int] IDENTITY(1,1) NOT NULL,
+	[ContinentName] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ContinentID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
