@@ -1,0 +1,371 @@
+USE [master]
+GO
+/****** Object:  Database [BookWormDB]    Script Date: 19/12/1403 01:00:59 ق.ظ ******/
+CREATE DATABASE [BookWormDB]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'BookWormDB', FILENAME = N'H:\BookWorm\DBFiles\BookWormDB.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'BookWormDB_log', FILENAME = N'H:\BookWorm\DBFiles\BookWormDB_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
+GO
+ALTER DATABASE [BookWormDB] SET COMPATIBILITY_LEVEL = 150
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [BookWormDB].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [BookWormDB] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [BookWormDB] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [BookWormDB] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [BookWormDB] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [BookWormDB] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [BookWormDB] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [BookWormDB] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [BookWormDB] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [BookWormDB] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [BookWormDB] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [BookWormDB] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [BookWormDB] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [BookWormDB] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [BookWormDB] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [BookWormDB] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [BookWormDB] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [BookWormDB] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [BookWormDB] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [BookWormDB] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [BookWormDB] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [BookWormDB] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [BookWormDB] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [BookWormDB] SET RECOVERY FULL 
+GO
+ALTER DATABASE [BookWormDB] SET  MULTI_USER 
+GO
+ALTER DATABASE [BookWormDB] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [BookWormDB] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [BookWormDB] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [BookWormDB] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [BookWormDB] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [BookWormDB] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'BookWormDB', N'ON'
+GO
+ALTER DATABASE [BookWormDB] SET QUERY_STORE = OFF
+GO
+USE [BookWormDB]
+GO
+/****** Object:  Schema [Book]    Script Date: 19/12/1403 01:00:59 ق.ظ ******/
+CREATE SCHEMA [Book]
+GO
+/****** Object:  Schema [User]    Script Date: 19/12/1403 01:00:59 ق.ظ ******/
+CREATE SCHEMA [User]
+GO
+/****** Object:  Schema [Zone]    Script Date: 19/12/1403 01:00:59 ق.ظ ******/
+CREATE SCHEMA [Zone]
+GO
+/****** Object:  Table [Book].[Author]    Script Date: 19/12/1403 01:00:59 ق.ظ ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Book].[Author](
+	[AuthorID] [int] NOT NULL,
+	[FirstName] [nvarchar](255) NOT NULL,
+	[MiddleName] [nvarchar](255) NULL,
+	[Lastname] [nvarchar](255) NOT NULL,
+	[Pseudonym] [nvarchar](255) NULL,
+	[BirthDate] [date] NULL,
+	[Gender] [tinyint] NULL,
+	[DeathDate] [date] NULL,
+	[IsAlive] [bit] NULL,
+	[NumberOfBooks] [smallint] NULL,
+	[CountryID] [int] NULL,
+	[Biography] [nvarchar](max) NULL,
+	[Website] [nvarchar](255) NULL,
+ CONSTRAINT [PK_Author] PRIMARY KEY CLUSTERED 
+(
+	[AuthorID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [Book].[Book]    Script Date: 19/12/1403 01:00:59 ق.ظ ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Book].[Book](
+	[BookID] [bigint] NOT NULL,
+	[Title] [nvarchar](255) NOT NULL,
+	[AuthorID] [int] NULL,
+	[PublisherID] [int] NULL,
+	[GenreID1] [smallint] NULL,
+	[GenreID2] [smallint] NULL,
+	[GenreID3] [smallint] NULL,
+	[GenreExtra] [nvarchar](max) NULL,
+	[Description] [nvarchar](max) NULL,
+	[PublishedYear] [smallint] NULL,
+	[LanguageID] [int] NULL,
+	[PageCount] [int] NULL,
+	[ISBN] [nchar](10) NULL,
+	[CreatedAt] [datetime] NULL,
+	[UpdatedAt] [datetime] NULL,
+	[Version] [timestamp] NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [Book].[Genre]    Script Date: 19/12/1403 01:00:59 ق.ظ ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Book].[Genre](
+	[GenreID] [smallint] NOT NULL,
+	[Title] [nvarchar](50) NOT NULL,
+	[SuitableAge] [tinyint] NOT NULL,
+	[SDescription] [nvarchar](max) NULL,
+ CONSTRAINT [PK_Genre] PRIMARY KEY CLUSTERED 
+(
+	[GenreID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [IX_Genre] UNIQUE NONCLUSTERED 
+(
+	[Title] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [Book].[Language]    Script Date: 19/12/1403 01:00:59 ق.ظ ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Book].[Language](
+	[LanguageID] [int] NOT NULL,
+	[Title] [nvarchar](50) NOT NULL,
+	[ISOCode] [varchar](3) NULL,
+ CONSTRAINT [PK_Language] PRIMARY KEY CLUSTERED 
+(
+	[LanguageID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [Book].[Publisher]    Script Date: 19/12/1403 01:00:59 ق.ظ ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Book].[Publisher](
+	[PublisherID] [int] NOT NULL,
+	[Title] [nvarchar](255) NOT NULL,
+	[CountryID] [int] NULL,
+	[Website] [nvarchar](255) NULL,
+ CONSTRAINT [PK_Publisher] PRIMARY KEY CLUSTERED 
+(
+	[PublisherID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [User].[Security]    Script Date: 19/12/1403 01:00:59 ق.ظ ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [User].[Security](
+	[ID] [bigint] IDENTITY(1,1) NOT NULL,
+	[UserID] [bigint] NOT NULL,
+	[PassHint] [nvarchar](250) NULL,
+	[LastLogin] [datetime] NOT NULL,
+	[Status] [tinyint] NOT NULL,
+	[LockOutEnd] [date] NULL,
+	[IsEmailVerified] [bit] NOT NULL,
+	[IsPhoneVerified] [bit] NOT NULL,
+	[FailedLoginAttempts] [tinyint] NOT NULL,
+	[CreateDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_Security] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [User].[Users]    Script Date: 19/12/1403 01:00:59 ق.ظ ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [User].[Users](
+	[UserID] [bigint] NOT NULL,
+	[UserName] [varchar](30) NOT NULL,
+	[PasswordHash] [varbinary](64) NOT NULL,
+	[Salt] [varbinary](16) NULL,
+	[MainName] [nvarchar](250) NOT NULL,
+	[SecondName] [nvarchar](250) NULL,
+	[PhoneNumber] [char](11) NULL,
+	[Email] [nvarchar](250) NULL,
+	[Bio] [nvarchar](250) NULL,
+	[Sex] [tinyint] NULL,
+	[DateOfBrith] [date] NULL,
+	[WebSite] [nvarchar](250) NULL,
+	[UserTypeID] [tinyint] NOT NULL,
+	[LastIPAddress] [nvarchar](45) NOT NULL,
+ CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED 
+(
+	[UserID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [User].[UserType]    Script Date: 19/12/1403 01:00:59 ق.ظ ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [User].[UserType](
+	[UserTypeID] [tinyint] NOT NULL,
+	[Code] [nvarchar](10) NOT NULL,
+	[MainName] [nvarchar](50) NULL,
+	[Description] [nvarchar](250) NULL,
+ CONSTRAINT [PK_UserType] PRIMARY KEY CLUSTERED 
+(
+	[UserTypeID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [Zone].[Continent]    Script Date: 19/12/1403 01:00:59 ق.ظ ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Zone].[Continent](
+	[ContinentID] [int] IDENTITY(1,1) NOT NULL,
+	[ContinentName] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ContinentID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [Zone].[Country]    Script Date: 19/12/1403 01:00:59 ق.ظ ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Zone].[Country](
+	[CountryID] [int] IDENTITY(1,1) NOT NULL,
+	[CountryName] [nvarchar](100) NOT NULL,
+	[ISOCode] [char](2) NULL,
+	[Capital] [nvarchar](100) NULL,
+	[ContinentID] [int] NULL,
+	[LanguageID] [int] NULL,
+ CONSTRAINT [PK__Countrie__10D160BFA4395944] PRIMARY KEY CLUSTERED 
+(
+	[CountryID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [Book].[Book] ADD  CONSTRAINT [DF_Book_CreatedAt]  DEFAULT (getdate()) FOR [CreatedAt]
+GO
+ALTER TABLE [Book].[Book] ADD  CONSTRAINT [DF_Book_UpdatedAt]  DEFAULT (getdate()) FOR [UpdatedAt]
+GO
+ALTER TABLE [User].[Security] ADD  CONSTRAINT [DF_Security_IsEmailVerified]  DEFAULT ((0)) FOR [IsEmailVerified]
+GO
+ALTER TABLE [User].[Security] ADD  CONSTRAINT [DF_Security_IsPhoneVerified]  DEFAULT ((0)) FOR [IsPhoneVerified]
+GO
+ALTER TABLE [User].[Security] ADD  CONSTRAINT [DF_Security_FailedLoginAttempts]  DEFAULT ((0)) FOR [FailedLoginAttempts]
+GO
+ALTER TABLE [Book].[Author]  WITH CHECK ADD  CONSTRAINT [FK_Author_Country] FOREIGN KEY([CountryID])
+REFERENCES [Zone].[Country] ([CountryID])
+ON UPDATE CASCADE
+GO
+ALTER TABLE [Book].[Author] CHECK CONSTRAINT [FK_Author_Country]
+GO
+ALTER TABLE [Book].[Book]  WITH CHECK ADD  CONSTRAINT [FK_Book_Author] FOREIGN KEY([AuthorID])
+REFERENCES [Book].[Author] ([AuthorID])
+ON UPDATE CASCADE
+GO
+ALTER TABLE [Book].[Book] CHECK CONSTRAINT [FK_Book_Author]
+GO
+ALTER TABLE [Book].[Book]  WITH CHECK ADD  CONSTRAINT [FK_Book_Genre] FOREIGN KEY([GenreID1])
+REFERENCES [Book].[Genre] ([GenreID])
+ON UPDATE SET NULL
+GO
+ALTER TABLE [Book].[Book] CHECK CONSTRAINT [FK_Book_Genre]
+GO
+ALTER TABLE [Book].[Book]  WITH NOCHECK ADD  CONSTRAINT [FK_Book_Genre1] FOREIGN KEY([GenreID2])
+REFERENCES [Book].[Genre] ([GenreID])
+NOT FOR REPLICATION 
+GO
+ALTER TABLE [Book].[Book] CHECK CONSTRAINT [FK_Book_Genre1]
+GO
+ALTER TABLE [Book].[Book]  WITH CHECK ADD  CONSTRAINT [FK_Book_Genre2] FOREIGN KEY([GenreID3])
+REFERENCES [Book].[Genre] ([GenreID])
+GO
+ALTER TABLE [Book].[Book] CHECK CONSTRAINT [FK_Book_Genre2]
+GO
+ALTER TABLE [Book].[Book]  WITH CHECK ADD  CONSTRAINT [FK_Book_Language] FOREIGN KEY([LanguageID])
+REFERENCES [Book].[Language] ([LanguageID])
+ON UPDATE CASCADE
+GO
+ALTER TABLE [Book].[Book] CHECK CONSTRAINT [FK_Book_Language]
+GO
+ALTER TABLE [Book].[Book]  WITH CHECK ADD  CONSTRAINT [FK_Book_Publisher] FOREIGN KEY([PublisherID])
+REFERENCES [Book].[Publisher] ([PublisherID])
+GO
+ALTER TABLE [Book].[Book] CHECK CONSTRAINT [FK_Book_Publisher]
+GO
+ALTER TABLE [Book].[Publisher]  WITH CHECK ADD  CONSTRAINT [FK_Publisher_Country] FOREIGN KEY([CountryID])
+REFERENCES [Zone].[Country] ([CountryID])
+ON UPDATE CASCADE
+GO
+ALTER TABLE [Book].[Publisher] CHECK CONSTRAINT [FK_Publisher_Country]
+GO
+ALTER TABLE [User].[Security]  WITH CHECK ADD  CONSTRAINT [FK_Security_Users] FOREIGN KEY([UserID])
+REFERENCES [User].[Users] ([UserID])
+ON UPDATE CASCADE
+GO
+ALTER TABLE [User].[Security] CHECK CONSTRAINT [FK_Security_Users]
+GO
+ALTER TABLE [User].[Users]  WITH CHECK ADD  CONSTRAINT [FK_Users_UserType] FOREIGN KEY([UserTypeID])
+REFERENCES [User].[UserType] ([UserTypeID])
+ON UPDATE CASCADE
+GO
+ALTER TABLE [User].[Users] CHECK CONSTRAINT [FK_Users_UserType]
+GO
+ALTER TABLE [Zone].[Country]  WITH CHECK ADD  CONSTRAINT [FK_Countries_Continent] FOREIGN KEY([ContinentID])
+REFERENCES [Zone].[Continent] ([ContinentID])
+GO
+ALTER TABLE [Zone].[Country] CHECK CONSTRAINT [FK_Countries_Continent]
+GO
+ALTER TABLE [Zone].[Country]  WITH CHECK ADD  CONSTRAINT [FK_Countries_Language] FOREIGN KEY([LanguageID])
+REFERENCES [Book].[Language] ([LanguageID])
+GO
+ALTER TABLE [Zone].[Country] CHECK CONSTRAINT [FK_Countries_Language]
+GO
+USE [master]
+GO
+ALTER DATABASE [BookWormDB] SET  READ_WRITE 
+GO
