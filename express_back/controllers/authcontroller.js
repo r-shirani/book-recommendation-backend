@@ -32,7 +32,7 @@ const verificationCodes = {};
 exports.login = async (req, res) => {
   const { username, password, email } = req.body;
 
-  const user = User.findOne({email});
+  const user =await User.findOne({email});
 
   if (!user) {
     return res.status(401).send('نام کاربری یا رمز عبور اشتباه است');
@@ -41,19 +41,23 @@ exports.login = async (req, res) => {
   // generate the 6 digit verification code
   const verificationCode = Math.floor(100000 + Math.random() * 900000);
   verificationCodes[email] = verificationCode;
+  console.log("کدهای ذخیره‌شده بعد از تولید:", verificationCodes);
+
 
   // send the verification code
+
   await sendVerificationCode(email, verificationCode)
     .then(() => res.send('کد تأیید به ایمیل شما ارسال شد'))
     .catch((err) => res.status(500).send('خطا در ارسال ایمیل'));
 
   console.log(`کد تأیید برای ${email}: ${verificationCode}`); // print on console
+
 };
 
 exports.verifyCode = (req, res) => {
   const { email, code } = req.body;
 
-  if (verificationCodes[email] && verificationCodes[email] == code) {
+  if (verificationCodes[email] && verificationCodes[email] == parseInt(code)) {
     delete verificationCodes[email]; // delete after use
     res.send('ورود موفقیت‌آمیز بود');
   } else {

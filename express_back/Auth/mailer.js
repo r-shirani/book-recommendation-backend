@@ -15,8 +15,6 @@ const sendVerificationCode =async (email, code) => {
         subject: 'کد تأیید',
         text: `کد تأیید شما جهت ورود به سامانه: ${code}`,
     };
-
-    console.log("hi stupid project");
     
      
     await transporter.sendMail(mailOptions, (error, info) => {
