@@ -2,6 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
+const sendVerificationCode = require('../Auth/mailer');
 
 exports.register = async (req, res) => {
   try {
@@ -27,35 +28,38 @@ exports.register = async (req, res) => {
   }
 };
 
-
-
-
-
-
+const verificationCodes = {};
 exports.login = async (req, res) => {
-  try {
-    //const errors = validationResult(req);
-    //if (!errors.isEmpty()) {
-    //  return res.status(400).json({ errors: errors.array() });
-    //}
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+  const { username, password, email } = req.body;
 
-    if (!user) return res.status(400).json({ message: "user not found" });
+  const user = User.findOne({email});
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "inorrect password" });
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
-  } catch (error) {
-    res.status(500).json({ message: "server error" });
+  if (!user) {
+    return res.status(401).send('نام کاربری یا رمز عبور اشتباه است');
   }
+
+  // generate the 6 digit verification code
+  const verificationCode = Math.floor(100000 + Math.random() * 900000);
+  verificationCodes[email] = verificationCode;
+
+  // send the verification code
+  await sendVerificationCode(email, verificationCode)
+    .then(() => res.send('کد تأیید به ایمیل شما ارسال شد'))
+    .catch((err) => res.status(500).send('خطا در ارسال ایمیل'));
+
+  console.log(`کد تأیید برای ${email}: ${verificationCode}`); // print on console
 };
 
+exports.verifyCode = (req, res) => {
+  const { email, code } = req.body;
 
-
+  if (verificationCodes[email] && verificationCodes[email] == code) {
+    delete verificationCodes[email]; // delete after use
+    res.send('ورود موفقیت‌آمیز بود');
+  } else {
+    res.status(400).send('کد تأیید اشتباه است');
+  }
+};
 
 exports.getProfile = async (req, res) => {
   try {
