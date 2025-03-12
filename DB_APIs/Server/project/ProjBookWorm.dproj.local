@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2025/01/31 20:40:04.000.203,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2025/02/05 18:33:28.000.207,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\IWTestCase1.pas</Transaction>
+    <Transaction>2025/02/08 22:58:10.000.478,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2025/03/11 09:02:44.000.812,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2025/03/11 09:02:44.000.882,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit3.pas</Transaction>
+    <Transaction>2025/03/11 09:02:44.000.739,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2025/03/11 09:02:45.000.104,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit4.pas</Transaction>
+    <Transaction>2025/03/11 09:03:26.000.218,C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit4.dfm=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\services\WebModule.Main.dfm</Transaction>
+    <Transaction>2025/03/11 09:03:26.000.218,C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit4.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\services\WebModule.Main.pas</Transaction>
+    <Transaction>2025/03/11 09:04:44.000.927,C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit3.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\controller\Controller.pas</Transaction>
+    <Transaction>2025/03/11 09:05:14.000.037,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\controller\Controller.User=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\controller\Controller.User.User</Transaction>
+    <Transaction>2025/03/11 09:06:21.000.436,C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit1.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\model\Model.User.pas</Transaction>
+    <Transaction>2025/03/11 09:07:03.000.355,C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit2.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\Unit2.pas</Transaction>
+    <Transaction>2025/03/11 09:07:09.000.416,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\Unit2.pas=</Transaction>
+    <Transaction>2025/03/11 09:07:37.000.799,C:\Users\user1\Documents\Embarcadero\Studio\Projects\Project1.dproj=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\ProjBookWorm.dproj</Transaction>
+    <Transaction>2025/03/11 09:10:10.000.780,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\Unit2.pas</Transaction>
+    <Transaction>2025/03/11 09:45:20.000.201,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\Unit2.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\UserSercive.pas</Transaction>
+    <Transaction>2025/03/11 09:45:26.000.856,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\UserSercive.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\UserService.pas</Transaction>
+    <Transaction>2025/03/11 09:51:15.000.629,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\services\UserService.pas</Transaction>
+    <Transaction>2025/03/11 11:25:28.000.637,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\services\UserService.pas=</Transaction>
+    <Transaction>2025/03/11 11:34:43.000.363,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\services\UserService.pas</Transaction>
+    <Transaction>2025/03/11 11:58:13.000.767,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\services\UserService.pas=</Transaction>
+    <Transaction>2025/03/11 23:29:29.000.252,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas</Transaction>
+    <Transaction>2025/03/11 23:30:13.000.688,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.dfm=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\DMMain.dfm</Transaction>
+    <Transaction>2025/03/11 23:30:13.000.688,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\DMMain.pas</Transaction>
+    <Transaction>2025/03/11 23:30:34.000.383,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\DMMain.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\UDMMain.pas</Transaction>
+    <Transaction>2025/03/11 23:30:34.000.383,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\DMMain.dfm=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\UDMMain.dfm</Transaction>
+  </Transactions>
+</BorlandProject>

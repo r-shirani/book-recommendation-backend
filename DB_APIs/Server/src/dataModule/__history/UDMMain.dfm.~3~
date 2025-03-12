@@ -1,0 +1,8 @@
+object DMMain: TDMMain
+  Height = 480
+  Width = 640
+  object FDConnMain: TFDConnection
+    Left = 226
+    Top = 118
+  end
+end

@@ -1,0 +1,17 @@
+object DMMain: TDMMain
+  Height = 186
+  Width = 291
+  object FDConnMain: TFDConnection
+    Left = 59
+    Top = 27
+  end
+  object FDQ: TFDQuery
+    Connection = FDConnMain
+    Left = 158
+    Top = 88
+  end
+  object CtrlMSSQL: TCtrlMSSQL
+    Left = 165
+    Top = 26
+  end
+end

@@ -1,0 +1,55 @@
+﻿unit UserService;
+
+interface
+
+uses
+  Model.User,
+  MVCFramework.Container,
+  MVCFramework, MVCFramework.Commons,
+  MVCFramework.SQLGenerators.MSSQL,
+  MVCFramework.Serializer.Commons,
+  MVCFramework.ActiveRecord,
+  MVCFramework.Nullables,
+  System.Generics.Collections;
+
+Type
+    IUserService = interface
+        ['{9685513C-D9FD-4FD3-945D-CA204505CB62}']
+        Function GetAll: TObjectList<TUser>;
+    End;
+
+    TUserService = Class(TInterfacedObject, IUserService)
+    protected
+        Function GetAll: TObjectList<TUser>;
+    End;
+
+Procedure RegisterServices(Container: IMVCServiceContainer);
+
+Implementation
+
+Uses
+    System.SysUtils, Controller.User;
+
+Procedure RegisterServices(Container: IMVCServiceContainer);
+Begin
+    Container.RegisterType(TUserService, IUserService, TRegistrationType.SingletonPerRequest);
+    // Register other services here
+End;
+
+Function TUserService.GetAll: TObjectList<TUser>;
+Var
+  lstUsers: TObjectList<TUser>;
+Begin
+    lstUsers := TMVCActiveRecord.SelectRQL<Model.User.TUser>('', 100);
+    Try
+        Render<TUser>(lstUsers);
+    Except
+        on E: Exception do
+        begin
+            LogE('خطا در فرآیند رندر: ' + E.Message);
+            raise;
+        end;
+    End;
+End;
+
+end.

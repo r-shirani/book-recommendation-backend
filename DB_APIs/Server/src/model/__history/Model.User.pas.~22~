@@ -1,0 +1,138 @@
+﻿Unit Model.User;
+
+Interface
+
+Uses
+    MVCFramework.ActiveRecord, System.SysUtils;
+
+Type
+    [MVCTable('[User].[User]')]
+    TUser = Class(TMVCActiveRecord)
+    Private
+        [MVCTableField('UserID', [foPrimaryKey])]
+        fUserID: Int64;
+
+        [MVCTableField('UserName')]
+        fUserName: String;
+
+        [MVCTableField('FirstName')]
+        fFirstName: String;
+
+        [MVCTableField('LastName')]
+        fLastName: String;
+
+        [MVCTableField('PhoneNumber')]
+        fPhoneNumber: String;
+
+        [MVCTableField('Email')]
+        fEmail: String;
+
+        [MVCTableField('Bio')]
+        fBio: String;
+
+        [MVCTableField('Gender')]
+        fGender: Byte;
+
+        [MVCTableField('DateOfBrith')]
+        fDateOfBirth: TDateTime;
+
+        [MVCTableField('WebSite')]
+        fWebsite: String;
+
+        [MVCTableField('UserTypeID')]
+        fUserTypeID: Byte ;
+
+        Procedure SetBio(const Value: String);
+        Procedure SetDateOfBirth(const Value: TDateTime);
+        Procedure SetEmail(const Value: String);
+        Procedure SetFirstName(const Value: String);
+        Procedure SetGender(const Value: Byte);
+        Procedure SetLastName(const Value: String);
+        Procedure SetPhoneNumber(const Value: String);
+        Procedure SetUserID(const Value: Int64);
+        Procedure SetUserName(const Value: String);
+        Procedure SetUserTypeID(const Value: Byte );
+        Procedure SetWebsite(const Value: String);
+
+    Public
+        Property UserID: Int64 read fUserID write SetUserID;
+        Property UserName: String read fUserName write SetUserName;
+        Property FirstName: String read fFirstName write SetFirstName;
+        Property LastName: String read fLastName write SetLastName;
+        Property PhoneNumber: String read fPhoneNumber write SetPhoneNumber;
+        Property Email: String read fEmail write SetEmail;
+        Property Bio: String read fBio write SetBio;
+        Property Gender: Byte read fGender write SetGender;
+        Property DateOfBirth: TDateTime read fDateOfBirth write SetDateOfBirth;
+        Property Website: String read fWebsite write SetWebsite;
+        Property UserTypeID: Byte  read fUserTypeID write SetUserTypeID;
+
+        Constructor Create; override;
+End;
+
+Implementation
+
+//______________________________________________________________________________
+Constructor TUser.Create;
+Begin
+  inherited Create;
+End;
+//______________________________________________________________________________
+Procedure TUser.SetBio(const Value: String);
+Begin
+  fBio := Value;
+End;
+//______________________________________________________________________________
+Procedure TUser.SetDateOfBirth(const Value: TDateTime);
+Begin
+  fDateOfBirth := Value;
+End;
+//______________________________________________________________________________
+Procedure TUser.SetEmail(const Value: String);
+Begin
+  fEmail := Value;
+End;
+//______________________________________________________________________________
+Procedure TUser.SetFirstName(const Value: String);
+Begin
+  fFirstName := Value;
+End;
+//______________________________________________________________________________
+Procedure TUser.SetGender(const Value: Byte);
+Begin
+  fGender := Value;
+End;
+//______________________________________________________________________________
+Procedure TUser.SetLastName(const Value: String);
+Begin
+  fLastName := Value;
+End;
+//______________________________________________________________________________
+Procedure TUser.SetPhoneNumber(const Value: String);
+Begin
+  fPhoneNumber := Value;
+End;
+//______________________________________________________________________________
+Procedure TUser.SetUserID(const Value: Int64);
+Begin
+  fUserID := Value;
+End;
+//______________________________________________________________________________
+Procedure TUser.SetUserName(const Value: String);
+Begin
+  fUserName := Value;
+End;
+//______________________________________________________________________________
+Procedure TUser.SetUserTypeID(const Value: Byte );
+Begin
+  fUserTypeID := Value;
+End;
+//______________________________________________________________________________
+Procedure TUser.SetWebsite(const Value: String);
+Begin
+  fWebsite := Value;
+End;
+//______________________________________________________________________________
+
+End.
+

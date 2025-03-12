@@ -1,7 +1,7 @@
 USE [BookWormDB]
 GO
 
-/****** Object:  Table [User].[UserType]    Script Date: 19/12/1403 12:58:05 ق.ظ ******/
+/****** Object:  Table [User].[UserType]    Script Date: 22/12/1403 12:00:26 ب.ظ ******/
 SET ANSI_NULLS ON
 GO
 

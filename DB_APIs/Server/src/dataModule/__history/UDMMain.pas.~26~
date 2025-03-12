@@ -1,0 +1,81 @@
+﻿unit UDMMain;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
+  Data.DB, FireDAC.Comp.Client, IniFiles;
+
+type
+  TDMMain = class(TDataModule)
+    FDConnMain: TFDConnection;
+  public
+    constructor Create(AOwner: TComponent); override;
+    class function GetConnection: TFDConnection;
+End;
+
+var
+  DMMain: TDMMain;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+//______________________________________________________________________________
+Constructor TDMMain.Create(AOwner: TComponent);
+Var
+    iniFile: TIniFile;
+    iniPath: string;
+    Driver, Server, Database, UserName, Password: string;
+Begin
+    Inherited Create(AOwner);
+
+    iniPath := ExtractFilePath(ParamStr(0)) + 'FDConnectionDefs.ini';
+  
+    If not FileExists(iniPath) then
+      raise Exception.Create('Configuration file FDConnectionDefs.ini not found!');
+
+    iniFile := TIniFile.Create(iniPath);
+    Try
+        Driver := iniFile.ReadString('ProjBookWorm', 'Driver', '');
+        Server := iniFile.ReadString('ProjBookWorm', 'Server', '');
+        Database := iniFile.ReadString('ProjBookWorm', 'Database', '');
+        UserName := iniFile.ReadString('ProjBookWorm', 'User_Name', '');
+        Password := iniFile.ReadString('ProjBookWorm', 'Password', '');
+
+        With FDConnMain.Params do
+        Begin
+            Clear;
+            Add('DriverID=' + Driver);
+            Add('Server=' + Server);
+            Add('Database=' + Database);
+            Add('User_Name=' + UserName);
+            Add('Password=' + Password);
+        End;
+
+        FDConnMain.Connected := True;
+
+    Finally
+        iniFile.Free;
+    End;
+End;
+//______________________________________________________________________________
+{Singelton DataModule}
+
+Class Function TDMMain.GetConnection: TFDConnection;
+Begin
+    If (DMMain = Nil) then
+      DMMain := TDMMain.Create(nil);
+
+    If not DMMain.FDConnMain.Connected then
+      DMMain.FDConnMain.Connected := True;
+
+    Result := DMMain.FDConnMain;
+End;
+//______________________________________________________________________________
+
+End.

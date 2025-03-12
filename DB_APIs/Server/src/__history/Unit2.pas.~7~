@@ -1,0 +1,45 @@
+﻿unit Unit2;
+
+interface
+
+uses
+  Model.User,
+  MVCFramework.Container, System.Generics.Collections;
+
+Type
+    IUserService = interface
+        ['{9685513C-D9FD-4FD3-945D-CA204505CB62}']
+        Function GetAll: TObjectList<TUser>;
+    End;
+
+    TUserService = Class(TInterfacedObject, IUserService)
+    protected
+        Function GetAll: TObjectList<TUser>;
+    End;
+
+Procedure RegisterServices(Container: IMVCServiceContainer);
+
+Implementation
+
+Uses
+    System.SysUtils;
+
+Procedure RegisterServices(Container: IMVCServiceContainer);
+Begin
+    Container.RegisterType(TUserService, IUserService, TRegistrationType.SingletonPerRequest);
+    // Register other services here
+End;
+
+Function TUserService.GetAll: TObjectList<TUser>;
+Begin
+    Result := TObjectList<TPerson>.Create;
+    Result.AddRange([
+      TPerson.Create(1, 'Henry', 'Ford', EncodeDate(1863, 7, 30)),
+      TPerson.Create(2, 'Guglielmo', 'Marconi', EncodeDate(1874, 4, 25)),
+      TPerson.Create(3, 'Antonio', 'Meucci', EncodeDate(1808, 4, 13)),
+      TPerson.Create(4, 'Michael', 'Faraday', EncodeDate(1867, 9, 22))
+    ]);
+End;
+
+
+end.

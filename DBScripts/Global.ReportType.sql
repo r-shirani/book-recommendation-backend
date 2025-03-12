@@ -1,0 +1,20 @@
+USE [BookWormDB]
+GO
+
+/****** Object:  Table [Global].[ReportType]    Script Date: 22/12/1403 12:00:59 ب.ظ ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [Global].[ReportType](
+	[ReportTypeID] [tinyint] NOT NULL,
+	[Title] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_ReportType] PRIMARY KEY CLUSTERED 
+(
+	[ReportTypeID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
