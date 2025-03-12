@@ -4,6 +4,7 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 
+const verificationCodes = {};
 exports.register = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -15,12 +16,21 @@ exports.register = async (req, res) => {
 
     if (user) return res.status(400).json({ message: "this user has already registered!" });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // generate the 6 digit verification code
+    const verificationCode = Math.floor(100000 + Math.random() * 900000);
+    verificationCodes[email] = verificationCode;
 
-    user = new User({ name, email, password: hashedPassword });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user = new User({ name, email, password: hashedPassword, isVerified: false, verificationCode });
     await user.save();
 
-    res.status(201).json({ message:"registered successfully" });
+    // send the verification code
+    await sendVerificationCode(email, verificationCode)
+    .then(() => res.send('Verification code sent to email.'))
+    .catch((err) => res.status(500).send('error in sending the verification email!'));
+
+    console.log(`verification code for ${email}: ${verificationCode}`); // print on console
+
   } catch (error) {
     console.log(error);
     console.log(req.body);
@@ -28,40 +38,50 @@ exports.register = async (req, res) => {
   }
 };
 
-const verificationCodes = {};
 exports.login = async (req, res) => {
-  const { username, password, email } = req.body;
-
-  const user =await User.findOne({email});
-
-  if (!user) {
-    return res.status(401).send('نام کاربری یا رمز عبور اشتباه است');
+  try
+  {
+    const { username, password, email } = req.body;
+    const user =await User.findOne({email});
+    if (!user) {return res.status(400).send('User not found');}
+    if (!user.isVerified) return res.status(400).json({ message: "Please verify your email first!" });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "wrong password" });
+    else
+    {
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      res.status(201).json({ 
+        message: "Logged in successfully", 
+        token, 
+        user: { id: user._id, name: user.name, email: user.email } 
+      });
+    }
   }
-
-  // generate the 6 digit verification code
-  const verificationCode = Math.floor(100000 + Math.random() * 900000);
-  verificationCodes[email] = verificationCode;
-  console.log("کدهای ذخیره‌شده بعد از تولید:", verificationCodes);
-
-
-  // send the verification code
-
-  await sendVerificationCode(email, verificationCode)
-    .then(() => res.send('کد تأیید به ایمیل شما ارسال شد'))
-    .catch((err) => res.status(500).send('خطا در ارسال ایمیل'));
-
-  console.log(`کد تأیید برای ${email}: ${verificationCode}`); // print on console
+  catch (error) {res.status(500).json({ message: "server error" })};
 
 };
 
-exports.verifyCode = (req, res) => {
-  const { email, code } = req.body;
+exports.verifyCode = async (req, res) => {
+  try{
+    const { email, code} = req.body;
+    let user = await User.findOne({ email });
 
-  if (verificationCodes[email] && verificationCodes[email] == parseInt(code)) {
+    if (!user) return res.status(400).json({ message: "User not found" });
+
+    if (verificationCodes[email] && verificationCodes[email] == parseInt(code)) {
+      //await User.updateOne({ email }, { $set: { isVerified: true } });
+      user.isVerified = true;
+      console.log(user.isVerified)
+      await user.save();
+      res.json({ message: "User verified successfully. You can now log in." });
+    } else {
+      await User.deleteOne({ email });
+      res.status(400).send('wrong verification code');
+    }
     delete verificationCodes[email]; // delete after use
-    res.send('ورود موفقیت‌آمیز بود');
-  } else {
-    res.status(400).send('کد تأیید اشتباه است');
+
+  }catch(error){
+    res.status(500).json({ message: "Server error" });
   }
 };
 
