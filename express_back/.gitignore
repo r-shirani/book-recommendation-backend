@@ -1,0 +1,15 @@
+# فایل‌های حساس و محیطی
+.env
+config/secrets.yml
+
+# فایل‌های سیستمی و کش
+.DS_Store
+Thumbs.db
+
+# وابستگی‌ها
+node_modules/
+vendor/
+
+# خروجی‌های کامپایل‌شده
+dist/
+build/

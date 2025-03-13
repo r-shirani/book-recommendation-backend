@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
@@ -65,7 +65,6 @@ exports.verifyCode = async (req, res) => {
   try{
     const { email, code} = req.body;
     let user = await User.findOne({ email });
-
     if (!user) return res.status(400).json({ message: "User not found" });
 
     if (verificationCodes[email] && verificationCodes[email] == parseInt(code)) {
@@ -93,5 +92,37 @@ exports.getProfile = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message:"server error" });
+  }
+};
+
+
+exports.googleLogin = async (req , res)=>{
+  try {
+    const { token } = req.body;
+
+    const googleUser = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const { id, name, email, picture } = googleUser.data;
+
+    let user = await User.findOne({ googleId: id });
+
+    if (!user) {
+      user = new User({
+        googleId: id,
+        name,
+        email,
+        avatar: picture,
+      });
+      await user.save();
+    }
+
+    const authToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+    res.json({ token: authToken, user });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Google authentication failed" });
   }
 };
