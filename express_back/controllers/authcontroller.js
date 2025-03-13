@@ -19,7 +19,8 @@ exports.register = async (req, res) => {
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
     
     const hashedPassword = await bcrypt.hash(password, 10);
-    user = new User({ name, email, password: hashedPassword, isVerified: false, verificationCode });
+    const googleId = Math.floor(100000 + Math.random() * 900000);
+    user = new User({ name, email, password: hashedPassword, isVerified: false, verificationCode , googleId});
     await user.save();
 
     // send the verification code
