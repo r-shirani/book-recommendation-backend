@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema({
     avatar: { type: String },
     password: { type: String, required: true },
     isVerified: { type: Boolean, default: false },
+    verificationCode: { type: String },
     
 }, { timestamps: true });
 
