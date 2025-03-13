@@ -4,7 +4,6 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 
-const verificationCodes = {};
 exports.register = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -18,8 +17,7 @@ exports.register = async (req, res) => {
 
     // generate the 6 digit verification code
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
-    verificationCodes[email] = verificationCode;
-
+    
     const hashedPassword = await bcrypt.hash(password, 10);
     user = new User({ name, email, password: hashedPassword, isVerified: false, verificationCode });
     await user.save();
@@ -28,8 +26,6 @@ exports.register = async (req, res) => {
     await sendVerificationCode(email, verificationCode)
     .then(() => res.send('Verification code sent to email.'))
     .catch((err) => res.status(500).send('error in sending the verification email!'));
-
-    console.log(`verification code for ${email}: ${verificationCode}`); // print on console
 
   } catch (error) {
     console.log(error);
@@ -67,17 +63,14 @@ exports.verifyCode = async (req, res) => {
     let user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "User not found" });
 
-    if (verificationCodes[email] && verificationCodes[email] == parseInt(code)) {
-      //await User.updateOne({ email }, { $set: { isVerified: true } });
+    if (user.verificationCode == parseInt(code)) {
       user.isVerified = true;
-      console.log(user.isVerified)
       await user.save();
       res.json({ message: "User verified successfully. You can now log in." });
     } else {
       await User.deleteOne({ email });
       res.status(400).send('wrong verification code');
     }
-    delete verificationCodes[email]; // delete after use
 
   }catch(error){
     res.status(500).json({ message: "Server error" });
