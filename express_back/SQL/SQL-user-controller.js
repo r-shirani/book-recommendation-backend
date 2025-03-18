@@ -85,7 +85,8 @@ const loginUser_controller = async(emailInput , passwordInput)=>{
 }
 
 module.exports={
-  registerUSer_controller
+  registerUSer_controller,
+  loginUser_controller
 };
 
 
