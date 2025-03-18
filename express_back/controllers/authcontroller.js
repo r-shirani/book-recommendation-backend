@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
+const { registerUSer_controller } = require("../SQL/SQL-user-controller");
 
 exports.register = async (req, res) => {
   try {
@@ -11,17 +12,32 @@ exports.register = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
     const { name, email, password } = req.body;
-    let user = await User.findOne({ email });
+    /////////let user = await User.findOne({ email });
 
-    if (user) return res.status(400).json({ message: "this user has already registered!" });
+    //////////if (user) return res.status(400).json({ message: "this user has already registered!" });
 
+    
+    
+    
     // generate the 6 digit verification code
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
-    
+    //hashig password
     const hashedPassword = await bcrypt.hash(password, 10);
+    //creating random googleID
     const googleId = Math.floor(100000 + Math.random() * 900000);
-    user = new User({ name, email, password: hashedPassword, isVerified: false, verificationCode , googleId});
-    await user.save();
+    
+
+
+    let user = await registerUSer_controller(email,name,hashedPassword);
+    console.log(user);
+    if(!user){
+      return res.status(400).json({ message: "this user has already registered!" });
+    }
+
+    
+    
+    ///////////user = new User({ name, email, password: hashedPassword, isVerified: false, verificationCode , googleId});
+    ///////////await user.save();
 
     // send the verification code
     await sendVerificationCode(email, verificationCode)

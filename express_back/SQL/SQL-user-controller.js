@@ -30,7 +30,7 @@ const RegisterUser = async (emailInput,nameInput,passwordInput) => {
                 password: passwordInput
             },
         });
-        
+        return response.data;
         console.log("Response from server:", response.data);
     } catch (error) {
         console.error("Error:", error);
@@ -38,28 +38,30 @@ const RegisterUser = async (emailInput,nameInput,passwordInput) => {
 };
 
 
-const registerUSer_controller = async(emailInput,nameInput,passwordInput)=>{
+ const registerUSer_controller = async(emailInput,nameInput,passwordInput)=>{
   let response = await RegisterUser(emailInput,nameInput,passwordInput);
+  let Pure_response = response[0];
+  console.log(Pure_response.message);
   if (!response || response.length === 0) {
       console.log("server Error(SQL-signupNormalUser)");
-      return;
+      return ;
   }
-  let Pure_response = response[0];
+  
   if(Pure_response.message === 'exists')
   {
       console.log("user exists");
-      return;
+      return 0;
   }
   else{
       console.log("The user has been added to the SQL database");
+      return 1;
   }
 
 }
 
-
-
-
-
+module.exports={
+  registerUSer_controller
+};
 
 
 
