@@ -9,6 +9,7 @@ Uses
     MVCFramework.ActiveRecord,
     MVCFramework.Nullables,
     FireDAC.Phys.MSSQL,
+    System.Variants,
     System.Generics.Collections,
     Model.User;
 
@@ -21,26 +22,35 @@ Type
     Public
         [MVCPath]
         [MVCHTTPMethods([httpGET])]
-        Procedure GetUsers(const [MVCFromQueryString('rql','')] RQL: String);
+        Procedure GetUsers();
 
-        [MVCPath('/getUser/($ID)')]
+        [MVCPath('/getUser')]
         [MVCHTTPMethods([httpGET])]
-        Procedure GetUsersByID(const ID: Integer);
+        Procedure GetUserByID(
+          Const [MVCFromQueryString('userID', '')] userID: Integer);
 
         [MVCPath('/login')]
         [MVCHTTPMethods([httpGET])]
-        Procedure GetUsersBInLogin(
-          Const [MVCFromQueryString('userName', 'U')] userName: String;
-          Const [MVCFromQueryString('email', 'E')] Email: String
+        Procedure LoginUser(
+          Const [MVCFromQueryString('userName', '')] userName: String;
+          Const [MVCFromQueryString('email', '')] email: String
+        );
+
+        [MVCPath('/remove')]
+        [MVCHTTPMethods([httpDELETE])]
+        Procedure RemoveUser(
+          Const [MVCFromQueryString('userID', '')] userID: String;
+          Const [MVCFromQueryString('userName', '')] userName: String;
+          Const [MVCFromQueryString('email', '')] email: String
         );
 
         [MVCPath('/signupNormalUser')]
         [MVCHTTPMethods([httpPost])]
-        Procedure PutSignupNormalUser(
-          Const [MVCFromQueryString('name', 'D')] Name: String;
-          Const [MVCFromQueryString('password', 'P')] Password: String;
-          Const [MVCFromQueryString('email', 'E')] Email: String;
-          Const [MVCFromQueryString('clientEmailID', 'C')] CEmailID: String
+        Procedure SignupNormalUser(
+          Const [MVCFromQueryString('name', '')] Name: String;
+          Const [MVCFromQueryString('password', '')] Password: String;
+          Const [MVCFromQueryString('email', '')] email: String;
+          Const [MVCFromQueryString('clientEmailID', '')] CEmailID: String
         );
 End;
 
@@ -58,7 +68,7 @@ uses
   UDMMain;
 
 //______________________________________________________________________________
-Procedure TUserController.GetUsers(const RQL: string);
+Procedure TUserController.GetUsers();
 Var
     FDQuery: TFDQuery;
 Begin
@@ -74,32 +84,50 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Procedure TUserController.GetUsersByID(const ID: Integer);
+Procedure TUserController.GetUserByID(Const userID: Integer);
 Begin
-    Render(ObjectDict().Add('data', TMVCActiveRecord.GetByPK<Model.User.TUser>(ID)));
+    Render(ObjectDict().Add('data', TMVCActiveRecord.GetByPK<Model.User.TUser>(userID)));
 End;
 //______________________________________________________________________________
-Procedure TUserController.PutSignupNormalUser(const Name, Password, Email, CEmailID: String);
+Procedure TUserController.SignupNormalUser(Const Name, Password, Email, CEmailID: String);
 Var
-    FDQuery: TFDQuery;
+    FDStoredProc: TFDStoredProc;
 Begin
-    FDQuery := TFDQuery.Create(nil);
-    Try
-        FDQuery.Connection := TDMMain.GetConnection;
-        FDQuery.SQL.Text := 'EXEC [User].[spSignupUser] :name, :pass, :email, :clientEmailID';
-        FDQuery.ParamByName('name').AsString := Name;
-        FDQuery.ParamByName('pass').AsString := Password;
-        FDQuery.ParamByName('email').AsString := Email;
-        FDQuery.ParamByName('clientEmailID').AsString := CEmailID;
-        FDQuery.Open;
+    If (Name.IsEmpty) OR (Password.IsEmpty) OR (Email.IsEmpty) then
+    Begin
+        Raise EMVCException.Create(400, 'Name, Password, Email must have value!');
+        Exit;
+    End;
 
-        Render(FDQuery.AsJSONArray);
+    FDStoredProc := TFDStoredProc.Create(nil);
+    Try
+        FDStoredProc.Connection := TDMMain.GetConnection;
+        FDStoredProc.StoredProcName := '[User].[spSignupUser]';
+        FDStoredProc.Prepare;
+
+        FDStoredProc.ParamByName('@name').AsString := Name;
+        FDStoredProc.ParamByName('@pass').AsString := Password;
+        FDStoredProc.ParamByName('@email').AsString := Email;
+            
+        If CEmailID.IsEmpty then 
+            FDStoredProc.ParamByName('@clientEmailID').Value := Null
+        Else 
+            FDStoredProc.ParamByName('@clientEmailID').AsString := CEmailID;
+
+        Try           
+            FDStoredProc.Open;
+        Except
+            Raise EMVCException.Create(400, 'Wrong Params');
+            Exit;
+        End;
+        
+        Render(FDStoredProc.AsJSONArray);
     Finally
-        FDQuery.Free;
+        FDStoredProc.Free;
     End;
 End;
 //______________________________________________________________________________
-Procedure TUserController.GetUsersBInLogin(Const userName, email: String);
+Procedure TUserController.LoginUser(Const userName, email: String);
 Var
     FDQuery: TFDQuery;
 Begin
@@ -114,6 +142,38 @@ Begin
         Render(FDQuery.AsJSONArray);
     Finally
         FDQuery.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TUserController.RemoveUser(const userID, userName, email: String);
+Var
+    FDStoredProc: TFDStoredProc;
+Begin
+    FDStoredProc := TFDStoredProc.Create(nil);
+    Try
+        FDStoredProc.Connection := TDMMain.GetConnection;
+        FDStoredProc.StoredProcName := '[User].spRemoveUser';
+        FDStoredProc.Prepare;
+
+        If userID.IsEmpty then FDStoredProc.ParamByName('@userID').Value := Null
+        Else FDStoredProc.ParamByName('@userID').AsString := userID;
+
+        If userName.IsEmpty then FDStoredProc.ParamByName('@userName').Value := Null
+        Else FDStoredProc.ParamByName('@userName').AsString := userName;
+
+        If email.IsEmpty then FDStoredProc.ParamByName('@email').Value := Null
+        Else FDStoredProc.ParamByName('@email').AsString := email;
+
+        Try
+            FDStoredProc.Open;
+        Except
+            Raise EMVCException.Create(400, 'DB Error');
+            Exit;
+        End;
+
+        Render(FDStoredProc.AsJSONArray);
+    Finally
+        FDStoredProc.Free;
     End;
 End;
 //______________________________________________________________________________
