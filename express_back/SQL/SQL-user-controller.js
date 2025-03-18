@@ -63,6 +63,7 @@ const loginUser_controller = async(emailInput , passwordInput)=>{
   let response = await LoginUser(emailInput);
   let isVerified = response[16];
   let pass =response[21];
+  let ID =response[0];
   console.log(isVerified.message);
   console.log(pass.message);
   if (!response || response.length===0){
@@ -71,11 +72,16 @@ const loginUser_controller = async(emailInput , passwordInput)=>{
   }
   if (!isVerified){
     console.log("not verified");
-    return 0;
+    return -2;
   }
-  if (isVerified && pass==passwordInput)
+  if (isVerified && pass==passwordInput){
     console.log("logged in");
-  return 1;
+    return ID;
+  }
+  if (isVerified && pass!=passwordInput){
+    console.log("wrong password");
+    return -3;
+  }
 }
 
 module.exports={
