@@ -21,6 +21,40 @@ const LoginUser = async (username,email) => {
   };
 
 
+const RegisterUser = async (emailInput,nameInput,passwordInput) => {
+    try {
+        const response = await api.post("/signupNormalUser", null, { 
+            params: {
+                email: emailInput,
+                name: nameInput,
+                password: passwordInput
+            },
+        });
+        
+        console.log("Response from server:", response.data);
+    } catch (error) {
+        console.error("Error:", error);
+    }
+};
+
+
+const registerUSer_controller = async(emailInput,nameInput,passwordInput)=>{
+  let response = await RegisterUser(emailInput,nameInput,passwordInput);
+  if (!response || response.length === 0) {
+      console.log("server Error(SQL-signupNormalUser)");
+      return;
+  }
+  let Pure_response = response[0];
+  if(Pure_response.message === 'exists')
+  {
+      console.log("user exists");
+      return;
+  }
+  else{
+      console.log("The user has been added to the SQL database");
+  }
+
+}
 
 
 
@@ -49,22 +83,5 @@ const LoginUser = async (username,email) => {
 
 
 
-  
-//   const getData = async () => {
-//     let data = await LoginData('Ahmad-2', 'ahmademrani@gmail.com');
-
-
-//     if (!data || data.length === 0) {
-//         console.error("null data");
-//         return;
-//     }
-
-//     let user = data[0];
-    
-//     Object.keys(user).forEach(key => {
-//         console.log(`${key}: ${user[key]}`);
-//     });
-
-// };
 
 
