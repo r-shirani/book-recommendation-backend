@@ -60,12 +60,12 @@ const RegisterUser = async (emailInput,nameInput,passwordInput) => {
 }
 
 const loginUser_controller = async(emailInput , passwordInput)=>{
-  let response = await LoginUser(emailInput);
-  let isVerified = response[16];
-  let pass =response[21];
-  let ID =response[0];
-  console.log(isVerified.message);
-  console.log(pass.message);
+  let responses = await LoginUser(emailInput);
+  let response = responses[0];
+  let isVerified = response.isEmailVerified;
+  let pass =response.passwordHash;
+  let ID =response.userId;
+  
   if (!response || response.length===0){
     console.log("server Error(SQL-login)");
     return -1;
