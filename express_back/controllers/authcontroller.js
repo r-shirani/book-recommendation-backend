@@ -61,7 +61,7 @@ exports.login = async (req, res) => {
     if(user==-1)//not found
       return res.status(400).send('User not found');
     if(user==-2)//not verified
-    return res.status(400).json({ message: "Please verify your email first!" });
+      return res.status(400).json({ message: "Please verify your email first!" });
     if(user>=0)//logged in
     {
       const token = jwt.sign({ id: user }, process.env.JWT_SECRET, { expiresIn: "1h" });
@@ -72,7 +72,7 @@ exports.login = async (req, res) => {
       });
     }
     if(user==-3)//wrong pass
-    return res.status(400).json({ message: "wrong password" });
+      return res.status(400).json({ message: "wrong password" });
 
     /*const user =await User.findOne({email});
     if (!user) {return res.status(400).send('User not found');}
@@ -89,7 +89,10 @@ exports.login = async (req, res) => {
       });
     }*/
   }
-  catch (error) {res.status(500).json({ message: "server error" })};
+  catch (error) {
+    res.status(500).json({ message: "server error" })
+    console.log(error);
+  };
 
 };
 

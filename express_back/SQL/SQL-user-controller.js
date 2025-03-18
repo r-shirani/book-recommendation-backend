@@ -61,27 +61,30 @@ const RegisterUser = async (emailInput,nameInput,passwordInput) => {
 
 const loginUser_controller = async(emailInput , passwordInput)=>{
   let responses = await LoginUser(emailInput);
-  let response = responses[0];
-  let isVerified = response.isEmailVerified;
-  let pass =response.passwordHash;
-  let ID =response.userId;
   
-  if (!response || response.length===0){
+  if (!responses || responses.length===0){
     console.log("server Error(SQL-login)");
     return -1;
   }
-  if (!isVerified){
-    console.log("not verified");
-    return -2;
+  else{
+    let response = responses[0];
+    let isVerified = response.isEmailVerified;
+    let pass =response.passwordHash;
+    let ID =response.userId;
+    if (!isVerified){
+      console.log("not verified");
+      return -2;
+    }
+    if (isVerified && pass==passwordInput){
+      console.log("logged in");
+      return ID;
+    }
+    if (isVerified && pass!=passwordInput){
+      console.log("wrong password");
+      return -3;
+    }
   }
-  if (isVerified && pass==passwordInput){
-    console.log("logged in");
-    return ID;
-  }
-  if (isVerified && pass!=passwordInput){
-    console.log("wrong password");
-    return -3;
-  }
+  
 }
 
 module.exports={
