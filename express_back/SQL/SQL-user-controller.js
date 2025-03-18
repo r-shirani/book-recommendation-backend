@@ -8,10 +8,10 @@ const api = axios.create({
 
 
 
-const LoginUser = async (username,email) => {
+const LoginUser = async (email) => {
     try {
       const response = await api.get("/login",{
-        params:{userName: username , email: email}
+        params:{email: email}
         
       });
       return response.data;
@@ -57,6 +57,25 @@ const RegisterUser = async (emailInput,nameInput,passwordInput) => {
       return 1;
   }
 
+}
+
+const loginUser_controller = async(emailInput , passwordInput)=>{
+  let response = await LoginUser(emailInput);
+  let isVerified = response[16];
+  let pass =response[21];
+  console.log(isVerified.message);
+  console.log(pass.message);
+  if (!response || response.length===0){
+    console.log("server Error(SQL-login)");
+    return -1;
+  }
+  if (!isVerified){
+    console.log("not verified");
+    return 0;
+  }
+  if (isVerified && pass==passwordInput)
+    console.log("logged in");
+  return 1;
 }
 
 module.exports={
