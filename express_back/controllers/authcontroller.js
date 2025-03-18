@@ -54,8 +54,26 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try
   {
-    const { username, password, email } = req.body;
-    const user =await User.findOne({email});
+    const {username , password , email } = req.body;
+    let user = await loginUser_controller(email,password);
+    console.log(user);
+    if(user==-1)//not found
+      return res.status(400).send('User not found');
+    if(user==-2)//not verified
+    return res.status(400).json({ message: "Please verify your email first!" });
+    if(user>=0)//logged in
+    {
+      const token = jwt.sign({ id: user }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      res.status(201).json({ 
+        message: "Logged in successfully", 
+        token, 
+        user: { id: user, name: username, email: email } 
+      });
+    }
+    if(user==-3)//wrong pass
+    return res.status(400).json({ message: "wrong password" });
+
+    /*const user =await User.findOne({email});
     if (!user) {return res.status(400).send('User not found');}
     if (!user.isVerified) return res.status(400).json({ message: "Please verify your email first!" });
     const isMatch = await bcrypt.compare(password, user.password);
@@ -68,7 +86,7 @@ exports.login = async (req, res) => {
         token, 
         user: { id: user._id, name: user.name, email: user.email } 
       });
-    }
+    }*/
   }
   catch (error) {res.status(500).json({ message: "server error" })};
 
