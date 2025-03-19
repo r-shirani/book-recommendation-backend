@@ -29,12 +29,11 @@ exports.register = async (req, res) => {
     
 
 
-    let user = await registerUSer_controller(email,name,hashedPassword);
-    console.log(user);
+    let user = await registerUSer_controller(email,name,hashedPassword,verificationCode);
     if(!user){
       return res.status(400).json({ message: "this user has already registered!" });
     }
-
+    console.log('new user data: $email  $verificatoncode ',email ,verificationCode);
     
     
     ///////////user = new User({ name, email, password: hashedPassword, isVerified: false, verificationCode , googleId});

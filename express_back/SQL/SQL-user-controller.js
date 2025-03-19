@@ -21,13 +21,14 @@ const LoginUser = async (email) => {
   };
 
 
-const RegisterUser = async (emailInput,nameInput,passwordInput) => {
+const RegisterUser = async (emailInput,nameInput,passwordInput,verificatoncodeInput) => {
     try {
         const response = await api.post("/signupNormalUser", null, { 
             params: {
                 email: emailInput,
                 name: nameInput,
-                password: passwordInput
+                password: passwordInput,
+                verificationCode: verificatoncodeInput
             },
         });
         return response.data;
@@ -38,15 +39,15 @@ const RegisterUser = async (emailInput,nameInput,passwordInput) => {
 };
 
 
-const registerUSer_controller = async(emailInput,nameInput,passwordInput)=>{
-  let response = await RegisterUser(emailInput,nameInput,passwordInput);
-  let Pure_response = response[0];
-  console.log(Pure_response.message);
+const registerUSer_controller = async(emailInput,nameInput,passwordInput,verificatoncodeInput)=>{
+  let response = await RegisterUser(emailInput,nameInput,passwordInput,verificatoncodeInput);
+  
   if (!response || response.length === 0) {
       console.log("server Error(SQL-signupNormalUser)");
       return ;
   }
-  
+  let Pure_response = response[0];
+  console.log(Pure_response.message);
   if(Pure_response.message === 'exists')
   {
       console.log("user exists");
