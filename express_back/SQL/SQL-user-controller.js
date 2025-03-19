@@ -38,7 +38,7 @@ const RegisterUser = async (emailInput,nameInput,passwordInput) => {
 };
 
 
- const registerUSer_controller = async(emailInput,nameInput,passwordInput)=>{
+const registerUSer_controller = async(emailInput,nameInput,passwordInput)=>{
   let response = await RegisterUser(emailInput,nameInput,passwordInput);
   let Pure_response = response[0];
   console.log(Pure_response.message);
@@ -85,6 +85,19 @@ const loginUser_controller = async(emailInput , passwordInput)=>{
     }
   }
   
+}
+
+
+
+const verifyCode_controller = async(emailInput)=>{
+  let response = await LoginUser(emailInput);
+  if (!responses || responses.length===0){
+    console.log("server Error(SQL-login)");
+    return ;
+  }
+  let Pure_response = response[0];
+  return Pure_response.verificationCode;
+
 }
 
 module.exports={

@@ -99,8 +99,9 @@ exports.login = async (req, res) => {
 exports.verifyCode = async (req, res) => {
   try{
     const { email, code} = req.body;
-    let user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "User not found" });
+    //let user = await User.findOne({ email });
+    //if (!user) return res.status(400).json({ message: "User not found" });
+    
 
     if (user.verificationCode == parseInt(code)) {
       user.isVerified = true;
