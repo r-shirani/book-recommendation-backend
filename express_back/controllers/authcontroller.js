@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
-const { registerUSer_controller } = require("../SQL/SQL-user-controller");
+const { registerUSer_controller, getUserData } = require("../SQL/SQL-user-controller");
 const { loginUser_controller } = require("../SQL/SQL-user-controller");
 
 exports.register = async (req, res) => {
@@ -33,7 +33,7 @@ exports.register = async (req, res) => {
     if(!user){
       return res.status(400).json({ message: "this user has already registered!" });
     }
-    console.log('new user data: $email  $verificatoncode ',email ,verificationCode);
+    console.log(`new user data: ${email}  ${verificationCode} `);
     
     
     ///////////user = new User({ name, email, password: hashedPassword, isVerified: false, verificationCode , googleId});
@@ -100,14 +100,14 @@ exports.verifyCode = async (req, res) => {
     const { email, code} = req.body;
     //let user = await User.findOne({ email });
     //if (!user) return res.status(400).json({ message: "User not found" });
-    
+    let user = await getUserData(email);
+
 
     if (user.verificationCode == parseInt(code)) {
-      user.isVerified = true;
-      await user.save();
+      user.isEmailVerified = true;
       res.json({ message: "User verified successfully. You can now log in." });
     } else {
-      await User.deleteOne({ email });
+      
       res.status(400).send('wrong verification code');
     }
 

@@ -19,23 +19,7 @@ const LoginUser = async (email) => {
       console.error("Error fetching data:", error);
     }
   };
-
-
-
-
-const gerUserData = async (email)=>{
-  try {
-    let responses = await LoginUser(email);
-    let response = responses[0];
-    if(!response){
-      return -1;
-    }
-    return response
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-}
-
+  
 const RegisterUser = async (emailInput,nameInput,passwordInput,verificatoncodeInput) => {
     try {
         const response = await api.post("/signupNormalUser", null, { 
@@ -46,12 +30,50 @@ const RegisterUser = async (emailInput,nameInput,passwordInput,verificatoncodeIn
                 verificationCode: verificatoncodeInput
             },
         });
-        return response.data;
         console.log("Response from server:", response.data);
+        return response.data;       
     } catch (error) {
         console.error("Error:", error);
     }
 };
+
+
+
+
+
+const DeleteUser = async (emailInput) => {
+  try {
+    const response = await api.delete("/remove " ,{
+      params: {
+          email: emailInput
+      }
+    })
+    console.log("Response from server:", response.data);
+    pure = response.data[0];
+    console.log(pure.status);
+
+
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+
+
+const getUserData = async (email)=>{
+  try {
+    let responses = await LoginUser(email);
+    let response = responses[0];
+    console.log(response.email+ " " + response.verificationCode + " " +"getUserDataMethod log");
+    if(!response){
+      return -1;
+    }
+    return response
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
 
 
 const registerUSer_controller = async(emailInput,nameInput,passwordInput,verificatoncodeInput)=>{
@@ -118,7 +140,10 @@ const verifyCode_controller = async(emailInput)=>{
 
 module.exports={
   registerUSer_controller,
-  loginUser_controller
+  loginUser_controller,
+  getUserData,
+  verifyCode_controller,
+  DeleteUser
 };
 
 
