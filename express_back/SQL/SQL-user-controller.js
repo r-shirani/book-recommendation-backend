@@ -21,6 +21,21 @@ const LoginUser = async (email) => {
   };
 
 
+
+
+const gerUserData = async (email)=>{
+  try {
+    let responses = await LoginUser(email);
+    let response = responses[0];
+    if(!response){
+      return -1;
+    }
+    return response
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
 const RegisterUser = async (emailInput,nameInput,passwordInput,verificatoncodeInput) => {
     try {
         const response = await api.post("/signupNormalUser", null, { 
