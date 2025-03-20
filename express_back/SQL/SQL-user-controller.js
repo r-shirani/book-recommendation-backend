@@ -49,7 +49,7 @@ const DeleteUser = async (emailInput) => {
       }
     })
     console.log("Response from server:", response.data);
-    pure = response.data[0];
+    Pure = response.data[0];
     console.log(pure.status);
 
 

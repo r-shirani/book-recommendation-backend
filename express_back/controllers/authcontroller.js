@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
-const { registerUSer_controller, getUserData } = require("../SQL/SQL-user-controller");
+const { registerUSer_controller, getUserData, DeleteUser } = require("../SQL/SQL-user-controller");
 const { loginUser_controller } = require("../SQL/SQL-user-controller");
 
 exports.register = async (req, res) => {
@@ -107,7 +107,7 @@ exports.verifyCode = async (req, res) => {
       user.isEmailVerified = true;
       res.json({ message: "User verified successfully. You can now log in." });
     } else {
-      
+      DeleteUser(email);
       res.status(400).send('wrong verification code');
     }
 
