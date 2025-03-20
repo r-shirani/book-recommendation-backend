@@ -3,18 +3,18 @@
 interface
 
 uses
-  System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
-  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
-  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
-  Data.DB, FireDAC.Comp.Client, IniFiles, FireDAC.Stan.Param, FireDAC.DatS,
-  FireDAC.DApt.Intf, FireDAC.DApt, AAFireDAC, FireDAC.Comp.DataSet;
+    System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+    FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+    FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
+    Data.DB, FireDAC.Comp.Client, IniFiles, FireDAC.Stan.Param, FireDAC.DatS,
+    FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet;
 
 type
-  TDMMain = class(TDataModule)
-    FDConn: TFDConnection;
-  public
-    constructor Create(AOwner: TComponent); override;
-    class function GetConnection: TFDConnection;
+    TDMMain = class(TDataModule)
+      FDConn: TFDConnection;
+    public
+      constructor Create(AOwner: TComponent); override;
+      class function GetConnection: TFDConnection;
 End;
 
 var

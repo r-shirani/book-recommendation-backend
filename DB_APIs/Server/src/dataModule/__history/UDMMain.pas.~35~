@@ -6,11 +6,12 @@ uses
   System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
-  Data.DB, FireDAC.Comp.Client, IniFiles;
+  Data.DB, FireDAC.Comp.Client, IniFiles, FireDAC.Stan.Param, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet;
 
 type
   TDMMain = class(TDataModule)
-    FDConnMain: TFDConnection;
+    FDConn: TFDConnection;
   public
     constructor Create(AOwner: TComponent); override;
     class function GetConnection: TFDConnection;
@@ -41,26 +42,23 @@ Begin
 
     iniFile := TIniFile.Create(iniPath);
     Try
-        Driver := iniFile.ReadString('Database', 'Driver', '');
-        Server := iniFile.ReadString('Database', 'Server', '');
-        Database := iniFile.ReadString('Database', 'Database', '');
-        UserName := iniFile.ReadString('Database', 'User_Name', '');
-        Password := iniFile.ReadString('Database', 'Password', '');
+        Driver := iniFile.ReadString('ProjBookWorm', 'DriverID', '');
+        Server := iniFile.ReadString('ProjBookWorm', 'Server', '');
+        Database := iniFile.ReadString('ProjBookWorm', 'Database', '');
+        UserName := iniFile.ReadString('ProjBookWorm', 'User_name', '');
+        Password := iniFile.ReadString('ProjBookWorm', 'Password', '');
 
-        With FDConnMain.Params do
-        Begin
-            Clear;
-            Add('DriverID=' + Driver);
-            Add('Server=' + Server);
-            Add('Database=' + Database);
-            Add('User_Name=' + UserName);
-            Add('Password=' + Password);
-        End;
+        FDConn.Params.Clear;
+        FDConn.Params.Add('DriverID=' + Driver);
+        FDConn.Params.Add('SERVER=' + Server);
+        FDConn.Params.Add('DataBase=' + Database);
+        FDConn.Params.Add('User_Name=' + UserName);
+        FDConn.Params.Add('Password=' + Password);
 
-      FDConnMain.Connected := True; // اتصال را باز کن
+        FDConn.Connected := True;
 
-    finally
-      iniFile.Free;
+    Finally
+        iniFile.Free;
     End;
 End;
 //______________________________________________________________________________
@@ -71,10 +69,10 @@ Begin
     If (DMMain = Nil) then
       DMMain := TDMMain.Create(nil);
 
-    If not DMMain.FDConnMain.Connected then
-      DMMain.FDConnMain.Connected := True;
+    If not DMMain.FDConn.Connected then
+      DMMain.FDConn.Connected := True;
 
-    Result := DMMain.FDConnMain;
+    Result := DMMain.FDConn;
 End;
 //______________________________________________________________________________
 
