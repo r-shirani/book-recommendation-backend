@@ -3,6 +3,7 @@
 Interface
 
 Uses
+    System.JSON,
     MVCFramework,
     MVCFramework.Commons,
     MVCFramework.SQLGenerators.MSSQL,
@@ -27,7 +28,7 @@ Type
         [MVCPath('/getUser')]
         [MVCHTTPMethods([httpGET])]
         Procedure GetUserByID(
-          Const [MVCFromQueryString('userID', '')] userID: Integer);
+          Const [MVCFromQueryString('userID', '')] userID: String);
 
         [MVCPath('/login')]
         [MVCHTTPMethods([httpGET])]
@@ -52,6 +53,14 @@ Type
           Const [MVCFromQueryString('email', '')] email: String;
           Const [MVCFromQueryString('clientEmailID', '')] CEmailID: String
         );
+
+
+        [MVCPath('/EmailVerification')]
+        [MVCHTTPMethods([httpPut])]
+        Procedure EmailVerification(
+          Const [MVCFromQueryString('userID', '0')] userID: String;
+          Const [MVCFromQueryString('IsEmailVerify', '0')] IsEmailVerify: Boolean
+        );
 End;
 
 Implementation
@@ -65,7 +74,7 @@ uses
   MVCFramework.DataSet.Utils,
   JsonDataObjects,
   IniFiles,
-  UDMMain;
+  UDMMain, Model.User.Security;
 
 //______________________________________________________________________________
 Procedure TUserController.GetUsers();
@@ -84,9 +93,61 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Procedure TUserController.GetUserByID(Const userID: Integer);
+Procedure TUserController.EmailVerification(const userID: String; const IsEmailVerify: Boolean);
+Var
+    FDQuery: TFDQuery;
+    Response: System.JSON.TJSONObject;
 Begin
-    Render(ObjectDict().Add('data', TMVCActiveRecord.GetByPK<Model.User.TUser>(userID)));
+    FDQuery := TFDQuery.Create(nil);
+    Try
+        FDQuery.Connection := TDMMain.GetConnection;
+        FDQuery.SQL.Text := 'UPDATE [User].[Security] SET IsEmailVerified = :IsEmailVerify ' +
+                            'WHERE UserID = :UserID';
+        FDQuery.ParamByName('IsEmailVerify').AsBoolean := IsEmailVerify;
+        FDQuery.ParamByName('UserID').AsString := UserID;
+
+        Try
+            FDQuery.ExecSQL;
+
+            // ارسال پیام موفقیت
+            Response := System.JSON.TJSONObject.Create;
+            Response.AddPair('Status', 'Success');
+            Response.AddPair('Message', 'Email verification status updated successfully.');
+
+            // استفاده از Add با شیء System.JSON.TJSONObject
+            Render(Response);
+        Except
+            On E: Exception Do
+            Begin
+                // در صورت بروز خطا، ارسال پیام خطا
+                Response := System.JSON.TJSONObject.Create;
+                Response.AddPair('Status', 'Error');
+                Response.AddPair('Message', 'Error updating email verification status: ' + E.Message);
+
+                // استفاده از Add با شیء System.JSON.TJSONObject
+                Render(Response);
+            End;
+        End;
+    Finally
+        FDQuery.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TUserController.GetUserByID(Const userID: String);
+Var
+    FDQuery: TFDQuery;
+Begin
+    FDQuery := TFDQuery.Create(nil);
+    Try
+        FDQuery.Connection := TDMMain.GetConnection;
+        FDQuery.SQL.Text := 'SELECT * FROM [User].[vwAllFieldUser] WHERE UserID = :userID';
+        FDQuery.ParamByName('userID').AsString := userID;
+        FDQuery.Open;
+
+        Render(FDQuery.AsJSONArray);
+    Finally
+        FDQuery.Free;
+    End;
 End;
 //______________________________________________________________________________
 Procedure TUserController.SignupNormalUser(Const Name, Password, Email, CEmailID: String);

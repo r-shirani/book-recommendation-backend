@@ -44,6 +44,8 @@ Type
 
         [MVCTableField('UserTypeID')]
         fUserTypeID: NullableInt16;
+
+
     Public
         Property UserID: Int64 read fUserID write fUserID;
         Property UserName: String read fUserName write fUserName;

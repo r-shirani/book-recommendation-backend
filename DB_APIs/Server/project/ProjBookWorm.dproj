@@ -122,6 +122,7 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="..\src\model\Model.User.Security.pas"/>
         <None Include="ProjBookWorm.todo"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

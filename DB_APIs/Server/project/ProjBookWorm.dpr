@@ -19,7 +19,8 @@ uses
   Model.User in '..\src\model\Model.User.pas',
   Controller.User in '..\src\controller\Controller.User.pas',
   WebModule.Main in '..\src\services\WebModule.Main.pas' {BookWorm: TWebModule},
-  UDMMain in '..\src\dataModule\UDMMain.pas' {DMMain: TDataModule};
+  UDMMain in '..\src\dataModule\UDMMain.pas' {DMMain: TDataModule},
+  Model.User.Security in '..\src\model\Model.User.Security.pas';
 
 {$R *.res}
 

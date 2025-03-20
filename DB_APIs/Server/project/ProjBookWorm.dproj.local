@@ -28,7 +28,9 @@
     <Transaction>2025/03/11 23:30:13.000.688,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\DMMain.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas</Transaction>
     <Transaction>2025/03/11 23:30:34.000.383,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\UDMMain.dfm=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\DMMain.dfm</Transaction>
     <Transaction>2025/03/11 23:30:34.000.383,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\UDMMain.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\DMMain.pas</Transaction>
-    <Transaction>2025/03/18 22:40:55.925,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\ProjBookWorm.todo</Transaction>
+    <Transaction>2025/03/18 22:40:55.000.925,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\ProjBookWorm.todo</Transaction>
+    <Transaction>2025/03/20 15:44:15.000.122,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas</Transaction>
+    <Transaction>2025/03/20 15:44:54.000.528,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\model\Model.User.Security.pas</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="..\..\Server"/>
@@ -40,6 +42,7 @@
     <File Path="..\src\dataModule\UDMMain.dfm"/>
     <File Path="..\src\model"/>
     <File Path="..\src\model\Model.User.pas"/>
+    <File Path="..\src\model\Model.User.Security.pas"/>
     <File Path="..\src\services"/>
     <File Path="..\src\services\WebModule.Main.pas"/>
     <File Path="..\src\services\WebModule.Main.dfm"/>
