@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
-const { registerUSer_controller, getUserData, DeleteUser } = require("../SQL/SQL-user-controller");
+const { registerUSer_controller, getUserData, DeleteUser, EmailVerficationPut } = require("../SQL/SQL-user-controller");
 const { loginUser_controller } = require("../SQL/SQL-user-controller");
 
 exports.register = async (req, res) => {
@@ -104,7 +104,8 @@ exports.verifyCode = async (req, res) => {
 
 
     if (user.verificationCode == parseInt(code)) {
-      user.isEmailVerified = true;
+      console.log(user.userId);
+      EmailVerficationPut(user.userId,true);
       res.json({ message: "User verified successfully. You can now log in." });
     } else {
       DeleteUser(email);
