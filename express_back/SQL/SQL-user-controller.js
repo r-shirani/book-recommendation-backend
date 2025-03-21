@@ -68,7 +68,12 @@ const EmailVerficationPut = async (userIdInput , EmailverificationInput) =>{
               isEmailVerify: EmailverificationInput
           }
       });
-      console.log(response.data);
+      const pure = response.data;
+
+      console.log(pure.Message); 
+
+
+      return pure.Status ;
 
 
 
@@ -162,7 +167,8 @@ module.exports={
   loginUser_controller,
   getUserData,
   verifyCode_controller,
-  DeleteUser
+  DeleteUser,
+  EmailVerficationPut
 };
 
 
