@@ -60,6 +60,25 @@ const DeleteUser = async (emailInput) => {
 
 
 
+const EmailVerficationPut = async (userIdInput , EmailverificationInput) =>{
+  try {
+      const response = await api.put("/EmailVerification",{} , {
+          params: {
+              userID: userIdInput,
+              isEmailVerify: EmailverificationInput
+          }
+      });
+      console.log(response.data);
+
+
+
+  } catch (error) {
+      console.log("Error:", error);
+  }
+}
+
+
+
 const getUserData = async (email)=>{
   try {
     let responses = await LoginUser(email);
