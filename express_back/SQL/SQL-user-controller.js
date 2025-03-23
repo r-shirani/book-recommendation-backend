@@ -162,13 +162,27 @@ const verifyCode_controller = async(emailInput)=>{
 
 }
 
+const getUserByID = async (userID) => {
+  try {
+    const response = await api.get("/getUser", {
+      params: { userID: userID }
+    });
+    return response.data;
+  }catch (error) {
+      console.error("Error fetching user data:", error);
+      return null;
+  }
+};
+
+
 module.exports={
   registerUSer_controller,
   loginUser_controller,
   getUserData,
   verifyCode_controller,
   DeleteUser,
-  EmailVerficationPut
+  EmailVerficationPut,
+  getUserByID
 };
 
 

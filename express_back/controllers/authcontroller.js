@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 const { registerUSer_controller, getUserData, DeleteUser, EmailVerficationPut } = require("../SQL/SQL-user-controller");
 const { loginUser_controller } = require("../SQL/SQL-user-controller");
-const { getUserData } = require("../SQL/SQL-user-controller");
+const { getUserByID } = require("../SQL/SQL-user-controller");
 
 exports.register = async (req, res) => {
   try {
@@ -120,16 +120,19 @@ exports.verifyCode = async (req, res) => {
 
 exports.getProfile = async (req, res) => {
   try {
-    const userId = req.user.id; //"Data retrieved from middleware"
+    const userID = req.user.id; //"Data retrieved from middleware"
 
-    const user = await getUserData(userId);
-    if (!user) {
+    let users = await getUserByID(userID);
+
+    if (!users) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    const user = users[0];
+    
     res.json({
       message: "User profile",
-      user: { id: user.userId, name: user.name, email: user.email },
+      user: { id: user.userId, name: user.firstName, email: user.email },
     });
   } catch (error) {
     console.error(error);
