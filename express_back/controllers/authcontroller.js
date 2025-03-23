@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
-const { registerUSer_controller, getUserData, DeleteUser, EmailVerficationPut } = require("../SQL/SQL-user-controller");
+const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut } = require("../SQL/SQL-user-controller");
 const { loginUser_controller } = require("../SQL/SQL-user-controller");
 const { getUserByID } = require("../SQL/SQL-user-controller");
 
@@ -14,31 +14,19 @@ exports.register = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
     const { name, email, password } = req.body;
-    /////////let user = await User.findOne({ email });
 
-    //////////if (user) return res.status(400).json({ message: "this user has already registered!" });
-
-    
-    
-    
     // generate the 6 digit verification code
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
-    //hashig password
+    //hashing password
     const hashedPassword = await bcrypt.hash(password, 10);
     //creating random googleID
     const googleId = Math.floor(100000 + Math.random() * 900000);
     
-
-
     let user = await registerUSer_controller(email,name,hashedPassword,verificationCode);
     if(!user){
       return res.status(400).json({ message: "this user has already registered!" });
     }
     console.log(`new user data: ${email}  ${verificationCode} `);
-    
-    
-    ///////////user = new User({ name, email, password: hashedPassword, isVerified: false, verificationCode , googleId});
-    ///////////await user.save();
 
     // send the verification code
     await sendVerificationCode(email, verificationCode)
@@ -73,21 +61,6 @@ exports.login = async (req, res) => {
     }
     if(user==-3)//wrong pass
       return res.status(400).json({ message: "wrong password" });
-
-    /*const user =await User.findOne({email});
-    if (!user) {return res.status(400).send('User not found');}
-    if (!user.isVerified) return res.status(400).json({ message: "Please verify your email first!" });
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "wrong password" });
-    else
-    {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-      res.status(201).json({ 
-        message: "Logged in successfully", 
-        token, 
-        user: { id: user._id, name: user.name, email: user.email } 
-      });
-    }*/
   }
   catch (error) {
     res.status(500).json({ message: "server error" })
@@ -99,14 +72,11 @@ exports.login = async (req, res) => {
 exports.verifyCode = async (req, res) => {
   try{
     const { email, code} = req.body;
-    //let user = await User.findOne({ email });
-    //if (!user) return res.status(400).json({ message: "User not found" });
     let user = await getUserData(email);
-
 
     if (user.verificationCode == parseInt(code)) {
       console.log(user.userId);
-      EmailVerficationPut(user.userId,true);
+      EmailVerificationPut(user.userId,true);
       res.json({ message: "User verified successfully. You can now log in." });
     } else {
       DeleteUser(email);
@@ -139,7 +109,6 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 exports.googleLogin = async (req , res)=>{
   try {

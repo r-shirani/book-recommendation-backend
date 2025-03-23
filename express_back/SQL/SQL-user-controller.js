@@ -6,28 +6,23 @@ const api = axios.create({
     },
   });
 
-
-
 const LoginUser = async (email) => {
-    try {
-      const response = await api.get("/login",{
-        params:{email: email}
-        
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+  try {
+    const response = await api.get("/login",{
+      params:{email: email} 
+    });
+    return response.data;
+  } catch (error) {console.error("Error fetching data:", error);}
+};
   
-const RegisterUser = async (emailInput,nameInput,passwordInput,verificatoncodeInput) => {
+const RegisterUser = async (emailInput,nameInput,passwordInput,verificationcodeInput) => {
     try {
         const response = await api.post("/signupNormalUser", null, { 
             params: {
                 email: emailInput,
                 name: nameInput,
                 password: passwordInput,
-                verificationCode: verificatoncodeInput
+                verificationCode: verificationcodeInput
             },
         });
         console.log("Response from server:", response.data);
@@ -36,10 +31,6 @@ const RegisterUser = async (emailInput,nameInput,passwordInput,verificatoncodeIn
         console.error("Error:", error);
     }
 };
-
-
-
-
 
 const DeleteUser = async (emailInput) => {
   try {
@@ -51,16 +42,12 @@ const DeleteUser = async (emailInput) => {
     console.log("Response from server:", response.data);
     Pure = response.data[0];
     console.log(pure.status);
-
-
   } catch (error) {
     console.error("Error:", error);
   }
 }
 
-
-
-const EmailVerficationPut = async (userIdInput , EmailverificationInput) =>{
+const EmailVerificationPut = async (userIdInput , EmailverificationInput) =>{
   try {
       const response = await api.put("/EmailVerification",{} , {
           params: {
@@ -69,20 +56,12 @@ const EmailVerficationPut = async (userIdInput , EmailverificationInput) =>{
           }
       });
       const pure = response.data;
-
       console.log(pure.Message); 
-
-
       return pure.Status ;
-
-
-
-  } catch (error) {
+    } catch (error) {
       console.log("Error:", error);
   }
 }
-
-
 
 const getUserData = async (email)=>{
   try {
@@ -98,10 +77,8 @@ const getUserData = async (email)=>{
   }
 }
 
-
-
-const registerUSer_controller = async(emailInput,nameInput,passwordInput,verificatoncodeInput)=>{
-  let response = await RegisterUser(emailInput,nameInput,passwordInput,verificatoncodeInput);
+const registerUSer_controller = async(emailInput,nameInput,passwordInput,verificationcodeInput)=>{
+  let response = await RegisterUser(emailInput,nameInput,passwordInput,verificationcodeInput);
   
   if (!response || response.length === 0) {
       console.log("server Error(SQL-signupNormalUser)");
@@ -118,7 +95,6 @@ const registerUSer_controller = async(emailInput,nameInput,passwordInput,verific
       console.log("The user has been added to the SQL database");
       return 1;
   }
-
 }
 
 const loginUser_controller = async(emailInput , passwordInput)=>{
@@ -146,10 +122,7 @@ const loginUser_controller = async(emailInput , passwordInput)=>{
       return -3;
     }
   }
-  
 }
-
-
 
 const verifyCode_controller = async(emailInput)=>{
   let response = await LoginUser(emailInput);
@@ -159,7 +132,6 @@ const verifyCode_controller = async(emailInput)=>{
   }
   let Pure_response = response[0];
   return Pure_response.verificationCode;
-
 }
 
 const getUserByID = async (userID) => {
@@ -174,38 +146,12 @@ const getUserByID = async (userID) => {
   }
 };
 
-
 module.exports={
   registerUSer_controller,
   loginUser_controller,
   getUserData,
   verifyCode_controller,
   DeleteUser,
-  EmailVerficationPut,
+  EmailVerificationPut,
   getUserByID
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
