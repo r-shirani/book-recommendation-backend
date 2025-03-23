@@ -3,17 +3,27 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'r.shiiranii@gmail.com',//this email must be changed to the site's email
-        pass: 'cnab hrjx blkp oplw',
+        user: 'bookworm.validation@gmail.com',
+        pass: 'lxyh uoaq mgvd ecgd',
     },
 });
 
 const sendVerificationCode =async (email, code) => {
     const mailOptions = {
-        from: 'r.shiiranii@gmail.com',
+        from: 'bookworm.validation@gmail.com',
         to: email,
-        subject: 'کد تأیید',
-        text: `کد تأیید شما جهت ورود به سامانه: ${code}`,
+        subject: 'کد تأیید حساب کاربری',
+        text: `،کاربر گرامی
+    
+        .از اینکه از سامانه ما استفاده می‌کنید سپاسگزاریم 
+    
+        ${code}:کد تأیید شما برای ورود به حساب کاربری 
+    
+        .لطفاً این کد را در فرم ورود وارد کنید 
+        .این کد به مدت محدود معتبر است و برای امنیت بیشتر، آن را در اختیار دیگران قرار ندهید 
+    
+        ،با احترام
+        Bookworm تیم پشتیبانی `,
     };
     
      
