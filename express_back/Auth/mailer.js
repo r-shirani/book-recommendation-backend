@@ -13,17 +13,29 @@ const sendVerificationCode =async (email, code) => {
         from: 'bookworm.validation@gmail.com',
         to: email,
         subject: 'کد تأیید حساب کاربری',
-        text: `،کاربر گرامی
-    
-        .از اینکه از سامانه ما استفاده می‌کنید سپاسگزاریم 
-    
-        ${code}:کد تأیید شما برای ورود به حساب کاربری 
-    
-        .لطفاً این کد را در فرم ورود وارد کنید 
-        .این کد به مدت محدود معتبر است و برای امنیت بیشتر، آن را در اختیار دیگران قرار ندهید 
-    
-        ،با احترام
-        Bookworm تیم پشتیبانی `,
+        html: `
+            <div style="background-color: #0f0f0f; padding: 30px; text-align: center; font-family: Arial, sans-serif; color: #fff;">
+                <div style="max-width: 400px; margin: auto; background: #1c1c1c; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);">
+                    <h2 style="color: #fff;">📌 کد تأیید حساب کاربری</h2>
+                    <p style="font-size: 16px; color: #bbb;">
+                        خوش آمدید Bookworm کاربر گرامی، به سامانه
+                    </p>
+                    <div style="background: #a94442; color: #fff; font-size: 22px; font-weight: bold; padding: 15px; border-radius: 8px; margin: 15px auto; max-width: 300px;">
+                        ${code}
+                    </div>
+                    <p style="font-size: 14px; color: #bbb;">
+                        این کد فقط برای مدت محدودی معتبر است و برای امنیت بیشتر آن را در اختیار دیگران قرار ندهید
+                    </p>
+                    <hr style="border: none; border-top: 1px solid #444; margin: 20px 0;">
+                    <p style="font-size: 14px; color: #bbb;">
+                        Bookworm با احترام، تیم پشتیبانی 
+                    </p>
+                    <p style="font-size: 16px; font-weight: bold; color: #fff;">
+                        📚 Bookworm Team
+                    </p>
+                </div>
+            </div>
+        `,
     };
     
      
