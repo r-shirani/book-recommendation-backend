@@ -18,7 +18,10 @@ const sendVerificationCode =async (email, code) => {
                 <div style="max-width: 400px; margin: auto; background: #1c1c1c; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);">
                     <h2 style="color: #fff;">📌 کد تأیید حساب کاربری</h2>
                     <p style="font-size: 16px; color: #bbb;">
-                        خوش آمدید Bookworm کاربر گرامی، به سامانه
+                        ،کاربر گرامی 
+                    </p>
+                    <p style="font-size: 16px; color: #bbb;">
+                        خوش آمدید Bookworm به سامانه 
                     </p>
                     <div style="background: #a94442; color: #fff; font-size: 22px; font-weight: bold; padding: 15px; border-radius: 8px; margin: 15px auto; max-width: 300px;">
                         ${code}
