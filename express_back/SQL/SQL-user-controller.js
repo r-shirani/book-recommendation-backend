@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const axios = require('axios');
 const api = axios.create({
     baseURL: "http://185.255.90.36:9547/api/v1/user", 
@@ -109,15 +110,21 @@ const loginUser_controller = async(emailInput , passwordInput)=>{
     let isVerified = response.isEmailVerified;
     let pass =response.passwordHash;
     let ID =response.userId;
+
+    let isMatch = await bcrypt.compare(passwordInput, pass);
+    console.log("password input: "+passwordInput);
+    console.log("password from SQL: "+pass);
+    console.log("isMatch: "+isMatch);
+
     if (!isVerified){
       console.log("not verified");
       return -2;
     }
-    if (isVerified && pass==passwordInput){
+    if (isVerified && isMatch){
       console.log("logged in");
       return ID;
     }
-    if (isVerified && pass!=passwordInput){
+    if (isVerified && !isMatch){
       console.log("wrong password");
       return -3;
     }
