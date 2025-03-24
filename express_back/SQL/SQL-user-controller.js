@@ -112,9 +112,6 @@ const loginUser_controller = async(emailInput , passwordInput)=>{
     let ID =response.userId;
 
     let isMatch = await bcrypt.compare(passwordInput, pass);
-    console.log("password input: "+passwordInput);
-    console.log("password from SQL: "+pass);
-    console.log("isMatch: "+isMatch);
 
     if (!isVerified){
       console.log("not verified");
