@@ -1,4 +1,4 @@
-﻿program ProjBookWorm;
+﻿Program ProjBookWorm;
 
 {$APPTYPE CONSOLE}
 
@@ -20,7 +20,10 @@ uses
   Controller.User in '..\src\controller\Controller.User.pas',
   WebModule.Main in '..\src\services\WebModule.Main.pas' {BookWorm: TWebModule},
   UDMMain in '..\src\dataModule\UDMMain.pas' {DMMain: TDataModule},
-  Model.User.Security in '..\src\model\Model.User.Security.pas';
+  Model.User.Security in '..\src\model\Model.User.Security.pas',
+  Service.User in '..\src\services\Service.User.pas',
+  Service.UserSecurity in '..\src\services\Service.UserSecurity.pas',
+  Controller.UserSecurity in '..\src\controller\Controller.UserSecurity.pas';
 
 {$R *.res}
 

@@ -1,23 +1,28 @@
-﻿unit WebModule.Main;
+﻿Unit WebModule.Main;
 
-interface
+Interface
 
-uses
-  System.SysUtils,
-  System.Classes,
-  Web.HTTPApp,
-  MVCFramework;
+Uses
+    System.SysUtils,
+    System.Classes,
+    Web.HTTPApp,
+    MVCFramework;
 
-type
-    TBookWorm = class(TWebModule)
-        procedure WebModuleCreate(Sender: TObject);
-        procedure WebModuleDestroy(Sender: TObject);
-    private
+Type
+    TBookWorm = Class(TWebModule)
+        Procedure WebModuleCreate(Sender: TObject);
+        Procedure WebModuleDestroy(Sender: TObject);
+
+    Private
         FMVC: TMVCEngine;
 End;
 
-var
-  WebModuleClass: TComponentClass = TBookWorm;
+Var
+    WebModuleClass: TComponentClass = TBookWorm;
+
+Const
+    BASE_API_V1 = '/api/v1';
+
 
 implementation
 
@@ -25,6 +30,7 @@ implementation
 
 uses
   Controller.User,
+  Controller.UserSecurity,
   MVCFramework.Middleware.ActiveRecord,
   MVCFramework.SQLGenerators.MSSQL,
   System.IOUtils,
@@ -40,11 +46,11 @@ uses
   UDMMain;
 
 
-procedure TBookWorm.WebModuleCreate(Sender: TObject);
+Procedure TBookWorm.WebModuleCreate(Sender: TObject);
 begin
     TDMMain.GetConnection;
     FMVC := TMVCEngine.Create(Self,
-    procedure(Config: TMVCConfig)
+    Procedure(Config: TMVCConfig)
     begin
       //default content-type
       Config[TMVCConfigKey.DefaultContentType] := dotEnv.Env('dmvc.default.content_type', TMVCConstants.DEFAULT_CONTENT_TYPE);
@@ -72,6 +78,7 @@ begin
 
     // Controllers
     fMVC.AddController(TUserController);
+    fMVC.AddController(TUserSecurityController);
 
     // Middleware
     fMVC.AddMiddleware(TMVCCompressionMiddleware.Create);

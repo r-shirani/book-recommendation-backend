@@ -1,0 +1,73 @@
+﻿Unit Service.User;
+
+interface
+
+uses
+    System.Generics.Collections,
+    System.SysUtils,
+    MVCFramework.ActiveRecord,
+    Model.User;
+
+type
+    IUserService = interface
+        ['{8A1E86C2-EC7F-470D-B9AE-1E87C6E5A621}']
+        function GetUserByID(const UserID: Int64): TUser;
+        function GetAllUsers: TObjectList<TUser>;
+        procedure AddUser(const AUser: TUser);
+        procedure UpdateUser(const AUser: TUser);
+        procedure DeleteUser(const UserID: Int64);
+    end;
+
+    TUserService = class(TInterfacedObject, IUserService)
+    public
+        function GetUserByID(const UserID: Int64): TUser;
+        function GetAllUsers: TObjectList<TUser>;
+        procedure AddUser(const AUser: TUser);
+        procedure UpdateUser(const AUser: TUser);
+        procedure DeleteUser(const UserID: Int64);
+    end;
+
+implementation
+
+{ TUserService }
+
+// دریافت اطلاعات کاربر بر اساس UserID
+function TUserService.GetUserByID(const UserID: Int64): TUser;
+begin
+    Result := TMVCActiveRecord.GetByPK<TUser>(UserID);
+end;
+
+// دریافت لیست تمام کاربران
+function TUserService.GetAllUsers: TObjectList<TUser>;
+begin
+    Result := TMVCActiveRecord.All<TUser>;
+end;
+
+// افزودن کاربر جدید
+procedure TUserService.AddUser(const AUser: TUser);
+begin
+    AUser.Insert;
+end;
+
+// بروزرسانی اطلاعات کاربر
+procedure TUserService.UpdateUser(const AUser: TUser);
+begin
+    AUser.Update;
+end;
+
+// حذف کاربر بر اساس UserID
+procedure TUserService.DeleteUser(const UserID: Int64);
+var
+    LUser: TUser;
+begin
+    LUser := GetUserByID(UserID);
+    try
+        if Assigned(LUser) then
+            LUser.Delete;
+    finally
+        LUser.Free;
+    end;
+end;
+
+end.
+

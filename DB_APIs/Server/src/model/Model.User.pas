@@ -37,7 +37,7 @@ Type
         fGender: NullableInt16;
 
         [MVCTableField('DateOfBrith')]
-        fDateOfBirth: TDateTime;
+        fDateOfBirth: TDate;
 
         [MVCTableField('WebSite')]
         fWebsite: NullableString;
@@ -55,7 +55,7 @@ Type
         Property Email: NullableString read fEmail write fEmail;
         Property Bio: NullableString read fBio write fBio;
         Property Gender: NullableInt16 read fGender write fGender;
-        Property DateOfBirth: TDateTime read fDateOfBirth write fDateOfBirth;
+        Property DateOfBirth: TDate read fDateOfBirth write fDateOfBirth;
         Property Website: NullableString read fWebsite write fWebsite;
         Property UserTypeID: NullableInt16  read fUserTypeID write fUserTypeID;
 End;

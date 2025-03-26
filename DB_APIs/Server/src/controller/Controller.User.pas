@@ -12,16 +12,24 @@ Uses
     FireDAC.Phys.MSSQL,
     System.Variants,
     System.Generics.Collections,
-    Model.User;
-
-Const
-  BASE_API_V1 = '/api/v1';
+    Model.User,
+    Model.User.Security,
+    Service.User,
+    Service.UserSecurity,
+    WebModule.Main;
 
 Type
     [MVCPath(BASE_API_V1 + '/user')]
     TUserController = class(TMVCController)
+    Private
+        FUserSecurityService: IUserSecurityService;
+        FUserService: IUserService;
+
     Public
-        [MVCPath]
+        Constructor Create(); override;
+        Destructor Destroy(); override;
+
+        [MVCPath('')]
         [MVCHTTPMethods([httpGET])]
         Procedure GetUsers();
 
@@ -55,28 +63,147 @@ Type
           Const [MVCFromQueryString('VerificationCode', '')] VerifyCode: String
         );
 
-
         [MVCPath('/EmailVerification')]
         [MVCHTTPMethods([httpPut])]
         Procedure EmailVerification(
           Const [MVCFromQueryString('userID', '0')] userID: String;
           Const [MVCFromQueryString('IsEmailVerify', '0')] IsEmailVerify: Boolean
         );
+
+        [MVCPath('/getUserAllFields')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetUserAllFields([MVCFromQueryString('userID', 0)] Const userID: Int64);
+
+        [MVCPath('/getAllUser')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetAllUser();
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPOST])]
+        Procedure AddUser;
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPUT])]
+        Procedure UpdateUser;
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpDelete])]
+        Procedure DeleteUser([MVCFromQueryString('userID', 0)] Const userID: Int64);
 End;
 
 Implementation
 
-uses
-  System.SysUtils,
-  FireDAC.Comp.Client,
-  FireDAC.Stan.Param,
-  MVCFramework.Logger,
-  MVCFramework.Serializer.Commons,
-  MVCFramework.DataSet.Utils,
-  JsonDataObjects,
-  IniFiles,
-  UDMMain, Model.User.Security;
+Uses
+    System.SysUtils,
+    FireDAC.Comp.Client,
+    FireDAC.Stan.Param,
+    MVCFramework.Logger,
+    MVCFramework.Serializer.Commons,
+    MVCFramework.DataSet.Utils,
+    JsonDataObjects,
+    IniFiles,
+    UDMMain;
 
+
+//______________________________________________________________________________
+Constructor TUserController.Create();
+Begin
+    Inherited;
+    FUserSecurityService := TUserSecurityService.Create();
+    FUserService := TUserService.Create();
+End;
+//______________________________________________________________________________
+Procedure TUserController.GetUserAllFields(Const userID: Int64);
+Var
+    user: Model.TUser;
+Begin
+    user := FUserService.GetUserByID(userID);
+    If Assigned(user) then
+        Render(user)
+    Else
+        Render(HTTP_STATUS.NotFound, 'User_Not_Found');
+End;
+//______________________________________________________________________________
+Procedure TUserController.GetAllUser;
+Var
+    userList: TObjectList<Model.TUser>;
+Begin
+    userList := FUserService.GetAllUsers;
+    Try
+        If (userList.Count > 0) Then
+            Render(userList)
+        Else
+            Render(HTTP_STATUS.NoContent, 'List_Is_Empty');
+    Finally
+        userList.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TUserController.AddUser;
+Var
+    NewUser: TUser;
+Begin
+    NewUser := Context.Request.BodyAs<TUser>;
+    Try
+        Try
+            FUserService.AddUser(NewUser);
+            Render(HTTP_STATUS.Created, 'User_Added');
+        Except
+            Render(HTTP_STATUS.BadRequest, 'Error');
+        End;
+    Finally
+        NewUser.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TUserController.UpdateUser();
+Var
+    UpdatedUser: TUser;
+Begin
+    UpdatedUser := Context.Request.BodyAs<TUser>;
+    Try
+        Try
+            UpdatedUser := Context.Request.BodyAs<TUser>;
+            FUserService.UpdateUser(UpdatedUser);
+            Render(HTTP_STATUS.Ok, 'User_Updated');
+        Except
+            Render(HTTP_STATUS.BadRequest, 'Error');
+        End;
+    Finally
+        UpdatedUser.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TUserController.DeleteUser(Const userID: Int64);
+Var
+    User: Model.TUser;
+    UserSecurity: TUser_Security;
+Begin
+    Try
+        User := FUserService.GetUserByID(userID);
+        If (Not Assigned(User)) then
+        Begin
+            Render(HTTP_STATUS.NotFound, 'User_Not_Found');
+            Exit;
+        End;
+
+        UserSecurity := FUserSecurityService.GetUserSecurityByUserID(userID);
+        If Assigned(UserSecurity) then
+          UserSecurity.Delete;
+
+        User.Delete;
+
+        Render(HTTP_STATUS.OK, 'User_Deleted');
+    Except
+        Render(HTTP_STATUS.InternalServerError, 'Error_Deleting_User');
+    End;
+end;
+//______________________________________________________________________________
+Destructor TUserController.Destroy();
+Begin
+    FUserService := NIL;
+    Inherited;
+End;
 //______________________________________________________________________________
 Procedure TUserController.GetUsers();
 Var
@@ -99,6 +226,16 @@ Var
     FDQuery: TFDQuery;
     Response: System.JSON.TJSONObject;
 Begin
+    If (userID = '0') then
+    Begin
+        Response := System.JSON.TJSONObject.Create;
+        Response.AddPair('Status', 'Failed');
+        Response.AddPair('Message', 'Dont find userID');
+
+        Render(Response);
+        Exit;
+    End;
+
     FDQuery := TFDQuery.Create(nil);
     Try
         FDQuery.Connection := TDMMain.GetConnection;
@@ -110,22 +247,18 @@ Begin
         Try
             FDQuery.ExecSQL;
 
-            // ارسال پیام موفقیت
             Response := System.JSON.TJSONObject.Create;
             Response.AddPair('Status', 'Success');
             Response.AddPair('Message', 'Email verification status updated successfully.');
 
-            // استفاده از Add با شیء System.JSON.TJSONObject
             Render(Response);
         Except
             On E: Exception Do
             Begin
-                // در صورت بروز خطا، ارسال پیام خطا
                 Response := System.JSON.TJSONObject.Create;
-                Response.AddPair('Status', 'Error');
+                Response.AddPair('Status', 'Failed');
                 Response.AddPair('Message', 'Error updating email verification status: ' + E.Message);
 
-                // استفاده از Add با شیء System.JSON.TJSONObject
                 Render(Response);
             End;
         End;
