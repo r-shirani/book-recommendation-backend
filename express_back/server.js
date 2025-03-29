@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-connectDB();
+//connectDB();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
