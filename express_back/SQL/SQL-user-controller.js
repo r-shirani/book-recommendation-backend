@@ -150,6 +150,58 @@ const getUserByID = async (userID) => {
   }
 };
 
+
+
+
+
+
+
+
+
+// new apis in sql server
+
+const newApi = axios.create({
+  baseURL: "http://185.255.90.36:9547/api/v1", 
+  headers: {
+    "Content-Type": "application/json"
+  }, 
+});
+
+
+
+
+
+
+const updatePassword_controller = async(userIdInput ,newPasswordInput) =>{
+  try {
+      const response = await newApi.put("/userSecurity", {
+          userid : userIdInput,
+          passwordHash : newPasswordInput
+      });
+      if (!response || response.length===0){
+          console.log("server Error(SQL-login)");
+          return -1;
+      }
+      const pure = response.data;
+      if(pure === "User_Security_Updated"){
+        console.log("User_Security_Updated");
+          return 1;
+      }
+      else{
+        console.log("somethiing went wrong");
+          return 0;
+      }
+      
+      
+  } catch (error) {
+      console.log("Error:", error);
+  }
+}
+
+
+
+
+
 module.exports={
   registerUSer_controller,
   loginUser_controller,
@@ -157,5 +209,6 @@ module.exports={
   verifyCode_controller,
   DeleteUser,
   EmailVerificationPut,
-  getUserByID
+  getUserByID,
+  updatePassword_controller
 };
