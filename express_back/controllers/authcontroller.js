@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
-const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut } = require("../SQL/SQL-user-controller");
+const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut, updatePassword_controller } = require("../SQL/SQL-user-controller");
 const { loginUser_controller } = require("../SQL/SQL-user-controller");
 const { getUserByID } = require("../SQL/SQL-user-controller");
 
@@ -118,6 +118,45 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+exports.newPassword = async(req , res)=>{
+  try {
+    const {newPassword , oldPassword} = req.body;
+    const userid = req.user.id;
+    console.log(userid);
+    let users = await getUserByID(userid);
+    const user = users[0];
+    let isMatch = await bcrypt.compare(oldPassword, user.passwordHash);
+    if(isMatch)
+    {
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      const response = await updatePassword_controller(userid ,hashedPassword);
+      console.log(response);
+      if(response===-1){
+        res.status(500).json({ message: "SQL server error" })
+      }
+      else if(response === 1){
+        res.status(200).json({ message: "User password updated successfully" })
+      }
+      else if(response === 0){
+        res.status(200).json({ message: "User not found" })
+      }
+    }
+    else{
+      res.status(404).json({ message: "wrong password"})
+    }
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "server error" });
+  }
+}
+
+
+
+
+
 
 exports.googleLogin = async (req , res)=>{
   try {
