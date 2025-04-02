@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
-const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut, updatePassword_controller } = require("../SQL/SQL-user-controller");
+const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut, updatePassword_controller, updateProfile_controller } = require("../SQL/SQL-user-controller");
 const { loginUser_controller } = require("../SQL/SQL-user-controller");
 const { getUserByID } = require("../SQL/SQL-user-controller");
 
@@ -119,7 +119,6 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-
 exports.newPassword = async(req , res)=>{
   try {
     const {newPassword , oldPassword} = req.body;
@@ -151,12 +150,25 @@ exports.newPassword = async(req , res)=>{
     console.error(error);
     res.status(500).json({ message: "server error" });
   }
-}
+};
 
+exports.updateProfile = async (req, res) => {
+  try {
+    const userID = req.user.id; // "Data retrieved from middleware"
+    const { new_firstName, new_lastName, new_userName, new_bio, new_gender, new_birthday, new_phoneNumber} = req.body; // new information
 
+    let response = await updateProfile_controller(userID,new_firstName, new_lastName, new_userName, new_bio, new_gender, new_birthday, new_phoneNumber);
 
-
-
+    if (response === 1) {
+      res.status(200).json({ message: "Profile updated successfully!" });
+    } else {
+      res.status(500).json({ message: "Something went wrong, try again later!" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 exports.googleLogin = async (req , res)=>{
   try {

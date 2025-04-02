@@ -46,7 +46,7 @@ const DeleteUser = async (emailInput) => {
   } catch (error) {
     console.error("Error:", error);
   }
-}
+};
 
 const EmailVerificationPut = async (userIdInput , EmailverificationInput) =>{
   try {
@@ -62,7 +62,7 @@ const EmailVerificationPut = async (userIdInput , EmailverificationInput) =>{
     } catch (error) {
       console.log("Error:", error);
   }
-}
+};
 
 const getUserData = async (email)=>{
   try {
@@ -76,7 +76,7 @@ const getUserData = async (email)=>{
   } catch (error) {
     console.error("Error fetching data:", error);
   }
-}
+};
 
 const registerUSer_controller = async(emailInput,nameInput,passwordInput,verificationcodeInput)=>{
   let response = await RegisterUser(emailInput,nameInput,passwordInput,verificationcodeInput);
@@ -96,7 +96,7 @@ const registerUSer_controller = async(emailInput,nameInput,passwordInput,verific
       console.log("The user has been added to the SQL database");
       return 1;
   }
-}
+};
 
 const loginUser_controller = async(emailInput , passwordInput)=>{
   let responses = await LoginUser(emailInput);
@@ -126,7 +126,7 @@ const loginUser_controller = async(emailInput , passwordInput)=>{
       return -3;
     }
   }
-}
+};
 
 const verifyCode_controller = async(emailInput)=>{
   let response = await LoginUser(emailInput);
@@ -150,27 +150,44 @@ const getUserByID = async (userID) => {
   }
 };
 
+const updateProfile_controller = async (userID,new_firstName, new_lastName, new_userName, new_bio, new_gender, new_birthday, new_phoneNumber) => {
+  try {
+    const response = await newApi.put("/user", { 
+      userid : userID,
+      firstname : new_firstName,
+      lastname : new_lastName,
+      username : new_userName,
+      bio : new_bio,
+      gender : new_gender,
+      dateofbirth : new_birthday,
+      phonenumber : new_phoneNumber
+    });
 
+    if (!response || response.length === 0) {
+      console.log("server Error(SQL-updateUserProfile)");
+      return -1;
+    }
 
-
-
-
-
-
+    const pure = response.data;
+    if (pure === "User_Updated") {
+      console.log("User profile updated successfully");
+      return 1;
+    } else {
+      console.log("Something went wrong");
+      return 0;
+    }
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+  }
+};
 
 // new apis in sql server
-
 const newApi = axios.create({
   baseURL: "http://185.255.90.36:9547/api/v1", 
   headers: {
     "Content-Type": "application/json"
   }, 
 });
-
-
-
-
-
 
 const updatePassword_controller = async(userIdInput ,newPasswordInput) =>{
   try {
@@ -196,11 +213,7 @@ const updatePassword_controller = async(userIdInput ,newPasswordInput) =>{
   } catch (error) {
       console.log("Error:", error);
   }
-}
-
-
-
-
+};
 
 module.exports={
   registerUSer_controller,
@@ -210,5 +223,6 @@ module.exports={
   DeleteUser,
   EmailVerificationPut,
   getUserByID,
-  updatePassword_controller
+  updatePassword_controller,
+  updateProfile_controller
 };
