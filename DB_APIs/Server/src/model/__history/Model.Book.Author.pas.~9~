@@ -1,0 +1,57 @@
+﻿Unit Model.Book.Author;
+
+Interface
+Uses
+    MVCFramework.Serializer.Commons,
+    MVCFramework.ActiveRecord,
+    MVCFramework.Nullables;
+Type
+    [MVCNameCase(ncLowerCase)]
+    [MVCTable('Book.Author')]
+    TAuthor = class(TMVCActiveRecord)
+    Private
+        [MVCTableField('AuthorID', [foPrimaryKey])]
+        FAuthorID: Integer;
+        [MVCTableField('FirstName')]
+        FFirstName: string;
+        [MVCTableField('MiddleName')]
+        FMiddleName: NullableString;
+        [MVCTableField('LastName')]
+        FLastName: string;
+        [MVCTableField('Pseudonym')]
+        FPseudonym: NullableString;
+        [MVCTableField('BirthDate')]
+        FBirthDate: NullableTDate;
+        [MVCTableField('Gender')]
+        FGender: NullableInt16;
+        [MVCTableField('DeathDate')]
+        FDeathDate: NullableTDate;
+        [MVCTableField('IsAlive')]
+        FIsAlive: NullableBoolean;
+        [MVCTableField('NumberOfBooks')]
+        FNumberOfBooks: NullableInt16;
+        [MVCTableField('CountryID')]
+        FCountryID: NullableInt32;
+        [MVCTableField('Biography')]
+        FBiography: NullableString;
+        [MVCTableField('Website')]
+        FWebsite: NullableString;
+    Public
+        Property AuthorID: Integer read FAuthorID write FAuthorID;
+        Property FirstName: string read FFirstName write FFirstName;
+        Property MiddleName: NullableString read FMiddleName write FMiddleName;
+        Property LastName: string read FLastName write FLastName;
+        Property Pseudonym: NullableString read FPseudonym write FPseudonym;
+        Property BirthDate: NullableTDate read FBirthDate write FBirthDate;
+        Property Gender: NullableInt16 read FGender write FGender;
+        Property DeathDate: NullableTDate read FDeathDate write FDeathDate;
+        Property IsAlive: NullableBoolean read FIsAlive write FIsAlive;
+        Property NumberOfBooks: NullableInt16 read FNumberOfBooks write FNumberOfBooks;
+        Property CountryID: NullableInt32 read FCountryID write FCountryID;
+        Property Biography: NullableString read FBiography write FBiography;
+        Property Website: NullableString read FWebsite write FWebsite;
+End;
+
+Implementation
+
+End.

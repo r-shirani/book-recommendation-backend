@@ -1,0 +1,181 @@
+﻿Unit Controller.Book.Image;
+
+Interface
+
+Uses
+    MVCFramework,
+    MVCFramework.Commons,
+    MVCFramework.Serializer.Commons,
+    Service.Book.Image,
+    Model.Book.Image, WebModule.Main;
+
+Type
+    [MVCPath(BASE_API_V1 + '/images')]
+    TImageController = class(TMVCController)
+    Private
+        FImageService: IImageService;
+    Public
+        Procedure OnAfterAction(Context: TWebContext; Const AActionNAme: String); Override;
+        Procedure OnBeforeAction(Context: TWebContext; Const AActionNAme: String; Var Handled: Boolean); Override;
+
+        [MVCPath('/($ID)')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetImageByID(ID: Int64);
+
+        [MVCPath('/book/($BookID)')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetImagesByBookID(BookID: Int64);
+
+        [MVCPath('/primary/($BookID)')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetPrimaryImage(BookID: Int64);
+
+        [MVCPath]
+        [MVCHTTPMethod([httpPOST])]
+        Procedure UploadImage;
+
+        [MVCPath('/($ID)')]
+        [MVCHTTPMethod([httpPUT])]
+        Procedure UpdateImage(ID: Int64);
+
+        [MVCPath('/($ID)')]
+        [MVCHTTPMethod([httpDELETE])]
+        Procedure DeleteImage(ID: Int64);
+
+        [MVCPath('/($ID)/setprimary')]
+        [MVCHTTPMethod([httpPOST])]
+        Procedure SetAsPrimaryImage(ID: Int64);
+    End;
+
+Implementation
+
+Uses
+    System.Classes,
+    System.SysUtils, System.Generics.Collections;
+
+{ TImageController }
+
+Procedure TImageController.OnAfterAction(Context: TWebContext; Const AActionNAme: String);
+Begin
+    inherited;
+    FImageService := Nil;
+End;
+//______________________________________________________________________________
+
+Procedure TImageController.OnBeforeAction(Context: TWebContext; Const AActionNAme: String;
+    Var Handled: Boolean);
+Begin
+    inherited;
+    FImageService := TImageService.Create;
+End;
+//______________________________________________________________________________
+Procedure TImageController.GetImageByID(ID: Int64);
+Var
+    LImage: TImage;
+Begin
+    LImage := FImageService.GetImageByID(ID);
+    Try
+        If Not Assigned(LImage) Then
+            Raise EMVCException.Create(HTTP_STATUS.NotFound, 'Image not found');
+
+        Render(LImage);
+    Finally
+        LImage.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TImageController.GetImagesByBookID(BookID: Int64);
+Var
+    LImages: TObjectList<TImage>;
+Begin
+    LImages := FImageService.GetImagesByBookID(BookID);
+    Try
+        If Not Assigned(LImages) Then
+            Raise EMVCException.Create(HTTP_STATUS.NotFound, 'No images found for this book');
+
+        Render<TImage>(LImages);
+    Finally
+        LImages.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TImageController.GetPrimaryImage(BookID: Int64);
+Var
+    LImage: TImage;
+Begin
+    LImage := FImageService.GetPrimaryImage(BookID);
+    Try
+        If Not Assigned(LImage) Then
+            Raise EMVCException.Create(HTTP_STATUS.NotFound, 'Primary image not found');
+
+        Render(LImage);
+    Finally
+        LImage.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TImageController.UploadImage;
+Var
+    LImage: TImage;
+    LFileStream: TStream;
+    LFileName: String;
+Begin
+    LFileStream := Context.Request.Files[0].Stream;
+    LFileName := Context.Request.Files[0].FileName;
+
+    LImage := Nil;
+    Try
+        FImageService.AddImage(LImage, LFileStream, LFileName);
+        Render(HTTP_STATUS.Created, LImage);
+    Except
+        On E: Exception Do
+        Begin
+            Render(HTTP_STATUS.BadRequest, E.Message);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TImageController.UpdateImage(ID: Int64);
+Var
+    LImage: TImage;
+Begin
+    // دریافت داده‌های به روزرسانی
+    LImage := Context.Request.BodyAs<TImage>;
+    Try
+        LImage.ID := ID;
+        FImageService.UpdateImage(LImage);
+        Render(HTTP_STATUS.OK, LImage);
+    Finally
+        LImage.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TImageController.DeleteImage(ID: Int64);
+Begin
+    Try
+        FImageService.DeleteImage(ID);
+        Render(HTTP_STATUS.NoContent);
+    Except
+        On E: Exception Do
+        Begin
+            Render(HTTP_STATUS.BadRequest, E.Message);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+
+Procedure TImageController.SetAsPrimaryImage(ID: Int64);
+Begin
+    Try
+        FImageService.SetAsPrimary(ID);
+        Render(HTTP_STATUS.OK);
+    Except
+        On E: Exception Do
+        Begin
+            Render(HTTP_STATUS.BadRequest, E.Message);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+
+End.

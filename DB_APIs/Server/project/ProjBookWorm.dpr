@@ -23,31 +23,54 @@ uses
   Model.User.Security in '..\src\model\Model.User.Security.pas',
   Service.User in '..\src\services\Service.User.pas',
   Service.UserSecurity in '..\src\services\Service.UserSecurity.pas',
-  Controller.UserSecurity in '..\src\controller\Controller.UserSecurity.pas';
+  Controller.UserSecurity in '..\src\controller\Controller.UserSecurity.pas',
+  Model.Book in '..\src\model\Model.Book.pas',
+  Model.Book.Genre in '..\src\model\Model.Book.Genre.pas',
+  Model.Book.Language in '..\src\model\Model.Book.Language.pas',
+  Model.Book.Author in '..\src\model\Model.Book.Author.pas',
+  Model.Book.Hashtag in '..\src\model\Model.Book.Hashtag.pas',
+  Model.Book.Rate in '..\src\model\Model.Book.Rate.pas',
+  Model.Book.Comment in '..\src\model\Model.Book.Comment.pas',
+  Service.Book in '..\src\services\Service.Book.pas',
+  Service.Book.Genre in '..\src\services\Service.Book.Genre.pas',
+  Service.Book.Language in '..\src\services\Service.Book.Language.pas',
+  Service.Book.Author in '..\src\services\Service.Book.Author.pas',
+  Service.Book.Hashtag in '..\src\services\Service.Book.Hashtag.pas',
+  Service.Book.Rate in '..\src\services\Service.Book.Rate.pas',
+  Service.Book.Comment in '..\src\services\Service.Book.Comment.pas',
+  Controller.Book in '..\src\controller\Controller.Book.pas',
+  Controller.Book.Author in '..\src\controller\Controller.Book.Author.pas',
+  Controller.Book.Comment in '..\src\controller\Controller.Book.Comment.pas',
+  Controller.Book.Rate in '..\src\controller\Controller.Book.Rate.pas',
+  Controller.Book.Hashtag in '..\src\controller\Controller.Book.Hashtag.pas',
+  Controller.Book.Language in '..\src\controller\Controller.Book.Language.pas',
+  Model.Book.Image in '..\src\model\Model.Book.Image.pas',
+  Controller.Book.Image in '..\src\controller\Controller.Book.Image.pas',
+  Service.Book.Image in '..\src\services\Service.Book.Image.pas';
 
 {$R *.res}
 
-procedure RunServer(APort: Integer);
-var
-  LServer: TIdHTTPWebBrokerBridge;
-begin
-  LServer := TIdHTTPWebBrokerBridge.Create(nil);
-  try
-    LServer.OnParseAuthentication := TMVCParseAuthentication.OnParseAuthentication;
-    LServer.DefaultPort := APort;
-    LServer.KeepAlive := dotEnv.Env('dmvc.indy.keep_alive', True);
-    LServer.MaxConnections := dotEnv.Env('dmvc.webbroker.max_connections', 0);
-    LServer.ListenQueue := dotEnv.Env('dmvc.indy.listen_queue', 500);
-    LServer.Active := True;
-    LogI('Listening on http://localhost:' + APort.ToString);
-    LogI('Application started. Press Ctrl+C to shut down.');
-    WaitForTerminationSignal;
-    EnterInShutdownState;
-    LServer.Active := False;
-  finally
-    LServer.Free;
-  end;
-end;
+Procedure RunServer(APort: Integer);
+Var
+    LServer: TIdHTTPWebBrokerBridge;
+Begin
+    LServer := TIdHTTPWebBrokerBridge.Create(nil);
+    Try
+        LServer.OnParseAuthentication := TMVCParseAuthentication.OnParseAuthentication;
+        LServer.DefaultPort := APort;
+        LServer.KeepAlive := dotEnv.Env('dmvc.indy.keep_alive', True);
+        LServer.MaxConnections := dotEnv.Env('dmvc.webbroker.max_connections', 0);
+        LServer.ListenQueue := dotEnv.Env('dmvc.indy.listen_queue', 500);
+        LServer.Active := True;
+        LogI('Listening on http://localhost:' + APort.ToString);
+        LogI('Application started. Press Ctrl+C to shut down.');
+        WaitForTerminationSignal;
+        EnterInShutdownState;
+        LServer.Active := False;
+    Finally
+        LServer.Free;
+    End;
+End;
 
 begin
   { Enable ReportMemoryLeaksOnShutdown during debug }

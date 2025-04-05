@@ -129,14 +129,11 @@ Var
     userList: TObjectList<Model.TUser>;
 Begin
     userList := FUserService.GetAllUsers;
-    Try
-        If (userList.Count > 0) Then
-            Render(userList)
-        Else
-            Render(HTTP_STATUS.NoContent, 'List_Is_Empty');
-    Finally
-        userList.Free;
-    End;
+    If (userList.Count > 0) Then
+        Render(userList)
+    Else
+        Render(HTTP_STATUS.NoContent, 'List_Is_Empty');
+
 End;
 //______________________________________________________________________________
 Procedure TUserController.AddUser;

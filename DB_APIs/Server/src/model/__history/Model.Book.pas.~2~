@@ -1,0 +1,79 @@
+﻿Unit Model.Book;
+
+Interface
+
+Uses
+    MVCFramework.Serializer.Commons,
+    MVCFramework.ActiveRecord,
+    MVCFramework.Nullables;
+
+Type
+    [MVCNameCase(ncLowerCase)]
+    [MVCTable('Book.Book')]
+    TBook = class(TMVCActiveRecord)
+    private
+      [MVCTableField('BookID', [foPrimaryKey])]
+      FBookID: Int64;
+
+      [MVCTableField('Title')]
+      FTitle: string;
+
+      [MVCTableField('AuthorID')]
+      FAuthorID: NullableInt32;
+
+      [MVCTableField('PublisherID')]
+      FPublisherID: NullableInt32;
+
+      [MVCTableField('GenreID1')]
+      FGenreID1: NullableInt16;
+
+      [MVCTableField('GenreID2')]
+      FGenreID2: NullableInt16;
+
+      [MVCTableField('GenreID3')]
+      FGenreID3: NullableInt16;
+
+      [MVCTableField('GenreExtra')]
+      FGenreExtra: NullableString;
+
+      [MVCTableField('Description')]
+      FDescription: NullableString;
+
+      [MVCTableField('PublishedYear')]
+      FPublishedYear: NullableInt16;
+
+      [MVCTableField('LanguageID')]
+      FLanguageID: NullableInt32;
+
+      [MVCTableField('PageCount')]
+      FPageCount: NullableInt32;
+
+      [MVCTableField('ISBN')]
+      FISBN: NullableString;
+
+      [MVCTableField('CreatedAt')]
+      FCreatedAt: TDateTime;
+
+      [MVCTableField('UpdatedAt')]
+      FUpdatedAt: TDateTime;
+    public
+      property BookID: Int64 read FBookID write FBookID;
+      property Title: string read FTitle write FTitle;
+      property AuthorID: NullableInt32 read FAuthorID write FAuthorID;
+      property PublisherID: NullableInt32 read FPublisherID write FPublisherID;
+      property GenreID1: NullableInt16 read FGenreID1 write FGenreID1;
+      property GenreID2: NullableInt16 read FGenreID2 write FGenreID2;
+      property GenreID3: NullableInt16 read FGenreID3 write FGenreID3;
+      property GenreExtra: NullableString read FGenreExtra write FGenreExtra;
+      property Description: NullableString read FDescription write FDescription;
+      property PublishedYear: NullableInt16 read FPublishedYear write FPublishedYear;
+      property LanguageID: NullableInt32 read FLanguageID write FLanguageID;
+      property PageCount: NullableInt32 read FPageCount write FPageCount;
+      property ISBN: NullableString read FISBN write FISBN;
+      property CreatedAt: TDateTime read FCreatedAt write FCreatedAt;
+      property UpdatedAt: TDateTime read FUpdatedAt write FUpdatedAt;
+End;
+
+Implementation
+
+End.

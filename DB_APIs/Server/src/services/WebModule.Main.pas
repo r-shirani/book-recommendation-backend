@@ -21,6 +21,7 @@ Var
     WebModuleClass: TComponentClass = TBookWorm;
 
 Const
+    BASE_Image = 'http://localhost/BookImage';
     BASE_API_V1 = '/api/v1';
 
 
@@ -43,7 +44,12 @@ uses
   MVCFramework.Middleware.Trace,
   MVCFramework.Middleware.CORS,
   MVCFramework.Middleware.ETag,
-  UDMMain;
+  UDMMain,
+
+  //Controller:
+  Controller.Book.Author, Controller.Book.Comment, Controller.Book.Rate,
+  Controller.Book.Hashtag, Controller.Book.Language, Controller.Book,
+  Controller.Book.Image;
 
 
 Procedure TBookWorm.WebModuleCreate(Sender: TObject);
@@ -79,6 +85,13 @@ begin
     // Controllers
     fMVC.AddController(TUserController);
     fMVC.AddController(TUserSecurityController);
+    fMVC.AddController(TBookController);
+    fMVC.AddController(TAuthorController);
+    fMVC.AddController(TCommentController);
+    fMVC.AddController(THashtagController);
+    fMVC.AddController(TLanguageController);
+    fMVC.AddController(TRateController);
+    fMVC.AddController(TImageController);
 
     // Middleware
     fMVC.AddMiddleware(TMVCCompressionMiddleware.Create);

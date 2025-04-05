@@ -1,0 +1,37 @@
+﻿Unit Model.Book.Genre;
+
+Interface
+
+Uses
+    MVCFramework.Serializer.Commons,
+    MVCFramework.ActiveRecord,
+    MVCFramework.Nullables;
+
+Type
+[MVCNameCase(ncLowerCase)]
+  [MVCTable('Book.Genre')]
+  TGenre = class(TMVCActiveRecord)
+  private
+    [MVCTableField('GenreID', [foPrimaryKey])]
+    FGenreID: SmallInt;
+
+    [MVCTableField('Title')]
+    FTitle: string;
+
+    [MVCTableField('SuitableAge')]
+    FSuitableAge: Byte;
+
+    [MVCTableField('SDescription')]
+    FSDescription: NullableString;
+  public
+    property GenreID: SmallInt read FGenreID write FGenreID;
+    property Title: string read FTitle write FTitle;
+    property SuitableAge: Byte read FSuitableAge write FSuitableAge;
+    property SDescription: NullableString read FSDescription write FSDescription;
+End;
+
+Implementation
+
+End.
+  
+

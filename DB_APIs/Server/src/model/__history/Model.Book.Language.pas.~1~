@@ -1,0 +1,23 @@
+﻿unit Model.Book.Language;
+
+  [MVCNameCase(ncLowerCase)]
+  [MVCTable('Book.Language')]
+  TLanguage = class(TMVCActiveRecord)
+  private
+    [MVCTableField('LanguageID', [foPrimaryKey])]
+    FLanguageID: Integer;
+
+    [MVCTableField('Title')]
+    FTitle: string;
+
+    [MVCTableField('ISOCode')]
+    FISOCode: NullableString;
+  public
+    property LanguageID: Integer read FLanguageID write FLanguageID;
+    property Title: string read FTitle write FTitle;
+    property ISOCode: NullableString read FISOCode write FISOCode;
+  end;
+
+implementation
+
+end.

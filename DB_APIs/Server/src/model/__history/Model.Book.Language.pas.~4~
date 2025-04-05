@@ -1,0 +1,32 @@
+﻿Unit Model.Book.Language;
+
+Interface
+
+Uses
+    MVCFramework.Serializer.Commons,
+    MVCFramework.ActiveRecord,
+    MVCFramework.Nullables;
+
+Type
+    [MVCNameCase(ncLowerCase)]
+    [MVCTable('Book.Language')]
+    TLanguage = class(TMVCActiveRecord)
+    Private
+        [MVCTableField('LanguageID', [foPrimaryKey])]
+        FLanguageID: Integer;
+
+        [MVCTableField('Title')]
+        FTitle: string;
+
+        [MVCTableField('ISOCode')]
+        FISOCode: NullableString;
+
+    Public
+        Property LanguageID: Integer read FLanguageID write FLanguageID;
+        Property Title: string read FTitle write FTitle;
+        Property ISOCode: NullableString read FISOCode write FISOCode;
+End;
+
+Implementation
+
+End.

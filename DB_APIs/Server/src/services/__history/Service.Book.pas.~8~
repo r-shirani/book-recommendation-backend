@@ -1,0 +1,87 @@
+﻿Unit Service.Book;
+
+Interface
+
+Uses
+    System.Generics.Collections,
+    System.SysUtils,
+    MVCFramework.ActiveRecord,
+    Model.User;
+
+Type
+    IBookService = interface
+        ['{D4B5D8E0-5B44-4D1B-823F-6C9B3F6A8F6A}']
+        Function GetBookByID(const BookID: Int64): TBook;
+        Function GetAllBooks: TObjectList<TBook>;
+        Procedure AddBook(const ABook: TBook);
+        Procedure UpdateBook(const ABook: TBook);
+    End;
+
+    TBookService = class(TInterfacedObject, IBookService)
+    Public
+        Function GetBookByID(const BookID: Int64): TBook;
+        Function GetAllBooks: TObjectList<TBook>;
+        Procedure AddBook(const ABook: TBook);
+        Procedure UpdateBook(const ABook: TBook);
+    End;
+
+Implementation
+
+
+{ TBookService }
+
+//______________________________________________________________________________
+Function TBookService.GetBookByID(const BookID: Int64): TBook;
+Begin
+    Try
+        Result := TMVCActiveRecord.GetByPK<TBook>(BookID);
+    Except
+        Result := nil;
+    End;
+End;
+//______________________________________________________________________________
+Function TBookService.GetAllBooks: TObjectList<TBook>;
+Begin
+    Try
+        Result := TMVCActiveRecord.All<TBook>;
+    Except
+        Result := nil;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TBookService.AddBook(const ABook: TBook);
+Begin
+    ABook.Insert;
+End;
+//______________________________________________________________________________
+Procedure TBookService.UpdateBook(const ABook: TBook);
+Var
+    OldBook: TBook;
+Begin
+    OldBook := TMVCActiveRecord.GetByPK<TBook>(ABook.BookID);
+    Try
+        if not Assigned(OldBook) then
+          raise Exception.Create('Book Not Found');
+
+        if ABook.Title <> '' then OldBook.Title := ABook.Title;
+        if not ABook.AuthorID.IsNull then OldBook.AuthorID := ABook.AuthorID;
+        if not ABook.PublisherID.IsNull then OldBook.PublisherID := ABook.PublisherID;
+        if not ABook.GenreID1.IsNull then OldBook.GenreID1 := ABook.GenreID1;
+        if not ABook.GenreID2.IsNull then OldBook.GenreID2 := ABook.GenreID2;
+        if not ABook.GenreID3.IsNull then OldBook.GenreID3 := ABook.GenreID3;
+        if not ABook.GenreExtra.IsNull then OldBook.GenreExtra := ABook.GenreExtra;
+        if not ABook.Description.IsNull then OldBook.Description := ABook.Description;
+        if not ABook.PublishedYear.IsNull then OldBook.PublishedYear := ABook.PublishedYear;
+        if not ABook.LanguageID.IsNull then OldBook.LanguageID := ABook.LanguageID;
+        if not ABook.PageCount.IsNull then OldBook.PageCount := ABook.PageCount;
+        if not ABook.ISBN.IsNull then OldBook.ISBN := ABook.ISBN;
+        OldBook.UpdatedAt := Now;
+        OldBook.Update;
+    Finally
+        OldBook.Free;
+    End;
+End;
+//______________________________________________________________________________
+
+End.
+

@@ -1,0 +1,87 @@
+﻿Unit Model.Book.Genre;
+
+Interface
+[MVCNameCase(ncLowerCase)]
+  [MVCTable('Book.Genre')]
+  TGenre = class(TMVCActiveRecord)
+  private
+    [MVCTableField('GenreID', [foPrimaryKey])]
+    FGenreID: SmallInt;
+
+    [MVCTableField('Title')]
+    FTitle: string;
+
+    [MVCTableField('SuitableAge')]
+    FSuitableAge: Byte;
+
+    [MVCTableField('SDescription')]
+    FSDescription: NullableString;
+  public
+    property GenreID: SmallInt read FGenreID write FGenreID;
+    property Title: string read FTitle write FTitle;
+    property SuitableAge: Byte read FSuitableAge write FSuitableAge;
+    property SDescription: NullableString read FSDescription write FSDescription;
+End;
+
+Implementation
+
+End.
+  [MVCNameCase(ncLowerCase)]
+  [MVCTable('Book.Author')]
+  TAuthor = class(TMVCActiveRecord)
+  private
+    [MVCTableField('AuthorID', [foPrimaryKey])]
+    FAuthorID: Integer;
+
+    [MVCTableField('FirstName')]
+    FFirstName: string;
+
+    [MVCTableField('MiddleName')]
+    FMiddleName: NullableString;
+
+    [MVCTableField('LastName')]
+    FLastName: string;
+
+    [MVCTableField('Pseudonym')]
+    FPseudonym: NullableString;
+
+    [MVCTableField('BirthDate')]
+    FBirthDate: NullableDate;
+
+    [MVCTableField('Gender')]
+    FGender: NullableByte;
+
+    [MVCTableField('DeathDate')]
+    FDeathDate: NullableDate;
+
+    [MVCTableField('IsAlive')]
+    FIsAlive: NullableBoolean;
+
+    [MVCTableField('NumberOfBooks')]
+    FNumberOfBooks: NullableSmallInt;
+
+    [MVCTableField('CountryID')]
+    FCountryID: NullableInt32;
+
+    [MVCTableField('Biography')]
+    FBiography: NullableString;
+
+    [MVCTableField('Website')]
+    FWebsite: NullableString;
+  public
+    property AuthorID: Integer read FAuthorID write FAuthorID;
+    property FirstName: string read FFirstName write FFirstName;
+    property MiddleName: NullableString read FMiddleName write FMiddleName;
+    property LastName: string read FLastName write FLastName;
+    property Pseudonym: NullableString read FPseudonym write FPseudonym;
+    property BirthDate: NullableDate read FBirthDate write FBirthDate;
+    property Gender: NullableByte read FGender write FGender;
+    property DeathDate: NullableDate read FDeathDate write FDeathDate;
+    property IsAlive: NullableBoolean read FIsAlive write FIsAlive;
+    property NumberOfBooks: NullableSmallInt read FNumberOfBooks write FNumberOfBooks;
+    property CountryID: NullableInt32 read FCountryID write FCountryID;
+    property Biography: NullableString read FBiography write FBiography;
+    property Website: NullableString read FWebsite write FWebsite;
+  end;
+
+

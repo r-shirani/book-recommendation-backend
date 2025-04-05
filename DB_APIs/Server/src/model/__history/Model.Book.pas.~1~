@@ -1,0 +1,178 @@
+﻿Unit Model.Book;
+
+Interface
+
+uses
+  MVCFramework.Serializer.Commons,
+  MVCFramework.ActiveRecord,
+  MVCFramework.Nullables;
+
+type
+  [MVCNameCase(ncLowerCase)]
+  [MVCTable('Book.Book')]
+  TBook = class(TMVCActiveRecord)
+  private
+    [MVCTableField('BookID', [foPrimaryKey])]
+    FBookID: Int64;
+
+    [MVCTableField('Title')]
+    FTitle: string;
+
+    [MVCTableField('AuthorID')]
+    FAuthorID: NullableInt32;
+
+    [MVCTableField('PublisherID')]
+    FPublisherID: NullableInt32;
+
+    [MVCTableField('GenreID1')]
+    FGenreID1: NullableInt16;
+
+    [MVCTableField('GenreID2')]
+    FGenreID2: NullableInt16;
+
+    [MVCTableField('GenreID3')]
+    FGenreID3: NullableInt16;
+
+    [MVCTableField('GenreExtra')]
+    FGenreExtra: NullableString;
+
+    [MVCTableField('Description')]
+    FDescription: NullableString;
+
+    [MVCTableField('PublishedYear')]
+    FPublishedYear: NullableInt16;
+
+    [MVCTableField('LanguageID')]
+    FLanguageID: NullableInt32;
+
+    [MVCTableField('PageCount')]
+    FPageCount: NullableInt32;
+
+    [MVCTableField('ISBN')]
+    FISBN: NullableString;
+
+    [MVCTableField('CreatedAt')]
+    FCreatedAt: TDateTime;
+
+    [MVCTableField('UpdatedAt')]
+    FUpdatedAt: TDateTime;
+  public
+    property BookID: Int64 read FBookID write FBookID;
+    property Title: string read FTitle write FTitle;
+    property AuthorID: NullableInt32 read FAuthorID write FAuthorID;
+    property PublisherID: NullableInt32 read FPublisherID write FPublisherID;
+    property GenreID1: NullableInt16 read FGenreID1 write FGenreID1;
+    property GenreID2: NullableInt16 read FGenreID2 write FGenreID2;
+    property GenreID3: NullableInt16 read FGenreID3 write FGenreID3;
+    property GenreExtra: NullableString read FGenreExtra write FGenreExtra;
+    property Description: NullableString read FDescription write FDescription;
+    property PublishedYear: NullableInt16 read FPublishedYear write FPublishedYear;
+    property LanguageID: NullableInt32 read FLanguageID write FLanguageID;
+    property PageCount: NullableInt32 read FPageCount write FPageCount;
+    property ISBN: NullableString read FISBN write FISBN;
+    property CreatedAt: TDateTime read FCreatedAt write FCreatedAt;
+    property UpdatedAt: TDateTime read FUpdatedAt write FUpdatedAt;
+  end;
+
+  [MVCNameCase(ncLowerCase)]
+  [MVCTable('Book.Genre')]
+  TGenre = class(TMVCActiveRecord)
+  private
+    [MVCTableField('GenreID', [foPrimaryKey])]
+    FGenreID: SmallInt;
+
+    [MVCTableField('Title')]
+    FTitle: string;
+
+    [MVCTableField('SuitableAge')]
+    FSuitableAge: Byte;
+
+    [MVCTableField('SDescription')]
+    FSDescription: NullableString;
+  public
+    property GenreID: SmallInt read FGenreID write FGenreID;
+    property Title: string read FTitle write FTitle;
+    property SuitableAge: Byte read FSuitableAge write FSuitableAge;
+    property SDescription: NullableString read FSDescription write FSDescription;
+  end;
+
+  [MVCNameCase(ncLowerCase)]
+  [MVCTable('Book.Author')]
+  TAuthor = class(TMVCActiveRecord)
+  private
+    [MVCTableField('AuthorID', [foPrimaryKey])]
+    FAuthorID: Integer;
+
+    [MVCTableField('FirstName')]
+    FFirstName: string;
+
+    [MVCTableField('MiddleName')]
+    FMiddleName: NullableString;
+
+    [MVCTableField('LastName')]
+    FLastName: string;
+
+    [MVCTableField('Pseudonym')]
+    FPseudonym: NullableString;
+
+    [MVCTableField('BirthDate')]
+    FBirthDate: NullableDate;
+
+    [MVCTableField('Gender')]
+    FGender: NullableByte;
+
+    [MVCTableField('DeathDate')]
+    FDeathDate: NullableDate;
+
+    [MVCTableField('IsAlive')]
+    FIsAlive: NullableBoolean;
+
+    [MVCTableField('NumberOfBooks')]
+    FNumberOfBooks: NullableSmallInt;
+
+    [MVCTableField('CountryID')]
+    FCountryID: NullableInt32;
+
+    [MVCTableField('Biography')]
+    FBiography: NullableString;
+
+    [MVCTableField('Website')]
+    FWebsite: NullableString;
+  public
+    property AuthorID: Integer read FAuthorID write FAuthorID;
+    property FirstName: string read FFirstName write FFirstName;
+    property MiddleName: NullableString read FMiddleName write FMiddleName;
+    property LastName: string read FLastName write FLastName;
+    property Pseudonym: NullableString read FPseudonym write FPseudonym;
+    property BirthDate: NullableDate read FBirthDate write FBirthDate;
+    property Gender: NullableByte read FGender write FGender;
+    property DeathDate: NullableDate read FDeathDate write FDeathDate;
+    property IsAlive: NullableBoolean read FIsAlive write FIsAlive;
+    property NumberOfBooks: NullableSmallInt read FNumberOfBooks write FNumberOfBooks;
+    property CountryID: NullableInt32 read FCountryID write FCountryID;
+    property Biography: NullableString read FBiography write FBiography;
+    property Website: NullableString read FWebsite write FWebsite;
+  end;
+
+  [MVCNameCase(ncLowerCase)]
+  [MVCTable('Book.Language')]
+  TLanguage = class(TMVCActiveRecord)
+  private
+    [MVCTableField('LanguageID', [foPrimaryKey])]
+    FLanguageID: Integer;
+
+    [MVCTableField('Title')]
+    FTitle: string;
+
+    [MVCTableField('ISOCode')]
+    FISOCode: NullableString;
+  public
+    property LanguageID: Integer read FLanguageID write FLanguageID;
+    property Title: string read FTitle write FTitle;
+    property ISOCode: NullableString read FISOCode write FISOCode;
+  end;
+
+implementation
+
+end.
+

@@ -12,7 +12,9 @@ Uses
     FireDAC.Phys.MSSQL,
     System.Variants,
     System.Generics.Collections,
-    Model.User.Security, Service.UserSecurity, WebModule.Main;
+    Model.User.Security,
+    Service.UserSecurity,
+    WebModule.Main;
 
 Type
     [MVCPath(BASE_API_V1 + '/userSecurity')]

@@ -1,0 +1,388 @@
+﻿
+ API Documentation
+
+ Base URL
+`http://185.255.90.36:9547/api/v1/`
+
+
+
+ Rate API Endpoints
+
+ 1. Get Rates by Book
+ **URL**: `/rate/book/{bookID}`
+ **Method**: GET
+ **Description**: Returns all rates for a specific book
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/rate/book/123
+  ```
+
+ 2. Get Rates by User
+ **URL**: `/rate/user/{userID}`
+ **Method**: GET
+ **Description**: Returns all rates given by a specific user
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/rate/user/456
+  ```
+
+ 3. Get Average Rating
+ **URL**: `/rate/average/{bookID}`
+ **Method**: GET
+ **Description**: Returns the average rating for a book
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/rate/average/123
+  ```
+
+ 4. Add or Update Rate
+ **URL**: `/rate`
+ **Method**: POST
+ **Description**: Adds a new rate or updates existing one
+ **Request Body**: JSON object with rate details
+ **Example**:
+  ```http
+  POST http://185.255.90.36:9547/api/v1/rate
+  ContentType: application/json
+
+  {
+    "userID": 456,
+    "bookID": 123,
+    "rate": 5
+  }
+  ```
+
+ 5. Delete Rate
+ **URL**: `/rate/user/{userID}/book/{bookID}`
+ **Method**: DELETE
+ **Description**: Deletes a specific rate
+ **Example**:
+  ```http
+  DELETE http://185.255.90.36:9547/api/v1/rate/user/456/book/123
+  ```
+
+ Language API Endpoints
+
+ 1. Get All Languages
+ **URL**: `/language`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/language
+  ```
+
+ 2. Get Language by ID
+ **URL**: `/language/{id}`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/language/1
+  ```
+
+ 3. Get Language by ISO Code
+ **URL**: `/language/iso/{isoCode}`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/language/iso/en
+  ```
+
+ 4. Add Language
+ **URL**: `/language`
+ **Method**: POST
+ **Request Body**: JSON object with language details
+ **Example**:
+  ```http
+  POST http://185.255.90.36:9547/api/v1/language
+  ContentType: application/json
+
+  {
+    "title": "English",
+    "isoCode": "en"
+  }
+  ```
+
+ 5. Update Language
+ **URL**: `/language`
+ **Method**: PUT
+ **Request Body**: JSON object with updated language details
+ **Example**:
+  ```http
+  PUT http://185.255.90.36:9547/api/v1/language
+  ContentType: application/json
+
+  {
+    "languageID": 1,
+    "title": "English (Updated)",
+    "isoCode": "en"
+  }
+  ```
+
+ 6. Delete Language
+ **URL**: `/language/{id}`
+ **Method**: DELETE
+ **Example**:
+  ```http
+  DELETE http://185.255.90.36:9547/api/v1/language/1
+  ```
+
+ Hashtag API Endpoints
+
+ 1. Get Hashtags by Collection
+ **URL**: `/hashtag/collection/{collectionID}`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/hashtag/collection/5
+  ```
+
+ 2. Search Hashtags
+ **URL**: `/hashtag/search?title={searchTerm}`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/hashtag/search?title=fantasy
+  ```
+
+ 3. Get Popular Hashtags
+ **URL**: `/hashtag/popular`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/hashtag/popular
+  ```
+
+ 4. Add Hashtag
+ **URL**: `/hashtag`
+ **Method**: POST
+ **Request Body**: JSON object with hashtag details
+ **Example**:
+  ```http
+  POST http://185.255.90.36:9547/api/v1/hashtag
+  ContentType: application/json
+
+  {
+    "collectionID": 5,
+    "title": "fantasy"
+  }
+  ```
+
+ 5. Update Hashtag
+ **URL**: `/hashtag`
+ **Method**: PUT
+ **Request Body**: JSON object with updated hashtag details
+ **Example**:
+  ```http
+  PUT http://185.255.90.36:9547/api/v1/hashtag
+  ContentType: application/json
+
+  {
+    "hashtagCollectionID": 10,
+    "collectionID": 5,
+    "title": "fantasybooks"
+  }
+  ```
+
+ 6. Delete Hashtag
+ **URL**: `/hashtag/{id}`
+ **Method**: DELETE
+ **Example**:
+  ```http
+  DELETE http://185.255.90.36:9547/api/v1/hashtag/10
+  ```
+
+ Comment API Endpoints
+
+ 1. Get Comments by Book
+ **URL**: `/comment/book/{bookID}`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/comment/book/123
+  ```
+
+ 2. Get Comments by User
+ **URL**: `/comment/user/{userID}`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/comment/user/456
+  ```
+
+ 3. Get Comment Replies
+ **URL**: `/comment/{id}/replies`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/comment/789/replies
+  ```
+
+ 4. Get Popular Comments
+ **URL**: `/comment/popular/{bookID}`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/comment/popular/123
+  ```
+
+ 5. Add Comment
+ **URL**: `/comment`
+ **Method**: POST
+ **Request Body**: JSON object with comment details
+ **Example**:
+  ```http
+  POST http://185.255.90.36:9547/api/v1/comment
+  ContentType: application/json
+
+  {
+    "userID": 456,
+    "bookID": 123,
+    "text": "This is a great book!"
+  }
+  ```
+
+ 6. Update Comment
+ **URL**: `/comment`
+ **Method**: PUT
+ **Request Body**: JSON object with updated comment details
+ **Example**:
+  ```http
+  PUT http://185.255.90.36:9547/api/v1/comment
+  ContentType: application/json
+
+  {
+    "commentID": 789,
+    "text": "This is an updated comment"
+  }
+  ```
+
+ 7. Delete Comment
+ **URL**: `/comment/{id}`
+ **Method**: DELETE
+ **Example**:
+  ```http
+  DELETE http://185.255.90.36:9547/api/v1/comment/789
+  ```
+
+ 8. Block Comment
+ **URL**: `/comment/{id}/block`
+ **Method**: PUT
+ **Example**:
+  ```http
+  PUT http://185.255.90.36:9547/api/v1/comment/789/block
+  ```
+
+ 9. Report Comment
+ **URL**: `/comment/{id}/report?reportID={reportID}`
+ **Method**: PUT
+ **Example**:
+  ```http
+  PUT http://185.255.90.36:9547/api/v1/comment/789/report?reportID=1
+  ```
+
+ 10. Like Comment
+ **URL**: `/comment/{id}/like`
+ **Method**: PUT
+ **Example**:
+  ```http
+  PUT http://185.255.90.36:9547/api/v1/comment/789/like
+  ```
+
+ 11. Dislike Comment
+ **URL**: `/comment/{id}/dislike`
+ **Method**: PUT
+ **Example**:
+  ```http
+  PUT http://185.255.90.36:9547/api/v1/comment/789/dislike
+  ```
+
+ 12. Mark as Spoiler
+ **URL**: `/comment/{id}/spoiler`
+ **Method**: PUT
+ **Example**:
+  ```http
+  PUT http://185.255.90.36:9547/api/v1/comment/789/spoiler
+  ```
+
+ Author API Endpoints
+
+ 1. Get All Authors
+ **URL**: `/author`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/author
+  ```
+
+ 2. Get Author by ID
+ **URL**: `/author/{id}`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/author/1
+  ```
+
+ 3. Search Authors
+ **URL**: `/author/search?name={name}`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/author/search?name=Stephen
+  ```
+
+ 4. Get Authors by Country
+ **URL**: `/author/country/{countryID}`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/author/country/1
+  ```
+
+ 5. Add Author
+ **URL**: `/author`
+ **Method**: POST
+ **Request Body**: JSON object with author details
+ **Example**:
+  ```http
+  POST http://185.255.90.36:9547/api/v1/author
+  ContentType: application/json
+
+  {
+    "firstName": "Stephen",
+    "lastName": "King",
+    "birthDate": "19470921"
+  }
+  ```
+
+ 6. Update Author
+ **URL**: `/author`
+ **Method**: PUT
+ **Request Body**: JSON object with updated author details
+ **Example**:
+  ```http
+  PUT http://185.255.90.36:9547/api/v1/author
+  ContentType: application/json
+
+  {
+    "authorID": 1,
+    "firstName": "Stephen",
+    "lastName": "King",
+    "biography": "Updated biography..."
+  }
+  ```
+
+ 7. Delete Author
+ **URL**: `/author/{id}`
+ **Method**: DELETE
+ **Example**:
+  ```http
+  DELETE http://185.255.90.36:9547/api/v1/author/1
+  ```
+
+ 8. Get Author Stats
+ **URL**: `/author/{id}/stats`
+ **Method**: GET
+ **Example**:
+  ```http
+  GET http://185.255.90.36:9547/api/v1/author/1/stats
+  ```
