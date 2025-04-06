@@ -15,7 +15,7 @@ Type
         Function GetBookRates(BookID: Int64): TObjectList<TRate>;
         Function GetUserRates(UserID: Int64): TObjectList<TRate>;
         Function GetAverageRating(BookID: Int64): Double;
-        Procedure AddOrUpdateRate(UserID, BookID: Int64; RateValue: Byte);
+        Procedure AddOrUpdateRate(Const ARate: TRate);
         Procedure DeleteRate(UserID, BookID: Int64);
     End;
 
@@ -25,7 +25,7 @@ Type
         Function GetBookRates(BookID: Int64): TObjectList<TRate>;
         Function GetUserRates(UserID: Int64): TObjectList<TRate>;
         Function GetAverageRating(BookID: Int64): Double;
-        Procedure AddOrUpdateRate(UserID, BookID: Int64; RateValue: Byte);
+        Procedure AddOrUpdateRate(Const ARate: TRate);
         Procedure DeleteRate(UserID, BookID: Int64);
     End;
 
@@ -35,44 +35,29 @@ Implementation
 
 //______________________________________________________________________________
 Function TRateService.GetRate(UserID, BookID: Int64): TRate;
+Var
+    Temp: TObjectList<TRate>;
 Begin
-    Try
-        Result := TMVCActiveRecord.Where<TRate>(
-            'UserID = ? AND BookID = ?',
-            [UserID, BookID]
-        ).First;
-    Except
-        On E: Exception Do
-        Begin
-            // Log the error if needed
-            Result := NIL;
-        End;
-    End;
+    Temp := TMVCActiveRecord.Where<TRate>('UserID = ? AND BookID = ?', [UserID, BookID]);
+    If (Temp.Count <> 0) then
+        Result := Temp[0]
+    Else
+        Result := nil;
 End;
 //______________________________________________________________________________
 Function TRateService.GetBookRates(BookID: Int64): TObjectList<TRate>;
 Begin
     Try
-        Result := TMVCActiveRecord.Where<TRate>(
-            'BookID = ?',
-            [BookID]
-        );
+        Result := TMVCActiveRecord.Where<TRate>('BookID = ?', [BookID]);
     Except
-        On E: Exception Do
-        Begin
-            // Log the error if needed
-            Result := NIL;
-        End;
+        Result := nil;
     End;
 End;
 //______________________________________________________________________________
 Function TRateService.GetUserRates(UserID: Int64): TObjectList<TRate>;
 Begin
     Try
-        Result := TMVCActiveRecord.Where<TRate>(
-            'UserID = ?',
-            [UserID]
-        );
+        Result := TMVCActiveRecord.Where<TRate>('UserID = ?',[UserID]);
     Except
         On E: Exception Do
         Begin
@@ -112,39 +97,32 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Procedure TRateService.AddOrUpdateRate(UserID, BookID: Int64; RateValue: Byte);
+Procedure TRateService.AddOrUpdateRate(Const ARate: TRate);
 Var
-    ExistingRate: TRate;
+    Temp: TObjectList<TRate>;
 Begin
-    // Validate rate value (assuming 1-5 scale)
-    if (RateValue < 1) or (RateValue > 5) then
+    Temp := TMVCActiveRecord.Where<TRate>('UserID = ? AND BookID = ?', [ARate.UserID, ARate.BookID]);
+
+    if (ARate.Rate < 1) or (ARate.Rate > 5) then
         raise Exception.Create('Rate value must be between 1 and 5');
 
-    ExistingRate := GetRate(UserID, BookID);
     Try
-        if Assigned(ExistingRate) then
+        If (Temp.Count <> 0) then
         begin
-            // Update existing rate
-            ExistingRate.Rate := RateValue;
-            ExistingRate.Update;
+            ARate.Update;
         end
         else
         begin
-            // Create new rate
-            ExistingRate := TRate.Create;
             Try
-                ExistingRate.UserID := UserID;
-                ExistingRate.BookID := BookID;
-                ExistingRate.Rate := RateValue;
-                ExistingRate.Insert;
+                ARate.Insert;
             Except
-                ExistingRate.Free;
+                ARate.Free;
                 raise;
             End;
         end;
     Finally
-        if Assigned(ExistingRate) then
-            ExistingRate.Free;
+        if Assigned(Temp) then
+            Temp.Free;
     End;
 End;
 //______________________________________________________________________________

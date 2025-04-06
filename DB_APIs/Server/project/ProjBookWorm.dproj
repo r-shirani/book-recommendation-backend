@@ -129,8 +129,9 @@
         <DCCReference Include="..\src\model\Model.Book.Image.pas"/>
         <DCCReference Include="..\src\controller\Controller.Book.Image.pas"/>
         <DCCReference Include="..\src\services\Service.Book.Image.pas"/>
+        <DCCReference Include="..\src\model\Model.User.Image.pas"/>
+        <DCCReference Include="..\src\services\Service.User.Image.pas"/>
         <None Include="ProjBookWorm.todo"/>
-        <None Include="..\API_Document_1404-01-11.txt"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -177,12 +178,6 @@
                 <DeployFile LocalName="..\..\..\ServerApp\ProjBookWorm.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>ProjBookWorm.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\API_Document_1404-01-11.txt" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

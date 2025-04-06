@@ -46,7 +46,9 @@ uses
   Controller.Book.Language in '..\src\controller\Controller.Book.Language.pas',
   Model.Book.Image in '..\src\model\Model.Book.Image.pas',
   Controller.Book.Image in '..\src\controller\Controller.Book.Image.pas',
-  Service.Book.Image in '..\src\services\Service.Book.Image.pas';
+  Service.Book.Image in '..\src\services\Service.Book.Image.pas',
+  Model.User.Image in '..\src\model\Model.User.Image.pas',
+  Service.User.Image in '..\src\services\Service.User.Image.pas';
 
 {$R *.res}
 

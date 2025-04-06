@@ -10,19 +10,19 @@ Type
     [MVCTable('Book.Rate')]
     TRate = class(TMVCActiveRecord)
     Private
-        [MVCTableField('UserID', [foPrimaryKey])]
+        [MVCTableField('userid', [foPrimaryKey])]
         FUserID: Int64;
 
-        [MVCTableField('BookID', [foPrimaryKey])]
+        [MVCTableField('bookid', [foPrimaryKey])]
         FBookID: Int64;
 
-        [MVCTableField('Rate')]
+        [MVCTableField('rate')]
         FRate: Byte;
 
     Public
-        Property UserID: Int64 read FUserID write FUserID;
-        Property BookID: Int64 read FBookID write FBookID;
-        Property Rate: Byte read FRate write FRate;
+        Property userid: Int64 read FUserID write FUserID;
+        Property bookid: Int64 read FBookID write FBookID;
+        Property rate: Byte read FRate write FRate;
 End;
 
 Implementation

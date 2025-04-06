@@ -27,9 +27,9 @@ Type
         [MVCHTTPMethod([httpGET])]
         Procedure GetAllBooks;
 
-        [MVCPath('/($id)')]
+        [MVCPath('/search')]
         [MVCHTTPMethod([httpGET])]
-        Procedure GetBookByID(Const id: Int64);
+        procedure SearchBook();
 
         [MVCPath('')]
         [MVCHTTPMethod([httpPOST])]
@@ -42,9 +42,16 @@ Type
         [MVCPath('/($id)')]
         [MVCHTTPMethod([httpDELETE])]
         Procedure DeleteBook(Const id: Int64);
+
+        [MVCPath('/($id)')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetBookByID(Const id: Int64);
     End;
 
 Implementation
+
+uses
+  FireDAC.Comp.Client, System.SysUtils;
 
 { TBookController }
 
@@ -82,6 +89,27 @@ Begin
     Else
         Render(HTTP_STATUS.NotFound);
 End;
+//______________________________________________________________________________
+procedure TBookController.SearchBook();
+var
+    SearchResult: TFDQuery;
+    SearchTerm: string;
+    PageNum, Count: Integer;
+Begin
+    SearchTerm := Context.Request.QueryStringParam('searchterm');
+    PageNum := StrToIntDef(Context.Request.QueryStringParam('pageNum'), 1);
+    Count := StrToIntDef(Context.Request.QueryStringParam('count'), 20);
+
+    SearchResult := FBookService.SearchBooks(searchterm, pageNum, count);
+    Try
+        If SearchResult.RecordCount = 0 then
+            Render(HTTP_STATUS.NoContent, 'Empty')
+        Else
+            Render(SearchResult);
+    Except
+        raise;
+    End;
+end;
 //______________________________________________________________________________
 Procedure TBookController.AddBook;
 Var

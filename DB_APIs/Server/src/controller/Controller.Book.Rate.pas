@@ -66,14 +66,10 @@ Var
     Rates: TObjectList<TRate>;
 Begin
     Rates := FRateService.GetBookRates(bookID);
-    Try
-        If Rates.Count > 0 Then
-            Render(Rates)
-        Else
-            Render(HTTP_STATUS.NoContent);
-    Finally
-        Rates.Free;
-    End;
+    If Rates.Count > 0 Then
+        Render(Rates)
+    Else
+        Render(HTTP_STATUS.NoContent);
 End;
 //______________________________________________________________________________
 Procedure TRateController.GetUserRates(Const userID: Int64);
@@ -81,14 +77,10 @@ Var
     Rates: TObjectList<TRate>;
 Begin
     Rates := FRateService.GetUserRates(userID);
-    Try
-        If Rates.Count > 0 Then
-            Render(Rates)
-        Else
-            Render(HTTP_STATUS.NoContent);
-    Finally
-        Rates.Free;
-    End;
+    If Rates.Count > 0 Then
+        Render(Rates)
+    Else
+        Render(HTTP_STATUS.NoContent);
 End;
 //______________________________________________________________________________
 Procedure TRateController.GetAverageRating(Const bookID: Int64);
@@ -113,7 +105,7 @@ Var
 Begin
     Rate := Context.Request.BodyAs<TRate>;
     Try
-        FRateService.AddOrUpdateRate(Rate.UserID, Rate.BookID, Rate.Rate);
+        FRateService.AddOrUpdateRate(Rate);
         Render(HTTP_STATUS.OK, 'Rating updated successfully');
     Finally
         Rate.Free;

@@ -27,10 +27,6 @@ Type
         [MVCHTTPMethod([httpGET])]
         Procedure GetAllAuthors;
 
-        [MVCPath('/($id)')]
-        [MVCHTTPMethod([httpGET])]
-        Procedure GetAuthorByID(Const id: Int64);
-
         [MVCPath('/search')]
         [MVCHTTPMethod([httpGET])]
         Procedure SearchAuthors(Const [MVCFromQueryString('name', '')] name: String);
@@ -46,6 +42,10 @@ Type
         [MVCPath('')]
         [MVCHTTPMethod([httpPUT])]
         Procedure UpdateAuthor;
+
+        [MVCPath('/($id)')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetAuthorByID(Const id: Int64);
 
         [MVCPath('/($id)')]
         [MVCHTTPMethod([httpDELETE])]
@@ -78,14 +78,10 @@ Var
     Authors: TObjectList<TAuthor>;
 Begin
     Authors := FAuthorService.GetAllAuthors;
-    Try
-        If Authors.Count > 0 Then
-            Render(Authors)
-        Else
-            Render(HTTP_STATUS.NoContent);
-    Finally
-        Authors.Free;
-    End;
+    If Authors.Count > 0 Then
+        Render(Authors)
+    Else
+        Render(HTTP_STATUS.NoContent);
 End;
 //______________________________________________________________________________
 Procedure TAuthorController.GetAuthorByID(Const id: Int64);
@@ -97,7 +93,6 @@ Begin
         Render(Author)
     Else
         Render(HTTP_STATUS.NotFound);
-    Author.Free;
 End;
 //______________________________________________________________________________
 Procedure TAuthorController.SearchAuthors(Const name: String);
@@ -105,14 +100,10 @@ Var
     Authors: TObjectList<TAuthor>;
 Begin
     Authors := FAuthorService.GetAuthorsByName(name);
-    Try
-        If Authors.Count > 0 Then
-            Render(Authors)
-        Else
-            Render(HTTP_STATUS.NoContent);
-    Finally
-        Authors.Free;
-    End;
+    If Authors.Count > 0 Then
+        Render(Authors)
+    Else
+        Render(HTTP_STATUS.NoContent);
 End;
 //______________________________________________________________________________
 Procedure TAuthorController.GetAuthorsByCountry(Const countryID: Int64);
@@ -120,14 +111,10 @@ Var
     Authors: TObjectList<TAuthor>;
 Begin
     Authors := FAuthorService.GetAuthorsByCountry(countryID);
-    Try
-        If Authors.Count > 0 Then
-            Render(Authors)
-        Else
-            Render(HTTP_STATUS.NoContent);
-    Finally
-        Authors.Free;
-    End;
+    If Authors.Count > 0 Then
+        Render(Authors)
+    Else
+        Render(HTTP_STATUS.NoContent);
 End;
 //______________________________________________________________________________
 Procedure TAuthorController.AddAuthor;
@@ -173,8 +160,10 @@ Begin
         Render(Author)
     End
     Else
+    Begin
         Render(HTTP_STATUS.NotFound);
-    Author.Free;
+    End;
+
 End;
 //______________________________________________________________________________
 
