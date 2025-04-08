@@ -7,7 +7,6 @@ const book = axios.create({
     },
   });
 
-
 const searchBook_controller = async (searchterm_input , pageNum_input ,count_input)=>{
     try {
         const response = await book.get("/search",{
@@ -19,8 +18,6 @@ const searchBook_controller = async (searchterm_input , pageNum_input ,count_inp
             }
         })
         return response.data;
-
-
     } catch (error) {
         console.log("Error:", error);
         console.log("SQL server error - (search-book)");
@@ -45,7 +42,6 @@ const bookImage = async (bookid)=>{
     catch (error) {
         throw new Error('Failed to fetch image');
     }
-   
 }
 
 module.exports={
