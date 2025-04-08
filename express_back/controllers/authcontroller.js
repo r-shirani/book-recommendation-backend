@@ -157,7 +157,7 @@ exports.updateProfile = async (req, res) => {
     const userID = req.user.id; // "Data retrieved from middleware"
     const { new_firstName, new_lastName, new_userName, new_bio, new_gender, new_birthday, new_phoneNumber} = req.body; // new information
     if(new_gender != "F" && new_gender != "M"){
-      res.status(400).json({message: "gender must be M or F"});
+      return res.status(400).json({message: "gender must be M or F"});
     }
     let response = await updateProfile_controller(userID,new_firstName, new_lastName, new_userName, new_bio, new_gender, new_birthday, new_phoneNumber);
 
