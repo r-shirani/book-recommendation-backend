@@ -191,12 +191,13 @@ const newApi = axios.create({
 
 const updatePassword_controller = async(userIdInput ,newPasswordInput) =>{
   try {
+      console.log(`new password input : ${newPasswordInput} `);
       const response = await newApi.put("/userSecurity", {
           userid : userIdInput,
-          passwordHash : newPasswordInput,
+          passwordhash : newPasswordInput,
 
       });
-      await EmailVerificationPut(userIdInput,true);
+
       if (!response || response.length===0){
           console.log("server Error(SQL-login)");
           return -1;
