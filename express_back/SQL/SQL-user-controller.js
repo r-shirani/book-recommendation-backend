@@ -193,8 +193,10 @@ const updatePassword_controller = async(userIdInput ,newPasswordInput) =>{
   try {
       const response = await newApi.put("/userSecurity", {
           userid : userIdInput,
-          passwordHash : newPasswordInput
+          passwordHash : newPasswordInput,
+
       });
+      await EmailVerificationPut(userIdInput,true);
       if (!response || response.length===0){
           console.log("server Error(SQL-login)");
           return -1;

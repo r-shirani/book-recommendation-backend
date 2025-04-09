@@ -123,7 +123,7 @@ exports.newPassword = async(req , res)=>{
   try {
     const {newPassword , oldPassword} = req.body;
     const userid = req.user.id;
-    console.log(userid);
+    console.log(`updated password user id : ${userid}`);
     let users = await getUserByID(userid);
     const user = users[0];
     let isMatch = await bcrypt.compare(oldPassword, user.passwordHash);
@@ -136,6 +136,13 @@ exports.newPassword = async(req , res)=>{
         res.status(500).json({ message: "SQL server error" })
       }
       else if(response === 1){
+        ///////////////////////
+        let userAfters = await getUserByID(userid);
+        const userAfter = userAfters[0];
+
+        console.log('Old Hash:', user.passwordHash);
+        console.log('New Hash:', userAfter.passwordHash);
+        //////////////////////
         res.status(200).json({ message: "User password updated successfully" })
       }
       else if(response === 0){
