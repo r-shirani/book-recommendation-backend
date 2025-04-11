@@ -55,7 +55,6 @@ exports.getBookImage = async (req , res) =>{
     } 
 }
 
-
 exports.searchBook_with_image = async (req, res) => {
     const { pagenum, searchterm } = req.body;
     const count = 10;

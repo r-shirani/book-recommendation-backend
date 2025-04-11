@@ -26,7 +26,7 @@ const RegisterUser = async (emailInput,nameInput,passwordInput,verificationcodeI
                 verificationCode: verificationcodeInput
             },
         });
-        console.log("Response from server:", response.data);
+        console.log("Response from (sql) server:", response.data);
         return response.data;       
     } catch (error) {
         console.error("Error:", error);

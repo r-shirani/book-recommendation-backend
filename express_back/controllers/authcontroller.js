@@ -23,7 +23,14 @@ exports.register = async (req, res) => {
     const googleId = Math.floor(100000 + Math.random() * 900000);
     
     let user = await registerUSer_controller(email,name,hashedPassword,verificationCode);
+    console.log(`USER LOGGED IN REGISTER : ${user}`);
     if(!user){
+      // if(user.isEmailVerified === false)
+      // {
+      //   DeleteUser(email);
+      //   return res.status(400).json({ message: "please register again" });
+      // }
+      
       return res.status(400).json({ message: "this user has already registered!" });
     }
     console.log(`new user data: ${email}  ${verificationCode} `);
