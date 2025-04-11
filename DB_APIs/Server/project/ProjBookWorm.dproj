@@ -131,6 +131,10 @@
         <DCCReference Include="..\src\services\Service.Book.Image.pas"/>
         <DCCReference Include="..\src\model\Model.User.Image.pas"/>
         <DCCReference Include="..\src\services\Service.User.Image.pas"/>
+        <DCCReference Include="..\src\controller\Controller.Book.Genre.pas"/>
+        <DCCReference Include="..\src\model\Model.User.GenreFavorit.pas"/>
+        <DCCReference Include="..\src\services\Service.User.GenreFavorit.pas"/>
+        <DCCReference Include="..\src\controller\Controller.User.GenreFavorite.pas"/>
         <None Include="ProjBookWorm.todo"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

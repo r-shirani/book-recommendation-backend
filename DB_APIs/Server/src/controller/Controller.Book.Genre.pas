@@ -1,0 +1,140 @@
+﻿Unit Controller.Book.Genre;
+
+Interface
+
+Uses
+    MVCFramework,
+    MVCFramework.Commons,
+    MVCFramework.Serializer.Commons,
+    System.SysUtils,
+    System.Generics.Collections,
+    Service.Book.Genre,
+    WebModule.Main,
+    Model.Book.Genre;
+
+Type
+    [MVCPath(BASE_API_V1 + '/genres')]
+    TGenreController = class(TMVCController)
+    Private
+      FGenreService: IGenreService;
+
+    Public
+        Constructor Create; override;
+        Destructor Destroy; override;
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetAllGenres();
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPOST])]
+        Procedure CreateGenre([MVCFromBody] const AGenre: TGenre);
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPUT])]
+        Procedure UpdateGenre([MVCFromBody] const AGenre: TGenre);
+
+        [MVCPath('/($id)')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetGenreByID(id: Integer);
+
+        [MVCPath('/($id)')]
+        [MVCHTTPMethod([httpDELETE])]
+        Procedure DeleteGenre(id: Integer);
+End;
+
+Implementation
+
+{ TGenreController }
+
+//______________________________________________________________________________
+Constructor TGenreController.Create;
+Begin
+    Inherited;
+    FGenreService := TGenreService.Create;
+End;
+//______________________________________________________________________________
+destructor TGenreController.Destroy;
+Begin
+    FGenreService := nil;
+    Inherited;
+End;
+//______________________________________________________________________________
+Procedure TGenreController.GetAllGenres;
+Var
+    Genres: TObjectList<TGenre>;
+Begin
+    Try
+        Genres := FGenreService.GetAllGenres;
+        If Assigned(Genres) Then
+            Render(Genres)
+        Else
+            Render(HTTP_STATUS.NoContent);
+    Except
+        On E: Exception Do
+        Begin
+            Render(HTTP_STATUS.BadRequest, E.Message);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TGenreController.GetGenreByID(id: Integer);
+Var
+    Genre: TGenre;
+Begin
+    Try
+        Genre := FGenreService.GetGenreByID(id);
+        If Assigned(Genre) then
+            Render(Genre)
+        Else
+            Render(HTTP_STATUS.NotFound, 'Genre not found');
+    Except
+        On E: Exception Do
+        Begin
+            Render(HTTP_STATUS.BadRequest, E.Message);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TGenreController.CreateGenre(const AGenre: TGenre);
+Begin
+    Try
+        FGenreService.AddGenre(AGenre);
+        Render(HTTP_STATUS.Created, 'Add Successfully');
+    Except
+        On E: Exception Do
+        Begin
+            Render(HTTP_STATUS.BadRequest, E.Message);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TGenreController.UpdateGenre(Const AGenre: TGenre);
+Begin
+    Try
+        FGenreService.UpdateGenre(AGenre);
+        Render(AGenre);
+    Except
+        On E: Exception Do
+        Begin
+            Render(HTTP_STATUS.BadRequest, E.Message);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TGenreController.DeleteGenre(id: Integer);
+Begin
+    Try
+        FGenreService.DeleteGenre(id);
+        Render(HTTP_STATUS.OK, 'Delete Successfully');
+    Except
+        On E: Exception Do
+        Begin
+            Render(HTTP_STATUS.BadRequest, E.Message);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+
+End.
+

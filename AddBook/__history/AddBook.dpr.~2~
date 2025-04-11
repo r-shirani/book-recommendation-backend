@@ -1,0 +1,14 @@
+﻿program AddBook;
+
+uses
+  Vcl.Forms,
+  UFormMain in 'UFormMain.pas' {FormMain};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TFormMain, FormMain);
+  Application.Run;
+end.

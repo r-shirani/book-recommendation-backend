@@ -52,8 +52,11 @@ Begin
         If not AUserSecurity.LockOutEnd.IsNull then
           OldSecurity.LockOutEnd := AUserSecurity.LockOutEnd;
 
-        OldSecurity.IsEmailVerified := AUserSecurity.IsEmailVerified;
-        OldSecurity.IsPhoneVerified := AUserSecurity.IsPhoneVerified;
+        If not AUserSecurity.IsPhoneVerified.IsNull then
+         OldSecurity.IsPhoneVerified := AUserSecurity.IsPhoneVerified;
+
+        If not AUserSecurity.IsEmailVerified.IsNull then
+          OldSecurity.IsEmailVerified := AUserSecurity.IsEmailVerified;
 
         If AUserSecurity.FailedLoginAttempts <> 0 then
           OldSecurity.FailedLoginAttempts := AUserSecurity.FailedLoginAttempts;
@@ -67,7 +70,7 @@ Begin
         If not AUserSecurity.Salt.IsNull then
           OldSecurity.Salt := AUserSecurity.Salt;
 
-        If not AUserSecurity.VerificationCode.IsNull then
+        If (not AUserSecurity.VerificationCode.IsNull) then
           OldSecurity.VerificationCode := AUserSecurity.VerificationCode;
 
         OldSecurity.Update;

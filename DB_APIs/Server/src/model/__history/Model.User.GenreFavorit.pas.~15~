@@ -1,0 +1,36 @@
+﻿Unit Model.User.GenreFavorit;
+
+Interface
+
+Uses
+    MVCFramework.Serializer.Commons,
+    MVCFramework.ActiveRecord,
+    MVCFramework.Nullables;
+
+Type
+    [MVCNameCase(ncLowerCase)]
+    [MVCTable('User.GenreFavorite')]
+    TRate = class(TMVCActiveRecord)
+    Private
+        [MVCTableField('GenreFavoriteID', [foPrimaryKey])]
+        FGenreFavoriteID: Int64;
+
+        [MVCTableField('UserID', [foPrimaryKey])]
+        FUserID: Int64;
+
+        [MVCTableField('GenreID', [foPrimaryKey])]
+        FGenreID: Int64;
+
+        [MVCTableField('Priority')]
+        FPriority: Integer;
+
+    Public
+        Property GenreFavoriteID: Int64 read FGenreFavoriteID write FGenreFavoriteID;
+        Property UserID: Int64 read FUserID write FUserID;
+        Property GenreID: Int64 read FGenreID write FGenreID;
+        Property Priority: Integer read FPriority write FPriority;
+End;
+
+Implementation
+
+End.

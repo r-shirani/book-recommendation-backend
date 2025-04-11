@@ -1,0 +1,1102 @@
+object FormMain: TFormMain
+  Left = 0
+  Top = 0
+  ClientHeight = 828
+  ClientWidth = 1224
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  WindowState = wsMaximized
+  TextHeight = 15
+  object pnlBase: TPanel
+    Left = 0
+    Top = 0
+    Width = 1224
+    Height = 828
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 0
+    StyleElements = []
+    ExplicitWidth = 1222
+    ExplicitHeight = 825
+    object Splitter1: TSplitter
+      AlignWithMargins = True
+      Left = 522
+      Top = 10
+      Width = 5
+      Height = 808
+      Margins.Left = 1
+      Margins.Top = 10
+      Margins.Right = 10
+      Margins.Bottom = 10
+      ExplicitLeft = 524
+      ExplicitTop = 3
+      ExplicitHeight = 766
+    end
+    object pnlImage: TPanel
+      Left = 0
+      Top = 0
+      Width = 521
+      Height = 828
+      Margins.Right = 0
+      Align = alLeft
+      BevelOuter = bvNone
+      TabOrder = 0
+      StyleElements = []
+      ExplicitHeight = 825
+      object Shape1: TShape
+        AlignWithMargins = True
+        Left = 10
+        Top = 10
+        Width = 501
+        Height = 754
+        Margins.Left = 10
+        Margins.Top = 10
+        Margins.Right = 10
+        Margins.Bottom = 10
+        Align = alClient
+      end
+      object imgBook: TImage
+        AlignWithMargins = True
+        Left = 10
+        Top = 10
+        Width = 501
+        Height = 754
+        Margins.Left = 10
+        Margins.Top = 10
+        Margins.Right = 10
+        Margins.Bottom = 10
+        Align = alClient
+        Center = True
+        Proportional = True
+        ExplicitLeft = -33
+      end
+      object pnlImagePath: TPanel
+        AlignWithMargins = True
+        Left = 10
+        Top = 777
+        Width = 511
+        Height = 41
+        Margins.Left = 10
+        Margins.Right = 0
+        Margins.Bottom = 10
+        Align = alBottom
+        BevelOuter = bvNone
+        TabOrder = 0
+        ExplicitTop = 774
+        object sbtnChooseImage: TSpeedButton
+          AlignWithMargins = True
+          Left = 466
+          Top = 3
+          Width = 40
+          Height = 35
+          Margins.Right = 5
+          Align = alRight
+          Glyph.Data = {
+            36100000424D3610000000000000360000002800000020000000200000000100
+            2000000000000010000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000001000000010000000100000001000000010000
+            0001000000010000000100000001000000010000000100000001000000010000
+            0001000000010000000100000001000000010000000100000000000000010000
+            0003000000040000000500000005000000050000000500000005000000050000
+            0005000000050000000500000005000000050000000500000005000000050000
+            0005000000050000000500000005000000050000000500000005000000050000
+            0005000000050000000500000005000000050000000300000002000000050000
+            000A0000000F0000001100000011000000120000001200000012000000120000
+            0012000000120000001300000013000000130000001300000013000000130000
+            0013000000140000001400000014000000140000001400000014000000150000
+            0015000000150000001500000015000000130000000D000000060000000A7B5A
+            4FBDAB7D6DFFAA7C6DFFA97C6CFFA97B6BFFA97B6AFFA87A6AFFA87969FFA879
+            69FFA77868FFA67768FFA57767FFA67767FFA57666FFA57565FFA47565FFA475
+            65FFA47464FFA37464FFA37363FFA37363FFA37363FFA27263FFA27262FFA272
+            62FFA27262FFA27262FFA17161FFA17161FF735146BF0000000D0000000DAE82
+            72FFFBF6F4FFFAF6F3FFFAF6F3FFFAF5F2FFFAF5F2FFFAF4F1FFF9F4F1FFFAF4
+            F0FFF9F3F0FFF9F3EFFFF8F3EFFFF8F2EFFFF8F1EEFFF8F1EDFFF8F2EDFFF8F1
+            EDFFF8F1ECFFF8F1ECFFF8F1EDFFF8F2EDFFF8F1EDFFF8F2EDFFF8F2EDFFF9F1
+            EDFFF8F2EEFFF8F2EEFFF8F3EFFFF9F3EFFFA97A6AFF000000120000000EB083
+            74FFFBF7F4FFF6EEE9FFF7EEE9FFF6EFE9FFF6EFE9FFF5EEE8FFF6EEE8FFF5EF
+            E9FFF5EEE9FFF5EDE8FFF4EEE8FFF4EDE7FFF3ECE7FFF4EDE8FFF5EFE8FFF7EE
+            E8FFF7EEE8FFF6EEE8FFF6EEE8FFF6EDE8FFF6EEE7FFF6EDE7FFF6EDE7FFF6EC
+            E6FFF5EDE7FFF6ECE6FFF5ECE6FFF9F3F0FFAA7B6CFF000000130000000EB085
+            75FFFBF8F5FFF7EFE9FF30AA7FFF2FAA7FFF2FA980FF30A97DFF30A87FFF2EA8
+            7EFF2FA87DFF2FA87DFF2FA77BFF2EA379FF28946CFF186A49FF339A73FF229D
+            6EFF229669FF1C835BFF186D4AFF176042FF258962FF2A9871FF1F694BFF2877
+            58FF297C5DFF1F694AFFF5ECE7FFF9F4F0FFAA7C6DFF000000130000000DB287
+            78FFFBF8F6FFF7EFEAFF30AE83FF35BE90FF35BC8EFF34B88BFF34B589FF34B3
+            88FF33B286FF33AF84FF32AE83FF2FA67EFF2B956CFF217D57FF57C5A0FF2BB0
+            7FFF2BAD7DFF27A375FF249A6EFF1E845CFF196848FF2AA076FF227553FF2A84
+            61FF30936EFF206E4EFFF6EDE6FFFAF5F2FFAB7E6FFF000000120000000DB389
+            7AFFFCF9F6FFF8EFEBFF31B087FF36C094FF35BD92FF2EA37AFF2C9B74FF2C97
+            70FF298F6AFF288C67FF278762FF288863FF237E59FF1D7F57FF6CC8AEFF2EAD
+            7FFF279D72FF239269FF1F8A60FF1E855EFF176D4AFF1C7855FF217554FF2886
+            63FF319B75FF237857FFF6EDE7FFFAF5F2FFAD8070FF000000110000000CB58B
+            7CFFFCF9F7FFF7F0ECFF34B58CFF38C598FF38C296FF35B68DFF40A984FF4BB6
+            90FF3FB388FF41B78CFF46C093FF43BB8FFF39A57CFF1C8058FF68B2A4FF2785
+            70FF218862FF1B705FFF1D4C8DFF196A5AFF176A48FF135647FF145C43FF207B
+            56FF2F9770FF288B68FFF6EDE8FFFAF6F3FFAE8172FF000000100000000BB68D
+            7EFFFCFAF8FFF8F1ECFF37B891FF3DC99DFF3CC69BFF3CC299FF36AF88FF63C4
+            A4FF4EC59AFF48C395FF46C092FF40B58BFF35A076FF1C7D55FF357291FF2B60
+            A6FF1E6466FF256384FF4A99D2FF195174FF145255FF2961A7FF174D69FF1B72
+            4FFF207A56FF2FA07BFFF6EEE8FFFBF6F3FFAF8374FF000000100000000BB98F
+            80FFFDFAF9FFF8F1EDFF3EBB94FF43CBA1FF43CAA1FF43C99FFF40C299FF40B3
+            8DFF76D5B7FF4EC49CFF48BF94FF3BAA84FF287D79FF19724CFF327590FF4F9B
+            D3FF326DADFF326DA5FF60B9E9FF235792FF3875B4FF4196D4FF184E6DFF1562
+            42FF1B6464FF31A383FFF6EFE9FFFBF7F5FFB18576FF0000000F0000000ABA91
+            83FFFDFAF9FFF8F2EEFF57C4A1FF5ED3AFFF62D5B1FF60D3AFFF5BD1ABFF56C7
+            A3FF63C8A7FF86DBC0FF5DC7A3FF35938EFF3B7BBCFF2E69A8FF286B86FF4D98
+            D2FF57A7DCFF3875B7FF6BC6F2FF3672B5FF55A7DEFF3B8CCCFF195173FF285E
+            A0FF2D75BBFF2C8883FFF7EEEAFFFBF8F6FFB28778FF0000000E00000009BB94
+            85FFFDFBFAFFF9F2EFFF7BCAA8FF84D8B5FF83D7B5FF82D8B5FF81D7B3FF7FD5
+            B1FF74CCA9FF70C8A9FF84D2B9FF79C8B2FF4282BDFF74C9F2FF4D96D1FF4187
+            C7FF69C8F4FF3F80C2FF63C6F5FF3E80C3FF5DC2F3FF387CBFFF4691CEFF48B5
+            EFFF2F6EAEFF47A07DFFF7EFE9FFFBF8F7FFB3897AFF0000000E00000009BD96
+            87FFFDFCFAFFF9F3EFFFA7CCACFFB4DBB7FFB2DBB8FFB3DAB7FFB2DAB7FFB1D9
+            B5FFADD6B3FF8DC2A5FF4F8FA3FF4F97A3FF4B90A0FF61A7DAFF83D6F8FF5AA8
+            DDFF5DBAEBFF60B5E6FF5FC3F2FF58B1E5FF56B7E9FF50A4DCFF52C0F4FF4999
+            D4FF427F90FF467C89FFF7EFEAFFFCF9F7FFB58B7CFF0000000D00000008BE98
+            8AFFFDFCFBFFF9F3F0FFD1CFAFFFDFDDBBFFDFDDBBFFDEDDBAFFDEDDB9FFDEDC
+            BAFFDBDCB8FFC0C8AFFF5995CCFF73B7E1FF69ACDAFF599AD0FF6BB5E3FF7BD3
+            F7FF508EC4FF355D9DFF2D4B8FFF345B9CFF4686BFFF5FC7F5FF53A7DDFF397E
+            BEFF3D8ACAFF3C87BFFFF7F0EBFFFCFAF8FFB78D7FFF0000000C00000007C09A
+            8CFFFEFCFCFFF9F4F1FFE8D5B6FFF7E1C0FFF7E2C0FFF7E2C0FFF8E1BFFFF8E1
+            BFFFF6DEBDFFF3DAB5FFC2C2B1FF6BA7D2FF84C5E9FF9FDFF8FF91D3F0FF6CA8
+            D4FF33589AFF2961A9FF194995FF255BA5FF274B91FF498DC6FF5ABAEAFF63C6
+            F4FF5EB2E3FF4A8BBBFFF7F0EBFFFCFAF9FFB99081FF0000000C00000007C19C
+            8EFFFEFDFCFFFAF5F1FFF0D8BBFFFEE6C6FFFEE4C5FFFEE5C5FFFDE4C4FFFDE4
+            C4FFFDE2C1FFE1D0B9FFA4B9C3FF79ABCDFF60A4D5FF62A8D8FF83CBEEFF507B
+            B3FF4485BFFF2865ABFF286CB3FF1A4F9BFF265DA8FF315D9EFF5FBAE8FF4896
+            CEFF4591CAFF4D7EABFFF8F0ECFFFDFBFAFFBA9183FF0000000B00000006C39E
+            91FFFEFDFDFFFAF5F2FFF2DDC2FFFFE9CDFFFFE9CBFFFFE9CBFFFFE9CBFFFFE9
+            CBFFFFE6C5FF75AACFFF8CCBECFF9FDBF5FFAEE7FBFFB2E9FCFFB0E8FBFF4470
+            ACFF4185C1FF4893CBFF2769AFFF296FB6FF1D539EFF295499FF6CC9F4FF6ECE
+            F7FF7AD2F7FF55A3D2FFF8F1ECFFFDFBFAFFBB9485FF0000000A00000006C4A0
+            92FFFEFDFDFFFAF5F3FFF3E3C8FFFFEDD2FFFFEDD3FFFFEDD2FFFFEDD1FFFFED
+            D1FFFFECCEFFE9E0CAFFAEC7CEFF87B9D5FF6AB1DCFF70B7DFFF9BDBF5FF5889
+            BEFF5EA4D2FF468FC9FF4A99CFFF286AB1FF397BBCFF3165A7FF6EC3ECFF4EA0
+            D3FF4D9DD2FF669EBDFFF8F1EDFFFDFCFBFFBD9588FF0000000A00000005C6A2
+            95FFFEFEFDFFFBF5F4FFF4E7D1FFFFF1D8FFFFF1D9FFFFF1D8FFFFF2D9FFFFF1
+            D8FFFFF1D7FFFFEFD3FFD7DACDFF84C2E2FFA4E0F6FFB7EBFCFFBCEBFBFF8FC4
+            E3FF447EBBFF61A9D6FF559BD0FF5197CDFF2760A7FF5BA3D3FF6DC8EFFF7BD3
+            F7FF6ABEE8FF4E97C3FFF8F1EEFFFEFCFBFFBE988AFF0000000900000005C7A4
+            96FFFFFEFEFFFBF6F4FFF5EBD6FFFFF5DEFFFFF5DFFFFFF5DEFFFFF5DEFFFFF5
+            DEFFFFF5DCFFE9E8D7FF8ACAE8FFADE1F6FF9AD3EEFF7ABFE3FF9CD6EFFFB8ED
+            FCFF8CC2E3FF5E9ACCFF3F83C1FF5896CAFF67ACD8FF89DCF9FF6DC1E9FF53A8
+            D9FF5BB1DFFF4E9FCFFFF8F2EDFFFEFDFCFFC09A8CFF0000000800000004C9A6
+            99FFFFFEFEFFFBF7F5FFF6EFDBFFFFF8E3FFFFF8E3FFFFF8E3FFFFF7E3FFFFF8
+            E2FFFFF8E2FFF7F3DEFFB7D7DEFFBEDADBFFB7D7DAFF98D2EEFFBFEFFDFFA0D9
+            F0FFB9E7F8FFA5DFF4FFC1ECFBFF9CDBF3FFA5E0F6FF6EC3E9FF95DFFAFF68BC
+            E5FFA0C8CDFFA0C2C6FFF8F2EEFFFEFDFCFFC19C8EFF0000000800000004CAA7
+            9AFFFFFEFEFFFCF8F6FFF7F2E0FFF7F2DFFFF7F2DFFFF7F2DFFFF7F2DFFFF7F2
+            DFFFF7F2DFFFF6F1DDFFF6F0DBFFEEECD6FF82C1DDFFA4D6E9FF92CBE4FF83C4
+            E1FFA5D8E9FF77BDDDFFA5D8EAFF75BBDDFF9CD4E9FF5EB0D7FF63B5DCFF6EBC
+            E0FF519FCBFFEAE8C9FFF9F2EEFFFEFDFDFFC39E91FF0000000700000003CBA9
+            9BFFFFFEFEFFFBF7F6FFFCF8F7FFFBF8F7FFFCF8F7FFFCF8F7FFFCF8F7FFFCF9
+            F7FFFCF9F7FFFCF9F7FFFCF9F7FFFCF8F7FFFCF8F6FFFCF8F6FFFBF7F6FFFBF7
+            F5FFFCF7F5FFFBF6F5FFFBF6F4FFFAF6F3FFFAF6F3FFFAF5F2FFFAF5F1FFF9F4
+            F1FFF9F3F0FFF9F3F0FFF8F3EFFFFEFEFDFFC5A092FF0000000600000002CCAA
+            9DFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC6A295FF00000005000000019E87
+            7DBED5B5A8FFD4B5A8FFD4B5A8FFD4B5A8FFD4B5A8FFD4B4A7FFD3B4A7FFD3B4
+            A6FFD3B3A5FFD2B3A6FFD2B2A5FFD2B2A5FFD2B1A4FFD1B1A4FFD1B0A3FFD0AF
+            A2FFD0AFA2FFD0AFA2FFCFAEA1FFCEAEA1FFCEADA0FFCEAD9FFFCDAC9FFFCCAA
+            9DFFCCAA9CFFCBA99CFFCBA99BFFCBA89BFF957C71BF00000003000000000000
+            0001000000020000000200000002000000020000000200000002000000030000
+            0003000000030000000300000003000000030000000300000003000000030000
+            0003000000030000000400000004000000040000000400000004000000040000
+            0004000000040000000400000004000000040000000300000001000000000000
+            0000000000000000000000000000000000000000000000000001000000010000
+            0001000000010000000100000001000000010000000100000001000000010000
+            0001000000010000000100000001000000010000000100000001000000010000
+            0001000000010000000100000001000000010000000100000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000}
+          OnClick = sbtnChooseImageClick
+          ExplicitLeft = 451
+        end
+        object edPath: TEdit
+          AlignWithMargins = True
+          Left = 0
+          Top = 5
+          Width = 458
+          Height = 31
+          Margins.Left = 0
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
+          Align = alClient
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -17
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 0
+          StyleName = 'Windows'
+        end
+      end
+    end
+    object pnlData: TPanel
+      AlignWithMargins = True
+      Left = 537
+      Top = 10
+      Width = 677
+      Height = 808
+      Margins.Left = 0
+      Margins.Top = 10
+      Margins.Right = 10
+      Margins.Bottom = 10
+      Align = alClient
+      BevelOuter = bvNone
+      TabOrder = 1
+      ExplicitWidth = 675
+      ExplicitHeight = 805
+      object pnlTitle: TPanel
+        Left = 0
+        Top = 0
+        Width = 677
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 0
+        StyleElements = []
+        ExplicitWidth = 675
+        object lblTitle: TLabel
+          AlignWithMargins = True
+          Left = 554
+          Top = 3
+          Width = 120
+          Height = 35
+          Align = alRight
+          Alignment = taRightJustify
+          AutoSize = False
+          BiDiMode = bdRightToLeft
+          Caption = #1593#1606#1608#1575#1606' '#1705#1578#1575#1576':'
+          Font.Charset = ARABIC_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'B Titr'
+          Font.Style = [fsBold]
+          ParentBiDiMode = False
+          ParentFont = False
+          StyleElements = []
+          ExplicitLeft = 534
+        end
+        object edTitle: TEdit
+          AlignWithMargins = True
+          Left = 0
+          Top = 5
+          Width = 546
+          Height = 31
+          Margins.Left = 0
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
+          Align = alClient
+          Alignment = taRightJustify
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -17
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          StyleName = 'Lavender Classico'
+          ExplicitWidth = 544
+        end
+      end
+      object Panel2: TPanel
+        Left = 0
+        Top = 205
+        Width = 677
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 1
+        StyleElements = []
+        ExplicitWidth = 675
+        object lblGenreID3: TLabel
+          AlignWithMargins = True
+          Left = 554
+          Top = 3
+          Width = 120
+          Height = 35
+          Align = alRight
+          Alignment = taRightJustify
+          AutoSize = False
+          BiDiMode = bdRightToLeft
+          Caption = #1588#1606#1575#1587#1607' '#1688#1575#1606#1585' 3:'
+          Font.Charset = ARABIC_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'B Titr'
+          Font.Style = [fsBold]
+          ParentBiDiMode = False
+          ParentFont = False
+          StyleElements = []
+          ExplicitLeft = 534
+        end
+        object edGenreID3: TEdit
+          AlignWithMargins = True
+          Left = 0
+          Top = 5
+          Width = 546
+          Height = 31
+          Margins.Left = 0
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
+          Align = alClient
+          Alignment = taRightJustify
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -17
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          NumbersOnly = True
+          ParentFont = False
+          TabOrder = 0
+          StyleName = 'Lavender Classico'
+          ExplicitWidth = 544
+        end
+      end
+      object Panel3: TPanel
+        Left = 0
+        Top = 164
+        Width = 677
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 2
+        StyleElements = []
+        ExplicitWidth = 675
+        object lblGenreID2: TLabel
+          AlignWithMargins = True
+          Left = 554
+          Top = 3
+          Width = 120
+          Height = 35
+          Align = alRight
+          Alignment = taRightJustify
+          AutoSize = False
+          BiDiMode = bdRightToLeft
+          Caption = #1588#1606#1575#1587#1607' '#1688#1575#1606#1585' 2:'
+          Font.Charset = ARABIC_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'B Titr'
+          Font.Style = [fsBold]
+          ParentBiDiMode = False
+          ParentFont = False
+          StyleElements = []
+          ExplicitLeft = 534
+        end
+        object edGenreID2: TEdit
+          AlignWithMargins = True
+          Left = 0
+          Top = 5
+          Width = 546
+          Height = 31
+          Margins.Left = 0
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
+          Align = alClient
+          Alignment = taRightJustify
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -17
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          NumbersOnly = True
+          ParentFont = False
+          TabOrder = 0
+          StyleName = 'Lavender Classico'
+          ExplicitWidth = 544
+        end
+      end
+      object Panel4: TPanel
+        Left = 0
+        Top = 123
+        Width = 677
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 3
+        StyleElements = []
+        ExplicitWidth = 675
+        object lblGenreID1: TLabel
+          AlignWithMargins = True
+          Left = 554
+          Top = 3
+          Width = 120
+          Height = 35
+          Align = alRight
+          Alignment = taRightJustify
+          AutoSize = False
+          BiDiMode = bdRightToLeft
+          Caption = #1588#1606#1575#1587#1607' '#1688#1575#1606#1585' 1:'
+          Font.Charset = ARABIC_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'B Titr'
+          Font.Style = [fsBold]
+          ParentBiDiMode = False
+          ParentFont = False
+          StyleElements = []
+          ExplicitLeft = 534
+        end
+        object edGenreID1: TEdit
+          AlignWithMargins = True
+          Left = 0
+          Top = 5
+          Width = 546
+          Height = 31
+          Margins.Left = 0
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
+          Align = alClient
+          Alignment = taRightJustify
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -17
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          NumbersOnly = True
+          ParentFont = False
+          TabOrder = 0
+          StyleName = 'Lavender Classico'
+          ExplicitWidth = 544
+        end
+      end
+      object Panel5: TPanel
+        Left = 0
+        Top = 82
+        Width = 677
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 4
+        StyleElements = []
+        ExplicitWidth = 675
+        object lblPageCount: TLabel
+          AlignWithMargins = True
+          Left = 554
+          Top = 3
+          Width = 120
+          Height = 35
+          Align = alRight
+          Alignment = taRightJustify
+          AutoSize = False
+          BiDiMode = bdRightToLeft
+          Caption = #1578#1593#1583#1575#1583' '#1589#1601#1581#1575#1578':'
+          Font.Charset = ARABIC_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'B Titr'
+          Font.Style = [fsBold]
+          ParentBiDiMode = False
+          ParentFont = False
+          StyleElements = []
+          ExplicitLeft = 534
+        end
+        object edPageCount: TEdit
+          AlignWithMargins = True
+          Left = 0
+          Top = 5
+          Width = 546
+          Height = 31
+          Margins.Left = 0
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
+          Align = alClient
+          Alignment = taRightJustify
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -17
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          NumbersOnly = True
+          ParentFont = False
+          TabOrder = 0
+          StyleName = 'Lavender Classico'
+          ExplicitWidth = 544
+        end
+      end
+      object Panel6: TPanel
+        Left = 0
+        Top = 41
+        Width = 677
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 5
+        StyleElements = []
+        ExplicitWidth = 675
+        object lblDescription: TLabel
+          AlignWithMargins = True
+          Left = 554
+          Top = 3
+          Width = 120
+          Height = 35
+          Align = alRight
+          Alignment = taRightJustify
+          AutoSize = False
+          BiDiMode = bdRightToLeft
+          Caption = #1578#1608#1590#1610#1581#1575#1578':'
+          Font.Charset = ARABIC_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'B Titr'
+          Font.Style = [fsBold]
+          ParentBiDiMode = False
+          ParentFont = False
+          StyleElements = []
+          ExplicitLeft = 534
+        end
+        object edDescription: TEdit
+          AlignWithMargins = True
+          Left = 0
+          Top = 5
+          Width = 546
+          Height = 31
+          Margins.Left = 0
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
+          Align = alClient
+          Alignment = taRightJustify
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -17
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          StyleName = 'Lavender Classico'
+          ExplicitWidth = 544
+        end
+      end
+      object Panel7: TPanel
+        Left = 0
+        Top = 451
+        Width = 677
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 6
+        StyleElements = []
+        ExplicitWidth = 675
+        object lblAuthorID: TLabel
+          AlignWithMargins = True
+          Left = 554
+          Top = 3
+          Width = 120
+          Height = 35
+          Align = alRight
+          Alignment = taRightJustify
+          AutoSize = False
+          BiDiMode = bdRightToLeft
+          Caption = #1588#1606#1575#1587#1607' '#1606#1608#1610#1587#1606#1583#1607':'
+          Font.Charset = ARABIC_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'B Titr'
+          Font.Style = [fsBold]
+          ParentBiDiMode = False
+          ParentFont = False
+          StyleElements = []
+          ExplicitLeft = 534
+        end
+        object edAuthorID: TEdit
+          AlignWithMargins = True
+          Left = 0
+          Top = 5
+          Width = 546
+          Height = 31
+          Margins.Left = 0
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
+          Align = alClient
+          Alignment = taRightJustify
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -17
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          NumbersOnly = True
+          ParentFont = False
+          TabOrder = 0
+          StyleName = 'Lavender Classico'
+          ExplicitWidth = 544
+        end
+      end
+      object Panel9: TPanel
+        Left = 0
+        Top = 328
+        Width = 677
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 7
+        StyleElements = []
+        ExplicitWidth = 675
+        object lblISBN: TLabel
+          AlignWithMargins = True
+          Left = 554
+          Top = 3
+          Width = 120
+          Height = 35
+          Align = alRight
+          Alignment = taRightJustify
+          AutoSize = False
+          BiDiMode = bdRightToLeft
+          Caption = #1588#1575#1576#1705':'
+          Font.Charset = ARABIC_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'B Titr'
+          Font.Style = [fsBold]
+          ParentBiDiMode = False
+          ParentFont = False
+          StyleElements = []
+          ExplicitLeft = 534
+        end
+        object edISBN: TEdit
+          AlignWithMargins = True
+          Left = 0
+          Top = 5
+          Width = 546
+          Height = 31
+          Margins.Left = 0
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
+          Align = alClient
+          Alignment = taRightJustify
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -17
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          StyleName = 'Lavender Classico'
+          ExplicitWidth = 544
+        end
+      end
+      object Panel10: TPanel
+        Left = 0
+        Top = 287
+        Width = 677
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 8
+        StyleElements = []
+        ExplicitWidth = 675
+        object lblPublishedYear: TLabel
+          AlignWithMargins = True
+          Left = 554
+          Top = 3
+          Width = 120
+          Height = 35
+          Align = alRight
+          Alignment = taRightJustify
+          AutoSize = False
+          BiDiMode = bdRightToLeft
+          Caption = #1587#1575#1604' '#1575#1606#1578#1588#1575#1585':'
+          Font.Charset = ARABIC_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'B Titr'
+          Font.Style = [fsBold]
+          ParentBiDiMode = False
+          ParentFont = False
+          StyleElements = []
+          ExplicitLeft = 534
+        end
+        object edPublishedYear: TEdit
+          AlignWithMargins = True
+          Left = 0
+          Top = 5
+          Width = 546
+          Height = 31
+          Margins.Left = 0
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
+          Align = alClient
+          Alignment = taRightJustify
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -17
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          NumbersOnly = True
+          ParentFont = False
+          TabOrder = 0
+          StyleName = 'Lavender Classico'
+          ExplicitWidth = 544
+        end
+      end
+      object Panel11: TPanel
+        Left = 0
+        Top = 246
+        Width = 677
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 9
+        StyleElements = []
+        ExplicitWidth = 675
+        object lblGenreExtra: TLabel
+          AlignWithMargins = True
+          Left = 554
+          Top = 3
+          Width = 120
+          Height = 35
+          Align = alRight
+          Alignment = taRightJustify
+          AutoSize = False
+          BiDiMode = bdRightToLeft
+          Caption = #1688#1575#1606#1585' '#1575#1590#1575#1601#1607':'
+          Font.Charset = ARABIC_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'B Titr'
+          Font.Style = [fsBold]
+          ParentBiDiMode = False
+          ParentFont = False
+          StyleElements = []
+          ExplicitLeft = 534
+        end
+        object edGenreExtra: TEdit
+          AlignWithMargins = True
+          Left = 0
+          Top = 5
+          Width = 546
+          Height = 31
+          Margins.Left = 0
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
+          Align = alClient
+          Alignment = taRightJustify
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -17
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          StyleName = 'Lavender Classico'
+          ExplicitWidth = 544
+        end
+      end
+      object Panel8: TPanel
+        Left = 0
+        Top = 410
+        Width = 677
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 10
+        StyleElements = []
+        ExplicitWidth = 675
+        object lblLanguageID: TLabel
+          AlignWithMargins = True
+          Left = 554
+          Top = 3
+          Width = 120
+          Height = 35
+          Align = alRight
+          Alignment = taRightJustify
+          AutoSize = False
+          BiDiMode = bdRightToLeft
+          Caption = #1588#1606#1575#1587#1607' '#1586#1576#1575#1606':'
+          Font.Charset = ARABIC_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'B Titr'
+          Font.Style = [fsBold]
+          ParentBiDiMode = False
+          ParentFont = False
+          StyleElements = []
+          ExplicitLeft = 534
+        end
+        object edLanguageID: TEdit
+          AlignWithMargins = True
+          Left = 0
+          Top = 5
+          Width = 546
+          Height = 31
+          Margins.Left = 0
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
+          Align = alClient
+          Alignment = taRightJustify
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -17
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          NumbersOnly = True
+          ParentFont = False
+          TabOrder = 0
+          StyleName = 'Lavender Classico'
+          ExplicitWidth = 544
+        end
+      end
+      object Panel12: TPanel
+        Left = 0
+        Top = 369
+        Width = 677
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 11
+        StyleElements = []
+        ExplicitWidth = 675
+        object lblPublisherID: TLabel
+          AlignWithMargins = True
+          Left = 554
+          Top = 3
+          Width = 120
+          Height = 35
+          Align = alRight
+          Alignment = taRightJustify
+          AutoSize = False
+          BiDiMode = bdRightToLeft
+          Caption = #1588#1606#1575#1587#1607' '#1606#1575#1588#1585':'
+          Font.Charset = ARABIC_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'B Titr'
+          Font.Style = [fsBold]
+          ParentBiDiMode = False
+          ParentFont = False
+          StyleElements = []
+          ExplicitLeft = 534
+        end
+        object edPublisherID: TEdit
+          AlignWithMargins = True
+          Left = 0
+          Top = 5
+          Width = 546
+          Height = 31
+          Margins.Left = 0
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
+          Align = alClient
+          Alignment = taRightJustify
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -17
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          NumbersOnly = True
+          ParentFont = False
+          TabOrder = 0
+          StyleName = 'Lavender Classico'
+          ExplicitWidth = 544
+        end
+      end
+      object btnSend: TBitBtn
+        Left = 0
+        Top = 738
+        Width = 677
+        Height = 70
+        Align = alBottom
+        Caption = #1575#1585#1587#1575#1604
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -27
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        Glyph.Data = {
+          36100000424D3610000000000000360000002800000020000000200000000100
+          2000000000000010000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          000000000000000000007541098B000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000000D77711FF7541098B0000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000000D77711FFD77711FF7541098B00000000000000000000
+          0000000000000B06010D57300767AD600ECE2515032C00000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000000D77711FFD77711FFD77711FF7541098B000000002A17
+          033181470A99CC7110F2D77711FFD77711FF6839087B00000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000000D77711FFD77711FFD77711FFD77711FFBA670FDDD777
+          11FFD77711FFD77711FFD77711FFD77711FFA95E0DC900000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000000D77711FFD77711FFD77711FFD77711FFD77711FFD777
+          11FFD77711FFD77711FFD77711FFD77711FFD67611FE160C021A000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          000000000000000000007541098BD77711FFD77711FFD77711FFD77711FFD777
+          11FFD77711FFD77711FFD77711FFD77711FFD77711FF57300767000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          000000000000000000000000000000000000000000002E190436190E021E0000
+          000000000000000000000201000292510CADD77711FFD77711FFD77711FFD777
+          11FFD77711FFD77711FFD77711FFD77711FFD77711FF99550CB5000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          000000000000000000000C07010F59310769AF610ECFD77711FFC66E10EB3B21
+          05460000000000000000000000000805010AAA5E0DCAD77711FFD77711FFD777
+          11FFD77711FFD77711FFD77711FFD77711FFD77711FFD17410F80A06010C0000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00002E19043684490A9CCE7210F4D77711FFD77711FFD77711FFD77711FFD576
+          11FD6A3A087D010100020000000000000000140B0218BD690FE0D77711FFD777
+          11FFD77711FFD77711FFD77711FFD77711FFD77711FFD77711FF462705540000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00004023054CBF6A0FE2D77711FFD77711FFD77711FFD77711FFD77711FFD777
+          11FFD77711FF98540CB50F08011200000000000000002515032CCB7010F0D777
+          11FFD77711FFD77711FFD77711FFD77711FFD77711FFD77711FF894C0BA20000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000B06010E7D450A95D67611FDD77711FFD77711FFD77711FFD777
+          11FFD77711FFD77711FFBB680FDE2A17033200000000000000003B210547D375
+          11FBD77711FFD77711FFD77711FFD77711FFD77711FFD77711FFC76E10ED0302
+          0004000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000321C043BB5640ED6D77711FFD77711FFD777
+          11FFD77711FFD77711FFD77711FFD07310F7542F076400000000000000005630
+          0766D77711FFD77711FFD77711FFD77711FFD77711FFD77711FFD77711FF361E
+          0440000000000000000000000000000000000000000000000000000000000000
+          000000000000000000000000000000000000060301076E3D0982D27411FAD777
+          11FFD77711FFD77711FFD77711FFD77711FFD77711FF85490B9D070401090000
+          00007541098BD77711FFD77711FFD77711FFD77711FFD77711FFD77711FF7842
+          0A8E000000000000000000000000000000000000000000000000000000000000
+          00000000000000000000000000000000000000000000000000002615032DA95E
+          0DC8D77711FFD77711FFD77711FFD77711FFD77711FFD77711FFAE600ECE1C10
+          02220201000292510CADD77711FFD77711FFD77711FFD77711FFD77711FFBA67
+          0FDD000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000201
+          00035F340770CE7210F4D77711FFD77711FFD77711FFD77711FFD77711FFC96F
+          10EE4023054B0805010AAA5E0DCAD77711FFD77711FFD77711FFD77711FFD777
+          11FF2515032C0000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000001B0F02209C560CB9D77711FFD77711FFD77711FFD77711FFD777
+          11FFD67611FE6F3D0984160C021BBD690FE0D77711FFD77711FFD77711FFD777
+          11FF6839087B0000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000000000000014F2C065EC76E10ECD77711FFD77711FFD777
+          11FFD77711FFD77711FF9D570CBA361E0441CB7010F0D77711FFD77711FFD777
+          11FFA95E0DC90000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          000000000000000000000000000000000000120A01168D4E0BA7D77711FFD777
+          11FFD77711FFD77711FFD77711FFBE690FE26A3B087DD37511FBD77711FFD777
+          11FFD67611FE160C021A00000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000000000000000000000000000000000000004023054CBF6A
+          0FE2D77711FFD77711FFD77711FFD77711FFD27411F9B0610ED0D77711FFD777
+          11FFD77711FF5730076700000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000B06
+          010E7D450A95D67611FDD77711FFD77711FFD77711FFD77711FFD77711FFD777
+          11FFD77711FF99550CB500000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          000000000000321C043BB5640ED6D77711FFD77711FFD77711FFD77711FFD777
+          11FFD77711FFD17410F80A06010C000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000000060301076E3D0982D27411FAD77711FFD77711FFD777
+          11FFD77711FFD77711FF46270554000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000002615032DA95E0DC8D77711FFD777
+          11FFD77711FFD77711FF894C0BA2000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000000000000000000000000000000020100035F340770CE72
+          10F4D77711FFD77711FFC76E10ED030200040000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000001B0F
+          02209C560CB9D77711FFD77711FF361E04400000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000014F2C065EC76E10EC78420A8E0000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000000120A0116703E09840000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          0000000000000000000000000000000000000000000000000000}
+        ParentFont = False
+        TabOrder = 12
+        StyleName = 'Cyan Dusk'
+        OnClick = btnSendClick
+        ExplicitTop = 735
+        ExplicitWidth = 675
+      end
+    end
+  end
+  object RESTClient1: TRESTClient
+    Params = <>
+    SynchronizedEvents = False
+    Left = 263
+    Top = 178
+  end
+  object RESTRequest1: TRESTRequest
+    AssignedValues = [rvConnectTimeout, rvReadTimeout]
+    Client = RESTClient1
+    Method = rmPOST
+    Params = <>
+    Response = RESTResponse1
+    SynchronizedEvents = False
+    Left = 145
+    Top = 224
+  end
+  object RESTResponse1: TRESTResponse
+    Left = 162
+    Top = 127
+  end
+  object OpenPictureDialog1: TOpenPictureDialog
+    Left = 351
+    Top = 412
+  end
+end

@@ -1,0 +1,138 @@
+﻿unit Service.User.GenreFavorit;
+
+interface
+
+uses
+  System.Generics.Collections,
+  System.SysUtils,
+  MVCFramework.ActiveRecord,
+  Model.User.GenreFavorit;
+
+Type
+    IGenreFavorit = interface
+        ['{4F16D7DF-2BCF-46AC-B08C-C41FBAA98500}']
+        Function GetGenreFavorit(UserID, GenreID: Int64): TGenreFavorit;
+        Function GetUserGenreFavorit(UserID: Int64): TObjectList<TGenreFavorit>;
+        Function GetGenre_GenreFavorit(GenreID: Integer): TObjectList<TGenreFavorit>;
+        Procedure AddOrUpdateGenreFavorit(const AGenreFavorit: TGenreFavorit);
+        Procedure DeleteGenreFavorit(UserID, GenreID: Int64);
+        Procedure ClearUserGenres(UserID: Int64);
+        Procedure AddUserGenres(UserID: Int64; GenreIDs: TArray<Integer>);
+    End;
+
+    TGenreFav = class(TInterfacedObject, IGenreFavorit)
+    Public
+        Function GetGenreFavorit(UserID, GenreID: Int64): TGenreFavorit;
+        Function GetUserGenreFavorit(userid: Int64): TObjectList<TGenreFavorit>;
+        Function GetGenre_GenreFavorit(GenreID: Integer): TObjectList<TGenreFavorit>;
+        Procedure AddOrUpdateGenreFavorit(const AGenreFavorit: TGenreFavorit);
+        Procedure DeleteGenreFavorit(UserID, GenreID: Int64);
+        Procedure ClearUserGenres(UserID: Int64);
+        Procedure AddUserGenres(UserID: Int64; GenreIDs: TArray<Integer>);
+    End;
+
+implementation
+
+{ TGenreFav }
+
+//______________________________________________________________________________
+Function TGenreFav.GetGenreFavorit(UserID, GenreID: Int64): TGenreFavorit;
+Var
+  Temp: TObjectList<TGenreFavorit>;
+Begin
+    Result := nil;
+    Temp := TMVCActiveRecord.Where<TGenreFavorit>('UserID = ? AND GenreID = ?', [UserID, GenreID]);
+    Try
+        If (Temp.Count > 0) then
+          Result := Temp.ExtractAt(0);
+    Finally
+      Temp.Free;
+    End;
+End;
+//______________________________________________________________________________
+Function TGenreFav.GetGenre_GenreFavorit(GenreID: Integer): TObjectList<TGenreFavorit>;
+Begin
+    Try
+        Result := TMVCActiveRecord.Where<TGenreFavorit>('GenreID = ?', [GenreID]);
+    Except
+        Result := nil;
+    End;
+End;
+//______________________________________________________________________________
+Function TGenreFav.GetUserGenreFavorit(userid: Int64): TObjectList<TGenreFavorit>;
+Begin
+    Try
+        Result := TMVCActiveRecord.Where<TGenreFavorit>('userid = ?', [userid]);
+    Except
+        Result := nil;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TGenreFav.AddOrUpdateGenreFavorit(const AGenreFavorit: TGenreFavorit);
+Var
+  Existing: TGenreFavorit;
+Begin
+    Existing := GetGenreFavorit(AGenreFavorit.UserID, AGenreFavorit.GenreID);
+    Try
+        if Assigned(Existing) then
+        Begin
+            AGenreFavorit.GenreFavoriteID := Existing.GenreFavoriteID;
+            AGenreFavorit.Update;
+        End
+        Else
+        Begin
+            AGenreFavorit.Insert;
+        End;
+    Finally
+        Existing.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TGenreFav.DeleteGenreFavorit(UserID, GenreID: Int64);
+Var
+  GenreToDelete: TGenreFavorit;
+Begin
+  GenreToDelete := GetGenreFavorit(UserID, GenreID);
+  Try
+    if Assigned(GenreToDelete) then
+      GenreToDelete.Delete;
+  Finally
+    GenreToDelete.Free;
+  End;
+End;
+//______________________________________________________________________________
+Procedure TGenreFav.ClearUserGenres(UserID: Int64);
+Var
+    List: TObjectList<TGenreFavorit>;
+    Item: TGenreFavorit;
+Begin
+    List := GetUserGenreFavorit(UserID);
+    Try
+        For Item in List do
+          Item.Delete;
+    Finally
+        List.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TGenreFav.AddUserGenres(UserID: Int64; GenreIDs: TArray<Integer>);
+Var
+  Genre: TGenreFavorit;
+  GenreID: Int64;
+Begin
+    for GenreID in GenreIDs do
+    Begin
+        Genre := TGenreFavorit.Create;
+        Try
+            Genre.UserID := UserID;
+            Genre.GenreID := GenreID;
+            AddOrUpdateGenreFavorit(Genre);
+        Finally
+            Genre.Free;
+        End;
+    End;
+End;
+//______________________________________________________________________________
+
+End.
+

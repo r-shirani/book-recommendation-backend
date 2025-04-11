@@ -27,6 +27,9 @@ Type
 
 Implementation
 
+uses
+  FireDAC.Comp.Client, UDMMain;
+
 { TUserService }
 
 //______________________________________________________________________________
@@ -49,7 +52,24 @@ Begin
 End;
 //______________________________________________________________________________
 Procedure TUserService.AddUser(Const AUser: TUser);
+Var
+    NextID: Int64;
+    Q: TFDQuery;
 Begin
+    If (AUser.UserID = 0) then
+    Begin
+        Q := TFDQuery.Create(nil);
+        Try
+            Q.Connection := DMMain.GetConnection;
+            Q.SQL.Text := 'SELECT NEXT VALUE FOR [User].[SeqUserID] AS NextID';
+            Q.Open;
+            NextID := Q.FieldByName('NextID').AsLargeInt;
+            AUser.UserID := NextID;
+        Finally
+            Q.Free;
+        End;
+    End;
+
     AUser.Insert;
 End;
 //______________________________________________________________________________

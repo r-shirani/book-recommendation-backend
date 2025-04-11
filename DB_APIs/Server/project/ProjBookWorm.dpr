@@ -48,7 +48,11 @@ uses
   Controller.Book.Image in '..\src\controller\Controller.Book.Image.pas',
   Service.Book.Image in '..\src\services\Service.Book.Image.pas',
   Model.User.Image in '..\src\model\Model.User.Image.pas',
-  Service.User.Image in '..\src\services\Service.User.Image.pas';
+  Service.User.Image in '..\src\services\Service.User.Image.pas',
+  Controller.Book.Genre in '..\src\controller\Controller.Book.Genre.pas',
+  Model.User.GenreFavorit in '..\src\model\Model.User.GenreFavorit.pas',
+  Service.User.GenreFavorit in '..\src\services\Service.User.GenreFavorit.pas',
+  Controller.User.GenreFavorite in '..\src\controller\Controller.User.GenreFavorite.pas';
 
 {$R *.res}
 

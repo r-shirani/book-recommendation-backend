@@ -1,0 +1,283 @@
+﻿unit UFormMain;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, 
+  Vcl.Graphics, Vcl.Imaging.jpeg, System.JSON, System.Generics.Collections,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons,
+  REST.Types, REST.Client, Data.Bind.Components, Data.Bind.ObjectScope,
+  Vcl.ExtDlgs;
+
+type
+  TFormMain = class(TForm)
+    pnlBase: TPanel;
+    pnlImage: TPanel;
+    imgBook: TImage;
+    pnlImagePath: TPanel;
+    sbtnChooseImage: TSpeedButton;
+    edPath: TEdit;
+    Splitter1: TSplitter;
+    pnlData: TPanel;
+    pnlTitle: TPanel;
+    edTitle: TEdit;
+    lblTitle: TLabel;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Panel4: TPanel;
+    Panel5: TPanel;
+    Panel6: TPanel;
+    edDescription: TEdit;
+    lblDescription: TLabel;
+    edGenreID3: TEdit;
+    lblGenreID2: TLabel;
+    lblGenreID1: TLabel;
+    lblGenreID3: TLabel;
+    edGenreID2: TEdit;
+    edGenreID1: TEdit;
+    lblPageCount: TLabel;
+    edPageCount: TEdit;
+    Panel7: TPanel;
+    Panel9: TPanel;
+    Panel10: TPanel;
+    Panel11: TPanel;
+    lblGenreExtra: TLabel;
+    edPublishedYear: TEdit;
+    edGenreExtra: TEdit;
+    lblPublishedYear: TLabel;
+    edISBN: TEdit;
+    lblISBN: TLabel;
+    Panel8: TPanel;
+    Panel12: TPanel;
+    lblPublisherID: TLabel;
+    lblLanguageID: TLabel;
+    lblAuthorID: TLabel;
+    edPublisherID: TEdit;
+    edLanguageID: TEdit;
+    edAuthorID: TEdit;
+    btnSend: TBitBtn;
+    RESTClient1: TRESTClient;
+    RESTRequest1: TRESTRequest;
+    RESTResponse1: TRESTResponse;
+    Shape1: TShape;
+    OpenPictureDialog1: TOpenPictureDialog;
+    procedure sbtnChooseImageClick(Sender: TObject);
+    procedure btnSendClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FormMain: TFormMain;
+
+implementation
+
+{$R *.dfm}
+
+uses
+    System.Net.HttpClient, System.Net.Mime, System.Net.UrlClient, Wait;
+
+//______________________________________________________________________________
+procedure TFormMain.btnSendClick(Sender: TObject);
+var
+    body: TJSONObject;
+    BookID: Int64;
+    JSONArray: TJSONArray;
+    ImagePath: string;
+begin
+    if edTitle.Text = '' then
+    bEGIN
+        ShowMessage('عنوان کتاب را وارد کنید!');
+        Exit;
+    end;
+
+    frmWait.Show;
+    body := TJSONObject.Create;
+    try
+        RESTRequest1.ClearBody;
+        RESTRequest1.Method := rmPOST;
+        RESTRequest1.Resource := 'book';
+        RESTClient1.BaseURL := 'http://127.0.0.1:9547/api/v1';
+
+        if edTitle.Text <> '' then
+          body.AddPair('title', edTitle.Text)
+        else
+          body.AddPair('title', TJSONNull.Create);
+
+        if edAuthorID.Text <> '' then
+          body.AddPair('authorid', TJSONNumber.Create(StrToInt(edAuthorID.Text)))
+        else
+          body.AddPair('authorid', TJSONNull.Create);
+
+        if edPublisherID.Text <> '' then
+          body.AddPair('publisherid', TJSONNumber.Create(StrToInt(edPublisherID.Text)))
+        else
+          body.AddPair('publisherid', TJSONNull.Create);
+
+
+        if edGenreID1.Text <> '' then
+          body.AddPair('genreid1', TJSONNumber.Create(StrToInt(edGenreID1.Text)))
+        else
+          body.AddPair('genreid1', TJSONNull.Create);
+
+        if edGenreID2.Text <> '' then
+          body.AddPair('genreid2', TJSONNumber.Create(StrToInt(edGenreID2.Text)))
+        else
+          body.AddPair('genreid2', TJSONNull.Create);
+
+        if edGenreID3.Text <> '' then
+          body.AddPair('genreid3', TJSONNumber.Create(StrToInt(edGenreID3.Text)))
+        else
+          body.AddPair('genreid3', TJSONNull.Create);
+
+        if edGenreExtra.Text <> '' then
+          body.AddPair('genreextra', edGenreExtra.Text)
+        else
+          body.AddPair('genreextra', TJSONNull.Create);
+
+
+        if edLanguageID.Text <> '' then
+          body.AddPair('languageid', edLanguageID.Text)
+        else
+          body.AddPair('languageid', TJSONNull.Create);
+
+        body.AddPair('description', edDescription.Text);
+        body.AddPair('publishedyear', TJSONNumber.Create(StrToIntDef(edPublishedYear.Text, 0)));
+        body.AddPair('pagecount', TJSONNumber.Create(StrToIntDef(edPageCount.Text, 0)));
+        body.AddPair('isbn', edISBN.Text);
+
+
+        RESTRequest1.AddBody(body.ToString, ContentTypeFromString('application/json'));
+        try
+            RESTRequest1.Execute;
+
+            if (RESTResponse1.StatusCode <> 201) then
+            begin
+                ShowMessage('خطا در ارسال داده. کد وضعیت: ' +
+                  IntToStr(RESTResponse1.StatusCode) + sLineBreak +
+                  'پیام خطا: ' + RESTResponse1.Content);
+                frmWait.Close;
+                Exit;
+            end;
+        except
+            on E: Exception do
+            begin
+                ShowMessage('خطا در ارسال درخواست: ' + E.Message);
+                frmWait.Close;
+                Exit;
+            end;
+        end;
+    finally
+        body.Free;
+    end;
+
+    if (imgBook.Picture.Graphic = nil) then
+    Begin
+        ShowMessage('کتاب بدون عکس افزوده شد !');
+        frmWait.Close;
+        Exit;
+    End;
+
+    {$REGION 'Get BookID'}
+    RESTRequest1.ClearBody;
+    RESTRequest1.Method := rmGet;
+    RESTRequest1.Resource := 'search';
+    RESTClient1.BaseURL := 'http://127.0.0.1:9547/api/v1/book';
+
+    RESTRequest1.AddParameter('searchterm', edTitle.Text);
+    RESTRequest1.AddParameter('pageNum', '1');
+    RESTRequest1.AddParameter('count', '1');
+
+    try
+        RESTRequest1.Execute;
+
+        // بررسی پاسخ سرور
+        if (RESTResponse1.StatusCode = 200) then
+        begin
+            JSONArray := TJSONObject.ParseJSONValue(RESTResponse1.Content) as TJSONArray;
+            try
+                if (JSONArray.Count > 0) then
+                begin
+                    BookID := (TJSONObject(JSONArray.Items[0]).GetValue('bookid') as TJSONNumber).AsInt64;
+                    ImagePath := OpenPictureDialog1.FileName;
+
+                    RESTRequest1.ClearBody;
+                    RESTRequest1.Params.Clear;
+                    RESTRequest1.Method := rmPOST;
+                    RESTRequest1.Resource := 'images';
+                    RESTClient1.BaseURL := 'http://127.0.0.1:9547/api/v1';
+
+                    // اضافه کردن فایل
+                    RESTRequest1.Params.AddItem('file', ImagePath, pkFile, [poDoNotEncode]);
+
+                    // اضافه کردن bookID
+                    RESTRequest1.Params.AddItem('bookID', BookID.ToString, pkGETorPOST);
+
+                    try
+                        RESTRequest1.Execute;
+
+                        if RESTResponse1.StatusCode = 201 then
+                        begin
+                          ShowMessage('کتاب و عکست اضافه شد :)');
+                          frmWait.Close;
+                        end
+                        else
+                        begin
+                          ShowMessage('خطا در ارسال تصویر. کد وضعیت: ' +
+                            IntToStr(RESTResponse1.StatusCode) + sLineBreak +
+                            'پیام خطا: ' + RESTResponse1.Content);
+                            frmWait.Close;
+                        end;
+                    except
+                        on E: Exception do
+                        begin
+                          ShowMessage('خطا در ارسال درخواست تصویر: ' + E.Message);
+                          frmWait.Close;
+                        end;
+                    end;
+                end
+                else
+                begin
+                    ShowMessage('کتابی با این عنوان یافت نشد.');
+                    frmWait.Close;
+                end;
+            finally
+              JSONArray.Free;
+            end;
+        end
+        else
+        begin
+            ShowMessage('نمیدونم چی شد!');
+            frmWait.Close;
+        end;
+    except
+        on E: Exception do
+        begin
+            ShowMessage('خطا در ارسال درخواست: ' + E.Message);
+            frmWait.Close;
+            Exit;
+        end;
+    end;
+    {$ENDREGION}
+end;
+//______________________________________________________________________________
+Procedure TFormMain.sbtnChooseImageClick(Sender: TObject);
+begin
+    Try
+        If (OpenPictureDialog1.Execute) then
+        Begin
+            imgBook.Picture.LoadFromFile(OpenPictureDialog1.FileName);
+            edPath.Text := OpenPictureDialog1.FileName;
+        End;  
+    Except
+        On E: Exception do
+        Begin
+            ShowMessage(E.Message);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+
+End.

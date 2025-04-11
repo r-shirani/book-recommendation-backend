@@ -78,7 +78,7 @@ Var
     Authors: TObjectList<TAuthor>;
 Begin
     Authors := FAuthorService.GetAllAuthors;
-    If Authors.Count > 0 Then
+    If Assigned(Authors) Then
         Render(Authors)
     Else
         Render(HTTP_STATUS.NoContent);
@@ -122,12 +122,8 @@ Var
     Author: TAuthor;
 Begin
     Author := Context.Request.BodyAs<TAuthor>;
-    Try
-        FAuthorService.AddAuthor(Author);
-        Render(HTTP_STATUS.Created, 'Author added successfully');
-    Finally
-        Author.Free;
-    End;
+    FAuthorService.AddAuthor(Author);
+    Render(HTTP_STATUS.Created, 'Author added successfully');
 End;
 //______________________________________________________________________________
 Procedure TAuthorController.UpdateAuthor;
@@ -135,12 +131,8 @@ Var
     Author: TAuthor;
 Begin
     Author := Context.Request.BodyAs<TAuthor>;
-    Try
-        FAuthorService.UpdateAuthor(Author);
-        Render(HTTP_STATUS.OK, 'Author updated successfully');
-    Finally
-        Author.Free;
-    End;
+    FAuthorService.UpdateAuthor(Author);
+    Render(HTTP_STATUS.OK, 'Author updated successfully');
 End;
 //______________________________________________________________________________
 Procedure TAuthorController.DeleteAuthor(Const id: Int64);

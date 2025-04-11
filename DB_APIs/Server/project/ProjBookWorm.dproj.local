@@ -4,9 +4,9 @@
     <Transaction>2025/01/31 20:40:04.000.203,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
     <Transaction>2025/02/05 18:33:28.000.207,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\IWTestCase1.pas</Transaction>
     <Transaction>2025/02/08 22:58:10.000.478,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
-    <Transaction>2025/03/11 09:02:44.000.882,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit3.pas</Transaction>
-    <Transaction>2025/03/11 09:02:44.000.739,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>2025/03/11 09:02:44.000.812,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2025/03/11 09:02:44.000.739,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2025/03/11 09:02:44.000.882,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit3.pas</Transaction>
     <Transaction>2025/03/11 09:02:45.000.104,=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit4.pas</Transaction>
     <Transaction>2025/03/11 09:03:26.000.218,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\services\WebModule.Main.dfm=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit4.dfm</Transaction>
     <Transaction>2025/03/11 09:03:26.000.218,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\services\WebModule.Main.pas=C:\Users\user1\Documents\Embarcadero\Studio\Projects\Unit4.pas</Transaction>
@@ -26,8 +26,8 @@
     <Transaction>2025/03/11 23:29:29.000.252,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas</Transaction>
     <Transaction>2025/03/11 23:30:13.000.688,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\DMMain.dfm=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.dfm</Transaction>
     <Transaction>2025/03/11 23:30:13.000.688,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\DMMain.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas</Transaction>
-    <Transaction>2025/03/11 23:30:34.000.383,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\UDMMain.dfm=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\DMMain.dfm</Transaction>
     <Transaction>2025/03/11 23:30:34.000.383,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\UDMMain.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\DMMain.pas</Transaction>
+    <Transaction>2025/03/11 23:30:34.000.383,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\UDMMain.dfm=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\dataModule\DMMain.dfm</Transaction>
     <Transaction>2025/03/18 22:40:55.000.925,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\ProjBookWorm.todo</Transaction>
     <Transaction>2025/03/20 15:44:15.000.122,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas</Transaction>
     <Transaction>2025/03/20 15:44:54.000.528,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\model\Model.User.Security.pas</Transaction>
@@ -101,6 +101,15 @@
     <Transaction>2025/04/06 14:39:42.000.928,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\model\Model.User.Image.pas</Transaction>
     <Transaction>2025/04/06 14:45:06.000.391,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas</Transaction>
     <Transaction>2025/04/06 14:45:24.000.800,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\services\Service.User.Image.pas</Transaction>
+    <Transaction>2025/04/07 23:57:41.000.803,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas</Transaction>
+    <Transaction>2025/04/07 23:57:54.000.366,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\controller\Controller.Book.Genre.pas</Transaction>
+    <Transaction>2025/04/08 13:17:34.000.438,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas</Transaction>
+    <Transaction>2025/04/08 13:18:17.000.702,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\model\User.GenreFavorit.pas</Transaction>
+    <Transaction>2025/04/08 13:18:31.000.138,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\model\User.GenreFavorit.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\model\Model.User.GenreFavorit.pas</Transaction>
+    <Transaction>2025/04/08 13:24:46.000.838,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas</Transaction>
+    <Transaction>2025/04/08 13:25:42.000.207,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\services\Service.User.GenreFavorit.pas</Transaction>
+    <Transaction>2025/04/08 22:44:05.000.180,=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas</Transaction>
+    <Transaction>2025/04/08 22:44:34.000.904,H:\BookWorm\book-recommendation-backend\DB_APIs\Server\project\Unit1.pas=H:\BookWorm\book-recommendation-backend\DB_APIs\Server\src\controller\Controller.User.GenreFavorite.pas</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="..\..\Server"/>
@@ -108,13 +117,15 @@
     <File Path="..\src\controller"/>
     <File Path="..\src\controller\Controller.Book.Author.pas"/>
     <File Path="..\src\controller\Controller.Book.Comment.pas"/>
+    <File Path="..\src\controller\Controller.Book.Genre.pas"/>
     <File Path="..\src\controller\Controller.Book.Hashtag.pas"/>
+    <File Path="..\src\controller\Controller.Book.Image.pas"/>
     <File Path="..\src\controller\Controller.Book.Language.pas"/>
     <File Path="..\src\controller\Controller.Book.pas"/>
     <File Path="..\src\controller\Controller.Book.Rate.pas"/>
     <File Path="..\src\controller\Controller.User.pas"/>
     <File Path="..\src\controller\Controller.UserSecurity.pas"/>
-    <File Path="..\src\controller\Controller.Book.Image.pas"/>
+    <File Path="..\src\controller\Controller.User.GenreFavorite.pas"/>
     <File Path="..\src\dataModule"/>
     <File Path="..\src\dataModule\UDMMain.pas"/>
     <File Path="..\src\dataModule\UDMMain.dfm"/>
@@ -123,26 +134,28 @@
     <File Path="..\src\model\Model.Book.Comment.pas"/>
     <File Path="..\src\model\Model.Book.Genre.pas"/>
     <File Path="..\src\model\Model.Book.Hashtag.pas"/>
+    <File Path="..\src\model\Model.Book.Image.pas"/>
     <File Path="..\src\model\Model.Book.Language.pas"/>
     <File Path="..\src\model\Model.Book.pas"/>
     <File Path="..\src\model\Model.Book.Rate.pas"/>
+    <File Path="..\src\model\Model.User.GenreFavorit.pas"/>
+    <File Path="..\src\model\Model.User.Image.pas"/>
     <File Path="..\src\model\Model.User.pas"/>
     <File Path="..\src\model\Model.User.Security.pas"/>
-    <File Path="..\src\model\Model.Book.Image.pas"/>
-    <File Path="..\src\model\Model.User.Image.pas"/>
     <File Path="..\src\services"/>
     <File Path="..\src\services\Service.Book.Author.pas"/>
     <File Path="..\src\services\Service.Book.Comment.pas"/>
-    <File Path="..\src\services\Service.Book.Genre.pas"/>
     <File Path="..\src\services\Service.Book.Hashtag.pas"/>
+    <File Path="..\src\services\Service.Book.Image.pas"/>
     <File Path="..\src\services\Service.Book.Language.pas"/>
     <File Path="..\src\services\Service.Book.pas"/>
     <File Path="..\src\services\Service.Book.Rate.pas"/>
+    <File Path="..\src\services\Service.Book.Genre.pas"/>
+    <File Path="..\src\services\Service.User.GenreFavorit.pas"/>
+    <File Path="..\src\services\Service.User.Image.pas"/>
     <File Path="..\src\services\Service.User.pas"/>
-    <File Path="..\src\services\Service.Book.Image.pas"/>
     <File Path="..\src\services\Service.UserSecurity.pas"/>
     <File Path="..\src\services\WebModule.Main.pas"/>
     <File Path="..\src\services\WebModule.Main.dfm"/>
-    <File Path="..\src\services\Service.User.Image.pas"/>
   </ProjectSortOrder>
 </BorlandProject>

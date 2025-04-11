@@ -29,10 +29,10 @@ Type
         fLockOutEnd: NullableTDate;
 
         [MVCTableField('IsEmailVerified')]
-        fIsEmailVerified: Boolean;
+        fIsEmailVerified: NullableBoolean;
 
         [MVCTableField('IsPhoneVerified')]
-        fIsPhoneVerified: Boolean;
+        fIsPhoneVerified: NullableBoolean;
 
         [MVCTableField('FailedLoginAttempts')]
         fFailedLoginAttempts: Byte;
@@ -58,8 +58,8 @@ Type
         Property LastLogin: TDateTime read fLastLogin write fLastLogin;
         Property Status: Byte read fStatus write fStatus;
         Property LockOutEnd: NullableTDate read fLockOutEnd write fLockOutEnd;
-        Property IsEmailVerified: Boolean read fIsEmailVerified write fIsEmailVerified;
-        Property IsPhoneVerified: Boolean read fIsPhoneVerified write fIsPhoneVerified;
+        Property IsEmailVerified: NullableBoolean read fIsEmailVerified write fIsEmailVerified;
+        Property IsPhoneVerified: NullableBoolean read fIsPhoneVerified write fIsPhoneVerified;
         Property FailedLoginAttempts: Byte read fFailedLoginAttempts write fFailedLoginAttempts;
         Property CreateDate: TDateTime read fCreateDate write fCreateDate;
         Property ClientEmailID: NullableString read fClientEmailID write fClientEmailID;

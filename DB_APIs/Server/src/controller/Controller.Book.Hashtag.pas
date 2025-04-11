@@ -70,14 +70,10 @@ Var
     Hashtags: TObjectList<THashtag>;
 Begin
     Hashtags := FHashtagService.GetHashtagsByCollectionID(collectionID);
-    Try
-        If Hashtags.Count > 0 Then
-            Render(Hashtags)
-        Else
-            Render(HTTP_STATUS.NoContent);
-    Finally
-        Hashtags.Free;
-    End;
+    If Assigned(Hashtags) Then
+        Render(Hashtags)
+    Else
+        Render(HTTP_STATUS.NoContent);
 End;
 //______________________________________________________________________________
 Procedure THashtagController.SearchHashtags(Const title: String);
@@ -85,14 +81,10 @@ Var
     Hashtags: TObjectList<THashtag>;
 Begin
     Hashtags := FHashtagService.GetHashtagsByTitle(title);
-    Try
-        If Hashtags.Count > 0 Then
-            Render(Hashtags)
-        Else
-            Render(HTTP_STATUS.NoContent);
-    Finally
-        Hashtags.Free;
-    End;
+    If Assigned(Hashtags) Then
+        Render(Hashtags)
+    Else
+        Render(HTTP_STATUS.NoContent)
 End;
 //______________________________________________________________________________
 Procedure THashtagController.GetPopularHashtags;
@@ -100,14 +92,10 @@ Var
     Hashtags: TObjectList<THashtag>;
 Begin
     Hashtags := FHashtagService.GetPopularHashtags;
-    Try
-        If Hashtags.Count > 0 Then
-            Render(Hashtags)
-        Else
-            Render(HTTP_STATUS.NoContent);
-    Finally
-        Hashtags.Free;
-    End;
+    If Assigned(Hashtags) Then
+        Render(Hashtags)
+    Else
+        Render(HTTP_STATUS.NoContent);
 End;
 //______________________________________________________________________________
 Procedure THashtagController.AddHashtag;

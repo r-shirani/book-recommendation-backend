@@ -49,7 +49,7 @@ uses
   //Controller:
   Controller.Book.Author, Controller.Book.Comment, Controller.Book.Rate,
   Controller.Book.Hashtag, Controller.Book.Language, Controller.Book,
-  Controller.Book.Image;
+  Controller.Book.Image, Controller.Book.Genre, Controller.User.GenreFavorite;
 
 
 Procedure TBookWorm.WebModuleCreate(Sender: TObject);
@@ -92,6 +92,8 @@ begin
     fMVC.AddController(TLanguageController);
     fMVC.AddController(TRateController);
     fMVC.AddController(TImageController);
+    fMVC.AddController(TGenreController);
+    fMVC.AddController(TUserGenreFavoritController);
 
     // Middleware
     fMVC.AddMiddleware(TMVCCompressionMiddleware.Create);

@@ -11,20 +11,20 @@ Uses
 Type
     IGenreService = Interface
         ['{3A7B8D9E-0F12-4A3C-9E1D-2F6C5E8A1B4D}']
-        Function GetGenreByID(Const GenreID: SmallInt): TGenre;
+        Function GetGenreByID(Const GenreID: Integer): TGenre;
         Function GetAllGenres: TObjectList<TGenre>;
         Procedure AddGenre(Const AGenre: TGenre);
         Procedure UpdateGenre(Const AGenre: TGenre);
-        Procedure DeleteGenre(Const GenreID: SmallInt);
+        Procedure DeleteGenre(Const GenreID: Integer);
     End;
 
     TGenreService = Class(TInterfacedObject, IGenreService)
     Public
-        Function GetGenreByID(Const GenreID: SmallInt): TGenre;
+        Function GetGenreByID(Const GenreID: Integer): TGenre;
         Function GetAllGenres: TObjectList<TGenre>;
         Procedure AddGenre(Const AGenre: TGenre);
         Procedure UpdateGenre(Const AGenre: TGenre);
-        Procedure DeleteGenre(Const GenreID: SmallInt);
+        Procedure DeleteGenre(Const GenreID: Integer);
     End;
 
 Implementation
@@ -32,37 +32,20 @@ Implementation
 { TGenreService }
 
 //______________________________________________________________________________
-Function TGenreService.GetGenreByID(Const GenreID: SmallInt): TGenre;
+Function TGenreService.GetGenreByID(Const GenreID: Integer): TGenre;
 Begin
-    Try
-        Result := TMVCActiveRecord.GetByPK<TGenre>(GenreID);
-    Except
-        On E: Exception Do
-        Begin
-            // Log the error if needed
-            Result := NIL;
-        End;
-    End;
+    Result := TMVCActiveRecord.GetByPK<TGenre>(GenreID);
 End;
 //______________________________________________________________________________
 Function TGenreService.GetAllGenres: TObjectList<TGenre>;
 Begin
-    Try
-        Result := TMVCActiveRecord.All<TGenre>;
-    Except
-        On E: Exception Do
-        Begin
-            // Log the error if needed
-            Result := NIL;
-        End;
-    End;
+    Result := TMVCActiveRecord.All<TGenre>;
 End;
 //______________________________________________________________________________
 Procedure TGenreService.AddGenre(Const AGenre: TGenre);
 Begin
     If AGenre.Title.Trim = '' Then
         Raise Exception.Create('Genre title cannot be empty');
-
     AGenre.Insert;
 End;
 //______________________________________________________________________________
@@ -75,19 +58,17 @@ Begin
         If Not Assigned(OldGenre) Then
             Raise Exception.Create('Genre Not Found');
 
-        // Update only fields that have new values
-        If AGenre.Title <> '' Then OldGenre.Title := AGenre.Title;
-        If AGenre.SuitableAge > 0 Then OldGenre.SuitableAge := AGenre.SuitableAge;
-        If Not AGenre.SDescription.IsNull Then OldGenre.SDescription := AGenre.SDescription;
+        If (AGenre.Title <> '') Then OldGenre.Title := AGenre.Title;
+        If (Not AGenre.SuitableAge.IsNull) Then OldGenre.SuitableAge := AGenre.SuitableAge;
+        If (Not AGenre.SDescription.IsNull) Then OldGenre.SDescription := AGenre.SDescription;
 
-        // Save changes
         OldGenre.Update;
     Finally
         OldGenre.Free;
     End;
 End;
 //______________________________________________________________________________
-Procedure TGenreService.DeleteGenre(Const GenreID: SmallInt);
+Procedure TGenreService.DeleteGenre(Const GenreID: Integer);
 Var
     GenreToDelete: TGenre;
 Begin

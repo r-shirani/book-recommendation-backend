@@ -24,11 +24,11 @@ Type
       [MVCTableField('PublisherID')]
       FPublisherID: NullableInt32;
       [MVCTableField('GenreID1')]
-      FGenreID1: NullableInt16;
+      FGenreID1: NullableInt32;
       [MVCTableField('GenreID2')]
-      FGenreID2: NullableInt16;
+      FGenreID2: NullableInt32;
       [MVCTableField('GenreID3')]
-      FGenreID3: NullableInt16;
+      FGenreID3: NullableInt32;
 
       [MVCTableField('GenreExtra')]
       FGenreExtra: NullableString;
@@ -61,9 +61,9 @@ Type
       Property Title: string read FTitle write FTitle;
       Property AuthorID: NullableInt32 read FAuthorID write FAuthorID;
       Property PublisherID: NullableInt32 read FPublisherID write FPublisherID;
-      Property GenreID1: NullableInt16 read FGenreID1 write FGenreID1;
-      Property GenreID2: NullableInt16 read FGenreID2 write FGenreID2;
-      Property GenreID3: NullableInt16 read FGenreID3 write FGenreID3;
+      Property GenreID1: NullableInt32 read FGenreID1 write FGenreID1;
+      Property GenreID2: NullableInt32 read FGenreID2 write FGenreID2;
+      Property GenreID3: NullableInt32 read FGenreID3 write FGenreID3;
       Property GenreExtra: NullableString read FGenreExtra write FGenreExtra;
       Property Description: NullableString read FDescription write FDescription;
       Property PublishedYear: NullableInt16 read FPublishedYear write FPublishedYear;

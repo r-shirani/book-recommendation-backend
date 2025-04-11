@@ -146,7 +146,10 @@ Begin
             FUserService.AddUser(NewUser);
             Render(HTTP_STATUS.Created, 'User_Added');
         Except
-            Render(HTTP_STATUS.BadRequest, 'Error');
+            On E: Exception do
+            Begin
+                Render(HTTP_STATUS.BadRequest, E.Message);
+            End;
         End;
     Finally
         NewUser.Free;
@@ -316,8 +319,11 @@ Begin
         Try           
             FDStoredProc.Open;
         Except
-            Raise EMVCException.Create(400, 'Wrong Params');
-            Exit;
+            On E: Exception Do
+            Begin
+                Render(HTTP_STATUS.OK, E.Message );
+                Exit;
+            End;
         End;
         
         Render(FDStoredProc.AsJSONArray);
