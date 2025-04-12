@@ -15,8 +15,7 @@ exports.searchBook = async (req , res)=>{
             bookData
         })
         console.log(bookData);
-    }
-    else{
+    } else {
         res.status(500).json({ message: "server error" });
     }
 }
@@ -58,23 +57,18 @@ exports.getBookImage = async (req , res) =>{
 exports.searchBook_with_image = async (req, res) => {
     const { pagenum, searchterm } = req.body;
     const count = 10;
-
     try {
         const bookData = await searchBook_controller(searchterm, pagenum, count);
-
         if (bookData === -1) {
             return res.status(500).json({ message: "server error" });
         }
-
         const booksWithImages = await Promise.all(
             bookData.map(async (book) => {
                 try {
                     const imageData = await bookImage(book.bookid);
-
                     // Convert stream to base64
                     const buffer = await streamToBuffer(imageData.stream);
                     const base64Image = `data:${imageData.contentType};base64,${buffer.toString('base64')}`;
-
                     return {
                         ...book,
                         image: base64Image,
@@ -88,11 +82,9 @@ exports.searchBook_with_image = async (req, res) => {
                 }
             })
         );
-
         res.status(200).json({
             bookData: booksWithImages
         });
-
     } catch (error) {
         console.error("Error in searchBook:", error);
         res.status(500).json({ message: "server error" });
