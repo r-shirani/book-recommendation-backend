@@ -7,7 +7,6 @@ const api = axios.create({
     },
 });
 
-
 const postComment_controller = async (userid_input,bookid_input,text_input)=>{
     try {
         const response = await api.post("/comment" , {
@@ -41,17 +40,7 @@ const postComment_controller = async (userid_input,bookid_input,text_input)=>{
         console.log("SQL server error - (post-comment)");
         return -1
     }
-
 }
-
-
-
-
-
-
-
-
-
 
 module.exports={
     postComment_controller
