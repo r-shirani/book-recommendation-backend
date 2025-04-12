@@ -195,24 +195,21 @@ const updatePassword_controller = async(userIdInput ,newPasswordInput) =>{
       const response = await newApi.put("/userSecurity", {
           userid : userIdInput,
           passwordhash : newPasswordInput,
-
       });
 
       if (!response || response.length===0){
           console.log("server Error(SQL-login)");
           return -1;
       }
+      
       const pure = response.data;
       if(pure === "User_Security_Updated"){
         console.log("User_Security_Updated");
           return 1;
-      }
-      else{
-        console.log("somethiing went wrong");
+      } else {
+          console.log("somethiing went wrong");
           return 0;
-      }
-      
-      
+      }    
   } catch (error) {
       console.log("Error:", error);
   }
