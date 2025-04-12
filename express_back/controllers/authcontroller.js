@@ -1,4 +1,3 @@
-//const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
@@ -14,7 +13,6 @@ exports.register = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
     const { name, email, password } = req.body;
-
     // generate the 6 digit verification code
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
     //hashing password
@@ -30,16 +28,13 @@ exports.register = async (req, res) => {
       //   DeleteUser(email);
       //   return res.status(400).json({ message: "please register again" });
       // }
-      
       return res.status(400).json({ message: "this user has already registered!" });
     }
     console.log(`new user data: ${email}  ${verificationCode} `);
-
     // send the verification code
     await sendVerificationCode(email, verificationCode)
     .then(() => res.send('Verification code sent to email.'))
     .catch((err) => res.status(500).send('error in sending the verification email!'));
-
   } catch (error) {
     console.log(error);
     console.log(req.body);
@@ -98,15 +93,11 @@ exports.verifyCode = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     const userID = req.user.id; //"Data retrieved from middleware"
-
     let users = await getUserByID(userID);
-
     if (!users) {
       return res.status(404).json({ message: "User not found" });
     }
-
     const user = users[0];
-    
     res.json({
       message: "User profile",
       user: {
@@ -143,23 +134,18 @@ exports.newPassword = async(req , res)=>{
         res.status(500).json({ message: "SQL server error" })
       }
       else if(response === 1){
-        ///////////////////////
         let userAfters = await getUserByID(userid);
         const userAfter = userAfters[0];
-
         console.log('Old Hash:', user.passwordHash);
         console.log('New Hash:', userAfter.passwordHash);
-        //////////////////////
         res.status(200).json({ message: "User password updated successfully" })
       }
       else if(response === 0){
         res.status(200).json({ message: "User not found" })
       }
-    }
-    else{
+    } else {
       res.status(404).json({ message: "wrong password"})
     }
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "server error" });
@@ -189,15 +175,11 @@ exports.updateProfile = async (req, res) => {
 exports.googleLogin = async (req , res)=>{
   try {
     const { token } = req.body;
-
     const googleUser = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-
     const { id, name, email, picture } = googleUser.data;
-
     let user = await User.findOne({ googleId: id });
-
     if (!user) {
       user = new User({
         googleId: id,
@@ -207,9 +189,7 @@ exports.googleLogin = async (req , res)=>{
       });
       await user.save();
     }
-
     const authToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
     res.json({ token: authToken, user });
   } catch (error) {
     console.error(error);
