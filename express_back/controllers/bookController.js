@@ -6,19 +6,29 @@ const { getUserByID } = require("../SQL/SQL-user-controller");
 const { bookImage, searchBook_controller } = require("../SQL/SQL-book-controller");
 const { Readable } = require('stream');
 
-exports.searchBook = async (req , res)=>{
-    const {pagenum , searchterm} = req.body;
-    const count =10;
-    const bookData = await searchBook_controller(searchterm,pagenum,count);
-    if(bookData != -1){
+exports.searchBook = async (req, res) => {
+    const { pagenum, searchterm } = req.body;
+    const count = 10;
+    const baseUrl = "http://185.255.90.36:9547/api/v1/images/file/";
+
+    const bookData = await searchBook_controller(searchterm, pagenum, count);
+
+    if (bookData !== -1) {
+        const updatedBookData = bookData.map(book => {
+            return {
+                ...book,
+                imageurl: book.imageguid ? baseUrl + book.imageguid : ""
+            };
+        });
+        //console.log(updatedBookData);
         res.status(200).json({
-            bookData
-        })
-        console.log(bookData);
+            updatedBookData
+        });
+       
     } else {
         res.status(500).json({ message: "server error" });
     }
-}
+};
 
 exports.popularBooks = async (req , res)=>{
     try{
