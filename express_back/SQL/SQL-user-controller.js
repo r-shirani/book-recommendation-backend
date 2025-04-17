@@ -215,6 +215,85 @@ const updatePassword_controller = async(userIdInput ,newPasswordInput) =>{
   }
 };
 
+
+
+
+
+
+
+
+
+
+const get_user_genres_controller = async(useridInput) => {
+  try {
+      const response = await newApi.get("/user/genres", {
+          params: { userid: useridInput },
+        });
+    
+      
+      const genreIds = response.data.list
+      .filter(item => item !== null) 
+      .map(item => item.genreid);    
+      return genreIds;
+
+
+  } catch (error) {
+    console.log("Error:", error);
+    return [];
+  }
+}
+
+
+
+
+const get_user_genres_name_controller = async (genreids) => {
+  try {
+    const requests = genreids.map(id => 
+      newApi.get("/genres", {
+        params: { genreid: id }
+      })
+    );
+
+    const responses = await Promise.all(requests);
+
+    const titles = responses.map(res => res.data.title);
+
+    return titles;
+
+  } catch (error) {
+    console.log("Error:", error);
+    return [];
+  }
+};
+
+
+
+
+
+const update_genres = async (useridInput, genresID) => {
+  try {
+   
+    const response = await newApi.put("/user/genres", {
+      userid: useridInput,
+      genres: genresID
+    });
+
+    console.log("response from sql server (updating genres):", response.data + "   "+useridInput);
+
+    if (response.data === "Updated") {
+      return 1;
+    } else {
+      return 0;
+    }
+
+  } catch (error) {
+    console.log("Error:", error);
+    return -1;
+  }
+};
+
+
+
 module.exports={
   registerUSer_controller,
   loginUser_controller,
@@ -224,5 +303,8 @@ module.exports={
   EmailVerificationPut,
   getUserByID,
   updatePassword_controller,
-  updateProfile_controller
+  updateProfile_controller,
+  get_user_genres_controller,
+  get_user_genres_name_controller,
+  update_genres
 };
