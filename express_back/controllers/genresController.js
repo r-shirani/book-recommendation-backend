@@ -5,6 +5,7 @@ const sendVerificationCode = require('../Auth/mailer');
 const { get_user_genres_controller, get_user_genres_name_controller, update_genres } = require("../SQL/SQL-user-controller");
 const { loginUser_controller } = require("../SQL/SQL-user-controller");
 const { getUserByID } = require("../SQL/SQL-user-controller");
+const { getAllGenres, getAllGenres_controller } = require("../SQL/SQL-genre-controller");
 
 
 
@@ -52,4 +53,18 @@ exports.updateUserGenres = async(req ,res)=>{
         console.error(error);
         res.status(500).json({ message: "Server error" });
     }
+}
+
+
+
+exports.getAllGenres = async(req , res)=>{
+    try {
+        const response = await getAllGenres_controller();
+        res.json(response);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+    
 }
