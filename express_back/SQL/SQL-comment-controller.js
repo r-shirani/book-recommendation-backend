@@ -42,6 +42,30 @@ const postComment_controller = async (userid_input,bookid_input,text_input)=>{
     }
 }
 
+
+
+const getAllComment_book = async(bookid_input)=>{
+    try {
+      
+      const response = await api.get("/comment/book",{
+        params: {bookid : bookid_input}
+      });
+      if (!response || response.length===0){
+        console.log("server Error(SQL-login)");
+        return -1;
+      }   
+      return response.data.list;
+  
+  
+    } catch (error) {
+      console.log("Error:", error);
+      return -1;
+    }
+  }
+
+
+
 module.exports={
-    postComment_controller
+    postComment_controller,
+    getAllComment_book
 };

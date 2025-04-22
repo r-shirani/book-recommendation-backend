@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 const { getUserByID } = require("../SQL/SQL-user-controller");
-const { postComment_controller } = require("../SQL/SQL-comment-controller");
+const { postComment_controller, getAllComment_book } = require("../SQL/SQL-comment-controller");
 
 exports.newComment = async (req , res)=>{
     try {
@@ -15,6 +15,21 @@ exports.newComment = async (req , res)=>{
         }
         else if(response===1){
             res.status(201).json({ message: "Comment added successfully" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "server error" });
+    }
+}
+
+
+
+exports.getAllCommentBook = async (req,res)=>{
+    try {
+        const {bookid } = req.body;
+        const response = await getAllComment_book(bookid);
+        if(response != -1){
+            res.status(200).send(response);
         }
     } catch (error) {
         console.error(error);
