@@ -85,8 +85,51 @@ const getAllComment_book = async(bookid_input)=>{
     }
   }
 
+
+
+const like_comment = async(commentid_input) =>{
+    try {
+        const response = await api.put("/comment/like",{},{
+            params: {commentid : commentid_input}
+        })
+        if(response.status === 200){
+            return 1 ;
+        }
+        else{
+            return -1 ;
+        }
+
+
+    } catch (error) {
+        console.log("Error:", error);
+        return -1 ;
+    }
+}
+
+
+const dislike_comment = async(commentid_input) =>{
+    try {
+        const response = await api.put("/comment/dislike",{},{
+            params: {commentid : commentid_input}
+        })
+        if(response.status === 200){
+            return 1 ;
+        }
+        else{
+            return -1 ;
+        }
+
+
+    } catch (error) {
+        console.log("Error:", error);
+        return -1 ;
+    }
+}
+
 module.exports={
     postComment_controller,
     getAllComment_book,
-    get_ref_comments
+    get_ref_comments,
+    like_comment,
+    dislike_comment
 };
