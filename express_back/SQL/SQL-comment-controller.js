@@ -7,11 +7,12 @@ const api = axios.create({
     },
 });
 
-const postComment_controller = async (userid_input,bookid_input,text_input)=>{
+const postComment_controller = async (userid_input,bookid_input,text_input,commentrefid_input)=>{
     try {
         const response = await api.post("/comment" , {
             userid: userid_input,
             bookid: bookid_input,
+            commentrefid: commentrefid_input,
             text: text_input
         })
         if (!response || response.length===0){
@@ -65,7 +66,27 @@ const getAllComment_book = async(bookid_input)=>{
 
 
 
+  const get_ref_comments = async(commentid_input) =>{
+    try {
+      const response = await api.get("/comment/replies",{
+        params: {commentid : commentid_input}
+      })
+      if(response.status === 200){
+        return response.data;
+      }
+      else{
+        return -1;
+      }
+      
+  
+    } catch (error) {
+      console.log("Error:", error);
+      return -1;
+    }
+  }
+
 module.exports={
     postComment_controller,
-    getAllComment_book
+    getAllComment_book,
+    get_ref_comments
 };
