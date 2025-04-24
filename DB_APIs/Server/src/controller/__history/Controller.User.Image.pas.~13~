@@ -1,0 +1,179 @@
+﻿Unit Controller.User.Image;
+
+Interface
+
+Uses
+    MVCFramework,
+    MVCFramework.Commons,
+    MVCFramework.Serializer.Commons,
+    Service.User.Image,
+    Model.User.Image, WebModule.Main;
+
+Type
+    [MVCPath(BASE_API_V1 + '/user/profile')]
+    TImageController = class(TMVCController)
+    Private
+        FImageService: IUserImageService;
+
+    Public
+        Procedure OnAfterAction(Context: TWebContext; Const AActionNAme: String); Override;
+        Procedure OnBeforeAction(Context: TWebContext; Const AActionNAme: String; Var Handled: Boolean); Override;
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetImagesByUserID([MVCFromQueryString('userid', '0')] UserID: Int64);
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPOST])]
+        Procedure UploadImage;
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPUT])]
+        Procedure UpdateImage([MVCFromQueryString('id', '0')] ID: Int64);
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpDELETE])]
+        Procedure DeleteImage([MVCFromQueryString('id', '0')] ID: Int64);
+
+        [MVCPath('/file')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetImageFileByGUID([MVCFromQueryString('guid', '0')] GUID: TGUID);
+    End;
+
+Implementation
+
+Uses
+    System.Classes,
+    System.SysUtils, System.Generics.Collections;
+
+{ TImageController }
+
+Procedure TImageController.OnAfterAction(Context: TWebContext; Const AActionNAme: String);
+Begin
+    inherited;
+    FImageService := Nil;
+End;
+//______________________________________________________________________________
+
+Procedure TImageController.OnBeforeAction(Context: TWebContext; Const AActionNAme: String;
+    Var Handled: Boolean);
+Begin
+    inherited;
+    FImageService := TUserImageService.Create;
+End;
+//______________________________________________________________________________
+Procedure TImageController.GetImageFileByGUID(GUID: TGUID);
+Var
+    LImage: TImage;
+    LImageStream: TStream;
+    LFilePath, LFileExt, LContentType: String;
+    LUserID: Int64;
+    LResponseStream: TStringStream;
+Begin
+    LImage := FImageService.GetImageByGUID(GUID);
+    Try
+        If Not Assigned(LImage) Then
+            Raise EMVCException.Create(HTTP_STATUS.NotFound, 'Image not found');
+
+        LFilePath := ExtractFilePath(ParamStr(0)) + 'BookImages\' + GUID.ToString +
+                     ExtractFileExt(LImage.OriginalFileName.ValueOrDefault);
+
+        If Not FileExists(LFilePath) Then
+            Raise EMVCException.Create(HTTP_STATUS.NotFound, 'Image file not found');
+
+        LFileExt := LowerCase(ExtractFileExt(LFilePath));
+
+        If (LFileExt = '.jpg') then LContentType := 'image/jpeg'
+        Else If (LFileExt = '.jpeg') then LContentType := 'image/jpeg'
+        Else If (LFileExt = '.png') then LContentType := 'image/png'
+        Else If (LFileExt = '.gif') then LContentType := 'image/gif'
+        Else If (LFileExt = '.bmp') then LContentType := 'image/bmp'
+        Else If (LFileExt = '.webp') then LContentType := 'image/webp'
+        Else LContentType := 'application/octet-stream';
+
+        LImageStream := TFileStream.Create(LFilePath, fmOpenRead or fmShareDenyWrite);
+        Try
+            // تنظیم هدر Content-Disposition برای نمایش در مرورگر
+            Context.Response.SetCustomHeader('Content-Disposition', 'inline; filename="' +
+                                          ExtractFileName(LImage.OriginalFileName.ValueOrDefault) + '"');
+
+            // ارسال استریم با پارامتر False برای عدم آزادسازی خودکار
+            Render(LImageStream, False);
+
+            // تنظیم نوع محتوا
+            Context.Response.ContentType := LContentType;
+        Finally
+            // حالا می‌توانیم استریم را آزاد کنیم چون Render کارش را انجام داده
+            LImageStream.Free;
+        End;
+    Finally
+        LImage.Free;
+    End;
+End;
+
+//______________________________________________________________________________
+Procedure TImageController.GetImagesByUserID(UserID: Int64);
+Var
+    LImages: TObjectList<TImage>;
+Begin
+    LImages := FImageService.GetImagesByUserID(UserID);
+    If Assigned(LImages) Then
+        Render(LImages)
+    Else
+        Render(HTTP_STATUS.NotFound, 'No images found for this book');
+End;
+//______________________________________________________________________________
+Procedure TImageController.UploadImage;
+Var
+    LImage: TImage;
+    LFileStream: TStream;
+    LFileName: String;
+    LUserID: Int64;
+Begin
+    LFileStream := Context.Request.Files[0].Stream;
+    LFileName := Context.Request.Files[0].FileName;
+    LUserID := Context.Request.ParamsAsInteger['UserID'];
+
+    LImage := TImage.Create;
+    Try
+        LImage.UserID := LUserID;
+        FImageService.AddImage(LImage, LFileStream, LFileName);
+        Render(HTTP_STATUS.Created, LImage);
+    Except
+        On E: Exception Do
+        Begin
+            Render(HTTP_STATUS.BadRequest, E.Message);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TImageController.UpdateImage(ID: Int64);
+Var
+    LImage: TImage;
+Begin
+    // دریافت داده‌های به روزرسانی
+    LImage := Context.Request.BodyAs<TImage>;
+    Try
+        LImage.ID := ID;
+        FImageService.UpdateImage(LImage);
+        Render(HTTP_STATUS.OK, LImage);
+    Finally
+        LImage.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TImageController.DeleteImage(ID: Int64);
+Begin
+    Try
+        FImageService.DeleteImage(ID);
+        Render(HTTP_STATUS.NoContent);
+    Except
+        On E: Exception Do
+        Begin
+            Render(HTTP_STATUS.BadRequest, E.Message);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+
+End.

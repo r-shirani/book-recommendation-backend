@@ -1,0 +1,137 @@
+﻿Unit Controller.Book.Like;
+
+Interface
+
+Uses
+    System.JSON,
+    System.Variants,
+    System.Generics.Collections,
+    MVCFramework,
+    MVCFramework.Commons,
+    MVCFramework.ActiveRecord,
+    Model.Book.BookLike,
+    Service.Book.Like,
+    WebModule.Main;
+
+Type
+    [MVCPath(BASE_API_V1 + '/like')]
+    TBookLikeController = class(TMVCController)
+    Private
+        FLikeService: ILikeService;
+
+    Public
+        Constructor Create; override;
+        Destructor Destroy; override;
+
+        [MVCPath('/book')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetBookLikes(Const [MVCFromQueryString('bookid')] bookID: Int64);
+
+        [MVCPath('/user')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetUserLikes(Const [MVCFromQueryString('userid')] userID: Int64);
+
+        [MVCPath('/count')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GeTBookLikeCount(Const [MVCFromQueryString('bookid')] bookID: Int64);
+
+        [MVCPath('/status')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GeTBookLikeStatus(Const [MVCFromQueryString('userid')] userID: Int64;
+          Const [MVCFromQueryString('bookid')] bookID: Int64);
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPOST])]
+        Procedure AddLike;
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpDELETE])]
+        Procedure DeleteLike(Const [MVCFromQueryString('userid')] userID: Int64;
+          Const [MVCFromQueryString('bookid')] bookID: Int64);
+    End;
+
+Implementation
+
+{ TBookLikeController }
+
+//______________________________________________________________________________
+Constructor TBookLikeController.Create;
+Begin
+    Inherited;
+    FLikeService := TBookLikeService.Create;
+End;
+//______________________________________________________________________________
+Destructor TBookLikeController.Destroy;
+Begin
+    FLikeService := nil;
+    Inherited;
+End;
+//______________________________________________________________________________
+Procedure TBookLikeController.GetBookLikes(Const bookID: Int64);
+Var
+    Likes: TObjectList<TBookLike>;
+Begin
+    Likes := FLikeService.GetBookLikes(bookID);
+    If Likes.Count > 0 Then
+        Render(Likes)
+    Else
+        Render(HTTP_STATUS.NoContent);
+End;
+//______________________________________________________________________________
+Procedure TBookLikeController.GetUserLikes(Const userID: Int64);
+Var
+    Likes: TObjectList<TBookLike>;
+Begin
+    Likes := FLikeService.GetUserLikes(userID);
+    If Likes.Count > 0 Then
+        Render(Likes)
+    Else
+        Render(HTTP_STATUS.NoContent);
+End;
+//______________________________________________________________________________
+Procedure TBookLikeController.GeTBookLikeCount(Const bookID: Int64);
+Var
+    LikeCount: Integer;
+    Response: TJSONObject;
+Begin
+    LikeCount := FLikeService.GetBookLikes(bookID).Count;
+    Response := TJSONObject.Create;
+    Response.AddPair('bookID', TJSONNumber.Create(bookID));
+    Response.AddPair('likeCount', TJSONNumber.Create(LikeCount));
+    Render(Response);
+End;
+//______________________________________________________________________________
+Procedure TBookLikeController.GeTBookLikeStatus(Const userID, bookID: Int64);
+Var
+    LikeStatus: Boolean;
+    Response: TJSONObject;
+Begin
+    LikeStatus := (FLikeService.GeTBookLike(userID, bookID) <> nil);
+    Response := TJSONObject.Create;
+    Response.AddPair('bookID', TJSONNumber.Create(bookID));
+    Response.AddPair('userID', TJSONNumber.Create(userID));
+    Response.AddPair('isLiked', TJSONBool.Create(LikeStatus));
+    Render(Response);
+End;
+//______________________________________________________________________________
+Procedure TBookLikeController.AddLike;
+Var
+    Like: TBookLike;
+Begin
+    Like := Context.Request.BodyAs<TBookLike>;
+    Try
+        FLikeService.AddLike(Like.UserID, Like.BookID);
+        Render(HTTP_STATUS.OK);
+    Finally
+        Like.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TBookLikeController.DeleteLike(Const userID, bookID: Int64);
+Begin
+    FLikeService.DeleteLike(userID, bookID);
+    Render(HTTP_STATUS.OK);
+End;
+//______________________________________________________________________________
+
+End.

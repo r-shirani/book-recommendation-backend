@@ -23,25 +23,26 @@ Type
         Constructor Create; override;
         Destructor Destroy; override;
 
-        [MVCPath('/book/($bookID)')]
+        [MVCPath('/book')]
         [MVCHTTPMethod([httpGET])]
-        Procedure GetBookRates(Const bookID: Int64);
+        Procedure GetBookRates(Const [MVCFromQueryString('bookid')] bookID: Int64);
 
-        [MVCPath('/user/($userID)')]
+        [MVCPath('/user')]
         [MVCHTTPMethod([httpGET])]
-        Procedure GetUserRates(Const userID: Int64);
+        Procedure GetUserRates(Const [MVCFromQueryString('userid')] userID: Int64);
 
-        [MVCPath('/average/($bookID)')]
+        [MVCPath('/average')]
         [MVCHTTPMethod([httpGET])]
-        Procedure GetAverageRating(Const bookID: Int64);
+        Procedure GetAverageRating(Const [MVCFromQueryString('bookid')] bookID: Int64);
 
         [MVCPath('')]
         [MVCHTTPMethod([httpPOST])]
         Procedure AddOrUpdateRate;
 
-        [MVCPath('/user/($userID)/book/($bookID)')]
+        [MVCPath('')]
         [MVCHTTPMethod([httpDELETE])]
-        Procedure DeleteRate(Const userID, bookID: Int64);
+        Procedure DeleteRate(Const [MVCFromQueryString('userid')] userID: Int64;
+          Const [MVCFromQueryString('bookid')] bookID: Int64);
     End;
 
 Implementation
@@ -69,7 +70,7 @@ Begin
     If Rates.Count > 0 Then
         Render(Rates)
     Else
-        Render(HTTP_STATUS.NoContent);
+        Render(HTTP_STATUS.NoContent, 'Empty');
 End;
 //______________________________________________________________________________
 Procedure TRateController.GetUserRates(Const userID: Int64);
@@ -90,13 +91,10 @@ Var
 Begin
     AvgRating := FRateService.GetAverageRating(bookID);
     Response := TJSONObject.Create;
-    Try
-        Response.AddPair('bookID', TJSONNumber.Create(bookID));
-        Response.AddPair('averageRating', TJSONNumber.Create(AvgRating));
-        Render(Response);
-    Finally
-        Response.Free;
-    End;
+
+    Response.AddPair('bookID', TJSONNumber.Create(bookID));
+    Response.AddPair('averageRating', TJSONNumber.Create(AvgRating));
+    Render(Response);
 End;
 //______________________________________________________________________________
 Procedure TRateController.AddOrUpdateRate;
@@ -107,12 +105,16 @@ Begin
     Try
         FRateService.AddOrUpdateRate(Rate);
         Render(HTTP_STATUS.OK, 'Rating updated successfully');
-    Finally
-        Rate.Free;
+    Except
+        ON E: EMVCException do
+        Begin
+            Render(HTTP_STATUS.InternalServerError, E.Message);
+            Rate.Free;
+        End;
     End;
 End;
 //______________________________________________________________________________
-Procedure TRateController.DeleteRate(Const userID, bookID: Int64);
+Procedure TRateController.DeleteRate(Const userID: Int64; Const bookID: Int64);
 Begin
     FRateService.DeleteRate(userID, bookID);
     Render(HTTP_STATUS.OK, 'Rating deleted successfully');

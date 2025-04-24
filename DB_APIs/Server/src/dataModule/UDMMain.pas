@@ -72,7 +72,7 @@ Begin
     If not DMMain.FDConn.Connected then
       DMMain.FDConn.Connected := True;
 
-    Result := DMMain.FDConn;
+    Result := TFDConnection(DMMain.FDConn.CloneConnection);
 End;
 //______________________________________________________________________________
 

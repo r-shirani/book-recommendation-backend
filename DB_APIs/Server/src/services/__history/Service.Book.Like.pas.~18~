@@ -1,0 +1,104 @@
+﻿Unit Service.Book.Like;
+
+Interface
+
+Uses
+    System.Generics.Collections,
+    System.SysUtils,
+    MVCFramework.ActiveRecord,
+    Model.Book.Like;
+
+Type
+    ILikeService = Interface
+        ['{B36C2586-CCEE-423C-918D-9DFD9A22336D}']
+        Function GetLike(UserID, BookID: Int64): TLike;
+        Function GetBookLikes(BookID: Int64): TObjectList<TLike>;
+        Function GetUserLikes(UserID: Int64): TObjectList<TLike>;
+        Procedure AddLike(UserID, BookID: Int64);
+        Procedure DeleteLike(UserID, BookID: Int64);
+    End;
+
+    TLikeService = Class(TInterfacedObject, ILikeService)
+    Public
+        Function GetLike(UserID, BookID: Int64): TLike;
+        Function GetBookLikes(BookID: Int64): TObjectList<TLike>;
+        Function GetUserLikes(UserID: Int64): TObjectList<TLike>;
+        Procedure AddLike(UserID, BookID: Int64);
+        Procedure DeleteLike(UserID, BookID: Int64);
+    End;
+
+Implementation
+
+{ TLikeService }
+
+//______________________________________________________________________________
+Function TLikeService.GetLike(UserID, BookID: Int64): TLike;
+Var
+    Temp: TObjectList<TLike>;
+Begin
+    Temp := TMVCActiveRecord.Where<TLike>('UserID = ? AND BookID = ?', [UserID, BookID]);
+    Try
+        If (Temp.Count > 0) Then
+            Result := Temp.First
+        Else
+            Result := nil;
+    Finally
+        Temp.Free;
+    End;
+End;
+//______________________________________________________________________________
+Function TLikeService.GetBookLikes(BookID: Int64): TObjectList<TLike>;
+Begin
+    Try
+        Result := TMVCActiveRecord.Where<TLike>('BookID = ?', [BookID]);
+    Except
+        On E: Exception Do
+        Begin
+            // Log Error: E.Message
+            Result := TObjectList<TLike>.Create(True);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+Function TLikeService.GetUserLikes(UserID: Int64): TObjectList<TLike>;
+Begin
+    Try
+        Result := TMVCActiveRecord.Where<TLike>('UserID = ?', [UserID]);
+    Except
+        On E: Exception Do
+        Begin
+            // Log the error if needed
+            Result := NIL;
+        End;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TLikeService.AddLike(UserID, BookID: Int64);
+Var
+    ALike: TLike;
+Begin
+    ALike := TLike.Create;
+    Try
+        ALike.UserID := UserID;
+        ALike.BookID := BookID;
+        ALike.Insert;
+    Finally
+        ALike.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TLikeService.DeleteLike(UserID, BookID: Int64);
+Var
+    LikeToDelete: TLike;
+Begin
+    LikeToDelete := GetLike(UserID, BookID);
+    Try
+        If Assigned(LikeToDelete) Then
+            LikeToDelete.Delete;
+    Finally
+        LikeToDelete.Free;
+    End;
+End;
+//______________________________________________________________________________
+
+End.

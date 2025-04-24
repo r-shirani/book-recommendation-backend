@@ -1,0 +1,209 @@
+﻿Unit Controller.Book.Comment;
+
+Interface
+
+Uses
+    System.JSON,
+    System.Variants,
+    System.Generics.Collections,
+    MVCFramework,
+    MVCFramework.Commons,
+    MVCFramework.ActiveRecord,
+    Model.Book.Comment,
+    Service.Book.Comment,
+    WebModule.Main;
+
+Type
+    [MVCPath(BASE_API_V1 + '/comment')]
+    TCommentController = class(TMVCController)
+    Private
+        FCommentService: ICommentService;
+
+    Public
+        Constructor Create; override;
+        Destructor Destroy; override;
+
+        [MVCPath('/book')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetCommentsByBook(Const [MVCFromQueryString('bookid')] bookID: Int64);
+
+        [MVCPath('/user')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetCommentsByUser(Const [MVCFromQueryString('userid')] userID: Int64);
+
+        [MVCPath('/replies')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetReplies(Const [MVCFromQueryString('commentid')] id: Int64);
+
+        [MVCPath('/popular')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetPopularComments(Const [MVCFromQueryString('bookid')] bookID: Int64);
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPOST])]
+        Procedure AddComment;
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPUT])]
+        Procedure UpdateComment;
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpDELETE])]
+        Procedure DeleteComment(Const [MVCFromQueryString('commentid')] id: Int64);
+
+        [MVCPath('/block')]
+        [MVCHTTPMethod([httpPUT])]
+        Procedure BlockComment(Const [MVCFromQueryString('commentid')] id: Int64);
+
+        [MVCPath('/report')]
+        [MVCHTTPMethod([httpPUT])]
+        Procedure ReportComment(Const [MVCFromQueryString('commentid')] id: Int64;
+          Const [MVCFromQueryString('reportID', 0)] reportID: Int64);
+
+        [MVCPath('/like')]
+        [MVCHTTPMethod([httpPUT])]
+        Procedure LikeComment(Const [MVCFromQueryString('commentid')] id: Int64);
+
+        [MVCPath('/dislike')]
+        [MVCHTTPMethod([httpPUT])]
+        Procedure DislikeComment(Const [MVCFromQueryString('commentid')] id: Int64);
+
+        [MVCPath('/spoiler')]
+        [MVCHTTPMethod([httpPUT])]
+        Procedure MarkAsSpoiler(Const [MVCFromQueryString('commentid')] id: Int64);
+    End;
+
+Implementation
+
+{ TCommentController }
+
+//______________________________________________________________________________
+Constructor TCommentController.Create;
+Begin
+    Inherited;
+    FCommentService := TCommentService.Create;
+End;
+//______________________________________________________________________________
+Destructor TCommentController.Destroy;
+Begin
+    FCommentService := nil;
+    Inherited;
+End;
+//______________________________________________________________________________
+Procedure TCommentController.GetCommentsByBook(Const [MVCFromQueryString('bookid')] bookID: Int64);
+Var
+    Comments: TObjectList<TComment>;
+Begin
+    Comments := FCommentService.GetCommentsByBook(bookID);
+    If Comments.Count > 0 Then
+        Render(Comments)
+    Else
+        Render(HTTP_STATUS.NoContent);
+End;
+//______________________________________________________________________________
+Procedure TCommentController.GetCommentsByUser(Const [MVCFromQueryString('userid')] userID: Int64);
+Var
+    Comments: TObjectList<TComment>;
+Begin
+    Comments := FCommentService.GetCommentsByUser(userID);
+    If Comments.Count > 0 Then
+        Render(Comments)
+    Else
+        Render(HTTP_STATUS.NoContent);
+End;
+//______________________________________________________________________________
+Procedure TCommentController.GetReplies(Const [MVCFromQueryString('commentid')] id: Int64);
+Var
+    Replies: TObjectList<TComment>;
+Begin
+    Replies := FCommentService.GetReplies(id);
+    Try
+        If Replies.Count > 0 Then
+            Render(Replies)
+        Else
+            Render(HTTP_STATUS.NoContent);
+    Finally
+        Replies.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TCommentController.GetPopularComments(Const [MVCFromQueryString('bookid')] bookID: Int64);
+Var
+    Comments: TObjectList<TComment>;
+Begin
+    Comments := FCommentService.GetPopularComments(bookID);
+    Try
+        If Comments.Count > 0 Then
+            Render(Comments)
+        Else
+            Render(HTTP_STATUS.NoContent);
+    Finally
+        Comments.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TCommentController.AddComment;
+Var
+    Comment: TComment;
+Begin
+    Comment := Context.Request.BodyAs<TComment>;
+    Try
+        FCommentService.AddComment(Comment);
+        Render(HTTP_STATUS.Created, 'Comment added successfully');
+    Finally
+        Comment.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TCommentController.UpdateComment;
+Var
+    Comment: TComment;
+Begin
+    Comment := Context.Request.BodyAs<TComment>;
+    Try
+        FCommentService.UpdateComment(Comment);
+        Render(HTTP_STATUS.OK, 'Comment updated successfully');
+    Finally
+        Comment.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TCommentController.DeleteComment(Const id: Int64);
+Begin
+    FCommentService.DeleteComment(id);
+    Render(HTTP_STATUS.OK, 'Comment deleted successfully');
+End;
+//______________________________________________________________________________
+Procedure TCommentController.BlockComment(Const [MVCFromQueryString('commentid')] id: Int64);
+Begin
+    FCommentService.BlockComment(id);
+    Render(HTTP_STATUS.OK, 'Comment blocked successfully');
+End;
+//______________________________________________________________________________
+Procedure TCommentController.ReportComment(Const [MVCFromQueryString('commentid')] id: Int64;
+          Const [MVCFromQueryString('reportID', 0)] reportID: Int64);
+Begin
+    FCommentService.ReportComment(Context.Request.ParamsAsInteger['id'], reportID);
+    Render(HTTP_STATUS.OK, 'Comment reported successfully');
+End;
+//______________________________________________________________________________
+Procedure TCommentController.LikeComment(Const [MVCFromQueryString('commentid')] id: Int64);
+Begin
+    FCommentService.LikeComment(id);
+    Render(HTTP_STATUS.OK, 'Comment liked successfully');
+End;
+//______________________________________________________________________________
+Procedure TCommentController.DislikeComment(Const [MVCFromQueryString('commentid')] id: Int64);
+Begin
+    FCommentService.DislikeComment(id);
+    Render(HTTP_STATUS.OK, 'Comment disliked successfully');
+End;
+//______________________________________________________________________________
+Procedure TCommentController.MarkAsSpoiler(Const [MVCFromQueryString('commentid')] id: Int64);
+Begin
+    FCommentService.MarkAsSpoiler(id);
+    Render(HTTP_STATUS.OK, 'Comment marked as spoiler');
+End;
+//______________________________________________________________________________
+
+End.

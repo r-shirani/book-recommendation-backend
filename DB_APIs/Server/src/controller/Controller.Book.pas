@@ -31,6 +31,14 @@ Type
         [MVCHTTPMethod([httpGET])]
         procedure SearchBook();
 
+        [MVCPath('/favorit')]
+        [MVCHTTPMethod([httpGET])]
+        procedure FavoritBook(Const [MVCFromQueryString('userid')] userID: Int64);
+
+        [MVCPath('/detail')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetDetailByID(Const [MVCFromQueryString('userid')] id: Int64);
+
         [MVCPath('')]
         [MVCHTTPMethod([httpPOST])]
         Procedure AddBook;
@@ -68,13 +76,24 @@ Begin
     Inherited;
 End;
 //______________________________________________________________________________
+procedure TBookController.FavoritBook(Const userID: Int64);
+Var
+    Books: TFDQuery;
+Begin
+    Books := FBookService.FavoritBook(userID);
+    If Books.RecordCount > 0 Then
+        Render(HTTP_STATUS.OK, Books)
+    Else
+        Render(HTTP_STATUS.NoContent);
+End;
+//______________________________________________________________________________
 Procedure TBookController.GetAllBooks;
 Var
     Books: TObjectList<TBook>;
 Begin
     Books := FBookService.GetAllBooks;
     If Books.Count > 0 Then
-        Render(Books)
+        Render(HTTP_STATUS.OK, Books)
     Else
         Render(HTTP_STATUS.NoContent);
 End;
@@ -85,9 +104,24 @@ Var
 Begin
     Book := FBookService.GetBookByID(id);
     If Assigned(Book) Then
-        Render(Book)
+        Render(HTTP_STATUS.OK, Book)
     Else
         Render(HTTP_STATUS.NotFound);
+End;
+//______________________________________________________________________________
+Procedure TBookController.GetDetailByID(const id: Int64);
+var
+    SearchResult: TFDQuery;
+Begin
+    SearchResult := FBookService.GetDetailByID(id);
+    Try
+        If SearchResult.RecordCount = 0 then
+            Render(HTTP_STATUS.NoContent, 'Empty')
+        Else
+            Render(HTTP_STATUS.OK, SearchResult);
+    Except
+        raise;
+    End;
 End;
 //______________________________________________________________________________
 procedure TBookController.SearchBook();

@@ -23,21 +23,21 @@ Type
         Constructor Create; override;
         Destructor Destroy; override;
 
-        [MVCPath('/book/($bookID)')]
+        [MVCPath('/book')]
         [MVCHTTPMethod([httpGET])]
-        Procedure GetCommentsByBook(Const bookID: Int64);
+        Procedure GetCommentsByBook(Const [MVCFromQueryString('bookid')] bookID: Int64);
 
-        [MVCPath('/user/($userID)')]
+        [MVCPath('/user')]
         [MVCHTTPMethod([httpGET])]
-        Procedure GetCommentsByUser(Const userID: Int64);
+        Procedure GetCommentsByUser(Const [MVCFromQueryString('userid')] userID: Int64);
 
-        [MVCPath('/$id/replies')]
+        [MVCPath('/replies')]
         [MVCHTTPMethod([httpGET])]
-        Procedure GetReplies(Const id: Int64);
+        Procedure GetReplies(Const [MVCFromQueryString('commentid')] id: Int64);
 
-        [MVCPath('/popular/($bookID)')]
+        [MVCPath('/popular')]
         [MVCHTTPMethod([httpGET])]
-        Procedure GetPopularComments(Const bookID: Int64);
+        Procedure GetPopularComments(Const [MVCFromQueryString('bookid')] bookID: Int64);
 
         [MVCPath('')]
         [MVCHTTPMethod([httpPOST])]
@@ -47,29 +47,30 @@ Type
         [MVCHTTPMethod([httpPUT])]
         Procedure UpdateComment;
 
-        [MVCPath('/($id)')]
+        [MVCPath('')]
         [MVCHTTPMethod([httpDELETE])]
-        Procedure DeleteComment(Const id: Int64);
+        Procedure DeleteComment(Const [MVCFromQueryString('commentid')] id: Int64);
 
-        [MVCPath('/($id)/block')]
+        [MVCPath('/block')]
         [MVCHTTPMethod([httpPUT])]
-        Procedure BlockComment(Const id: Int64);
+        Procedure BlockComment(Const [MVCFromQueryString('commentid')] id: Int64);
 
-        [MVCPath('/($id)/report')]
+        [MVCPath('/report')]
         [MVCHTTPMethod([httpPUT])]
-        Procedure ReportComment(Const [MVCFromQueryString('reportID', 0)] reportID: Int64);
+        Procedure ReportComment(Const [MVCFromQueryString('commentid')] id: Int64;
+          Const [MVCFromQueryString('reportID', 0)] reportID: Int64);
 
-        [MVCPath('/($id)/like')]
+        [MVCPath('/like')]
         [MVCHTTPMethod([httpPUT])]
-        Procedure LikeComment(Const id: Int64);
+        Procedure LikeComment(Const [MVCFromQueryString('commentid')] id: Int64);
 
-        [MVCPath('/($id)/dislike')]
+        [MVCPath('/dislike')]
         [MVCHTTPMethod([httpPUT])]
-        Procedure DislikeComment(Const id: Int64);
+        Procedure DislikeComment(Const [MVCFromQueryString('commentid')] id: Int64);
 
-        [MVCPath('/($id)/spoiler')]
+        [MVCPath('/spoiler')]
         [MVCHTTPMethod([httpPUT])]
-        Procedure MarkAsSpoiler(Const id: Int64);
+        Procedure MarkAsSpoiler(Const [MVCFromQueryString('commentid')] id: Int64);
     End;
 
 Implementation
@@ -94,14 +95,10 @@ Var
     Comments: TObjectList<TComment>;
 Begin
     Comments := FCommentService.GetCommentsByBook(bookID);
-    Try
-        If Comments.Count > 0 Then
-            Render(Comments)
-        Else
-            Render(HTTP_STATUS.NoContent);
-    Finally
-        Comments.Free;
-    End;
+    If Comments.Count > 0 Then
+        Render(Comments)
+    Else
+        Render(HTTP_STATUS.NoContent);
 End;
 //______________________________________________________________________________
 Procedure TCommentController.GetCommentsByUser(Const userID: Int64);
@@ -109,29 +106,10 @@ Var
     Comments: TObjectList<TComment>;
 Begin
     Comments := FCommentService.GetCommentsByUser(userID);
-    Try
-        If Comments.Count > 0 Then
-            Render(Comments)
-        Else
-            Render(HTTP_STATUS.NoContent);
-    Finally
-        Comments.Free;
-    End;
-End;
-//______________________________________________________________________________
-Procedure TCommentController.GetReplies(Const id: Int64);
-Var
-    Replies: TObjectList<TComment>;
-Begin
-    Replies := FCommentService.GetReplies(id);
-    Try
-        If Replies.Count > 0 Then
-            Render(Replies)
-        Else
-            Render(HTTP_STATUS.NoContent);
-    Finally
-        Replies.Free;
-    End;
+    If Comments.Count > 0 Then
+        Render(Comments)
+    Else
+        Render(HTTP_STATUS.NoContent);
 End;
 //______________________________________________________________________________
 Procedure TCommentController.GetPopularComments(Const bookID: Int64);
@@ -139,14 +117,21 @@ Var
     Comments: TObjectList<TComment>;
 Begin
     Comments := FCommentService.GetPopularComments(bookID);
-    Try
-        If Comments.Count > 0 Then
-            Render(Comments)
-        Else
-            Render(HTTP_STATUS.NoContent);
-    Finally
-        Comments.Free;
-    End;
+    If Comments.Count > 0 Then
+        Render(Comments)
+    Else
+        Render(HTTP_STATUS.NoContent);
+End;
+//______________________________________________________________________________
+Procedure TCommentController.GetReplies(Const id: Int64);
+Var
+    Replies: TObjectList<TComment>;
+Begin
+    Replies := FCommentService.GetReplies(id);
+    If Replies.Count > 0 Then
+        Render(Replies)
+    Else
+        Render(HTTP_STATUS.NoContent);
 End;
 //______________________________________________________________________________
 Procedure TCommentController.AddComment;
@@ -187,9 +172,9 @@ Begin
     Render(HTTP_STATUS.OK, 'Comment blocked successfully');
 End;
 //______________________________________________________________________________
-Procedure TCommentController.ReportComment(Const reportID: Int64);
+Procedure TCommentController.ReportComment(Const id: Int64; Const reportID: Int64);
 Begin
-    FCommentService.ReportComment(Context.Request.ParamsAsInteger['id'], reportID);
+    FCommentService.ReportComment(id, reportID);
     Render(HTTP_STATUS.OK, 'Comment reported successfully');
 End;
 //______________________________________________________________________________

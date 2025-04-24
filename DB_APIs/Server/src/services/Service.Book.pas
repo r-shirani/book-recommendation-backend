@@ -21,6 +21,8 @@ Type
         Procedure AddBook(const ABook: TBook);
         Procedure UpdateBook(const ABook: TBook);
         Procedure DeleteBook(const BookID: Int64);
+        Function FavoritBook(const UserID: Int64): TFDQuery;
+        Function GetDetailByID(const UserID: Int64): TFDQuery;
     End;
 
     TBookService = class(TInterfacedObject, IBookService)
@@ -32,6 +34,9 @@ Type
         Procedure AddBook(const ABook: TBook);
         Procedure UpdateBook(const ABook: TBook);
         Procedure DeleteBook(const BookID: Int64);
+        Function FavoritBook(const UserID: Int64): TFDQuery;
+        Function GetDetailByID(const UserID: Int64): TFDQuery;
+
     Private
         Procedure DeleteRelatedComments(const BookID: Int64);
         Procedure DeleteRelatedRates(const BookID: Int64);
@@ -51,6 +56,20 @@ Begin
     Except
         Result := nil;
     End;
+End;
+//______________________________________________________________________________
+Function TBookService.GetDetailByID(const UserID: Int64): TFDQuery;
+Var
+    FDQuer: TFDQuery;
+Begin
+    FDQuer := TFDQuery.Create(NIL);
+    FDQuer.Connection := DMMain.GetConnection;
+
+    FDQuer.SQL.Text := 'Exec Book.spDetailOfBook :UserID';
+    FDQuer.Params.ParamByName('UserID').AsLargeInt := UserID;
+    FDQuer.Open;
+
+    Result := FDQuer;
 End;
 //______________________________________________________________________________
 Function TBookService.SearchBooks(const SearchTerm: string; Const PageNum: Integer = 1;
@@ -141,6 +160,20 @@ Procedure TBookService.DeleteRelatedRates(const BookID: Int64);
 Begin
     // Delete all rates related to this book
     TMVCActiveRecord.DeleteRQL(TComment, 'BookID=' + BookID.ToString);
+End;
+//______________________________________________________________________________
+Function TBookService.FavoritBook(const UserID: Int64): TFDQuery;
+Var
+    FDQuer: TFDQuery;
+Begin
+    FDQuer := TFDQuery.Create(NIL);
+    FDQuer.Connection := DMMain.GetConnection;
+
+    FDQuer.SQL.Text := 'Exec Book.spFavoritBook :UserID';
+    FDQuer.Params.ParamByName('UserID').AsLargeInt := UserID;
+    FDQuer.Open;
+
+    Result := FDQuer;
 End;
 //______________________________________________________________________________
 

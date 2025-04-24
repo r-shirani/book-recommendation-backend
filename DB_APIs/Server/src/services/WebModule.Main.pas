@@ -21,7 +21,8 @@ Var
     WebModuleClass: TComponentClass = TBookWorm;
 
 Const
-    BASE_Image = 'http://localhost/BookImage';
+    BASE_ImageBook = 'http://185.255.90.36:9547/api/v1/images/file/';
+    BASE_ImageProfile = 'http://185.255.90.36:9547/api/v1/user/profile/file/';
     BASE_API_V1 = '/api/v1';
 
 
@@ -49,7 +50,8 @@ uses
   //Controller:
   Controller.Book.Author, Controller.Book.Comment, Controller.Book.Rate,
   Controller.Book.Hashtag, Controller.Book.Language, Controller.Book,
-  Controller.Book.Image, Controller.Book.Genre, Controller.User.GenreFavorite;
+  Controller.Book.Image, Controller.Book.Genre, Controller.User.GenreFavorite,
+  Controller.User.Image, Controller.Book.Like;
 
 
 Procedure TBookWorm.WebModuleCreate(Sender: TObject);
@@ -94,6 +96,8 @@ begin
     fMVC.AddController(TImageController);
     fMVC.AddController(TGenreController);
     fMVC.AddController(TUserGenreFavoritController);
+    fMVC.AddController(TUserImageController);
+    fMVC.AddController(TBookLikeController);
 
     // Middleware
     fMVC.AddMiddleware(TMVCCompressionMiddleware.Create);

@@ -52,7 +52,11 @@ uses
   Controller.Book.Genre in '..\src\controller\Controller.Book.Genre.pas',
   Model.User.GenreFavorit in '..\src\model\Model.User.GenreFavorit.pas',
   Service.User.GenreFavorit in '..\src\services\Service.User.GenreFavorit.pas',
-  Controller.User.GenreFavorite in '..\src\controller\Controller.User.GenreFavorite.pas';
+  Controller.User.GenreFavorite in '..\src\controller\Controller.User.GenreFavorite.pas',
+  Controller.User.Image in '..\src\controller\Controller.User.Image.pas',
+  Model.Book.BookLike in '..\src\model\Model.Book.BookLike.pas',
+  Service.Book.Like in '..\src\services\Service.Book.Like.pas',
+  Controller.Book.Like in '..\src\controller\Controller.Book.Like.pas';
 
 {$R *.res}
 

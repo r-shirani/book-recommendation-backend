@@ -3,35 +3,44 @@
 Interface
 
 Uses
-  System.Classes,
-  System.SysUtils,
-  Model.User.Image,
-  System.IOUtils,
-  MVCFramework.ActiveRecord;
+    System.Generics.Collections,
+    System.SysUtils,
+    MVCFramework.ActiveRecord,
+    Model.User.Image,
+    System.Classes, WebModule.Main;
 
 Type
     IUserImageService = interface
         ['{F19D5B1C-9D50-444B-AC77-9A43E3B35125}']
-        Function GetProfileImage(const UserID: Int64): TImage;
-        Procedure SaveProfileImage(var AImage: TImage; const FileStream: TStream; const OriginalFileName: string);
-        Procedure DeleteProfileImage(const UserID: Int64);
+        Function GetImageByID(const ImageID: Int64): TImage;
+        Function GetImagesByUserID(const UserID: Int64): TObjectList<TImage>;
+        Function GetImageByGUID(const GUID: TGUID): TImage;
+        Procedure AddImage(var AImage: TImage; const FileStream: TStream; const OriginalFileName: string);
+        Procedure UpdateImage(const AImage: TImage);
+        Procedure DeleteImage(const ImageID: Int64);
     End;
 
-    TUserImageService = class(TInterfacedObject, IUserImageService)
+    TUserImageService = Class(TInterfacedObject, IUserImageService)
     Private
-        class Function GenerateImagePath(const UserID: Int64; const Extension: string): string;
-        class Procedure SetImageDimensions(AImage: TImage; const FileStream: TStream);
+        Class Function GenerateImageUrl(const AImage: TImage): string;
+        Class Procedure SetImageDimensions(AImage: TImage; const FileStream: TStream);
 
     Public
-        Function GetProfileImage(const UserID: Int64): TImage;
-        Procedure SaveProfileImage(var AImage: TImage; const FileStream: TStream; const OriginalFileName: string);
-        Procedure DeleteProfileImage(const UserID: Int64);
+        Function GetImageByGUID(const GUID: TGUID): TImage;
+        Function GetImageByID(const ImageID: Int64): TImage;
+        Function GetImagesByUserID(const UserID: Int64): TObjectList<TImage>;
+        Procedure AddImage(var AImage: TImage; const FileStream: TStream; const OriginalFileName: string);
+        Procedure UpdateImage(const AImage: TImage);
+        Procedure DeleteImage(const ImageID: Int64);
     End;
 
 Implementation
 
 Uses
-    Vcl.Imaging.jpeg, Vcl.Imaging.pngimage, Vcl.Graphics;
+    System.NetEncoding,
+    Vcl.Imaging.jpeg,
+    Vcl.Imaging.pngimage,
+    Vcl.Graphics;
 
 Const
     BASE_PROFILE_IMAGE_URL = '/UserImages';
@@ -39,110 +48,180 @@ Const
 { TUserImageService }
 
 //______________________________________________________________________________
-Class Function TUserImageService.GenerateImagePath(const UserID: Int64; const Extension: string): string;
-Var
-    Dir: string;
+Function TUserImageService.GetImageByGUID(const GUID: TGUID): TImage;
 Begin
-    Dir := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) + 'UserImages\';
-    If (not DirectoryExists(Dir)) then ForceDirectories(Dir);
-
-    Result := Dir + Format('%d%s', [UserID, Extension]);
+    Result := TMVCActiveRecord.GetOneByWhere<TImage>('ImageGuid = ?', [GUIDToString(GUID)], False);
 End;
 //______________________________________________________________________________
-Function TUserImageService.GetProfileImage(const UserID: Int64): TImage;
+Function TUserImageService.GetImageByID(const ImageID: Int64): TImage;
 Begin
-    Try
-        Result := TMVCActiveRecord.GetByPK<TImage>(UserID);
-    Except
-        Result := Nil;
-    End;
+    Result := TMVCActiveRecord.GetByPK<TImage>(ImageID, False);
 End;
 //______________________________________________________________________________
-Procedure TUserImageService.SaveProfileImage(var AImage: TImage; const FileStream: TStream; const OriginalFileName: string);
-Var
-    Extension: string;
-    FilePath: string;
-    FS: TFileStream;
+Function TUserImageService.GetImagesByUserID(const UserID: Int64): TObjectList<TImage>;
 Begin
-    If (Not Assigned(AImage)) then AImage := TImage.Create;
+    Result := TMVCActiveRecord.Where<TImage>('UserID = ?', [UserID]);
+End;
+//______________________________________________________________________________
+Procedure TUserImageService.AddImage(Var AImage: TImage; const FileStream: TStream; const OriginalFileName: string);
+Var
+    LFileStream: TFileStream;
+    LFilePath: string;
+Begin
+    If Not Assigned(AImage) Then
+        AImage := TImage.Create;
 
     Try
+        // Initialize image data
+        AImage.ImageGuid := TGUID.NewGuid;
         AImage.UploadDate := Now;
         AImage.OriginalFileName := OriginalFileName;
+
+        // Process file
         FileStream.Position := 0;
         AImage.FileSizeKB := FileStream.Size div 1024;
-
         SetImageDimensions(AImage, FileStream);
 
-        Extension := ExtractFileExt(OriginalFileName).ToLower;
-        FilePath := GenerateImagePath(AImage.UserID, Extension);
+        // Generate URL and save
+        LFilePath := GenerateImageUrl(AImage);
+        AImage.ImageUrl := BASE_ImageProfile + AImage.ImageGuid.ToString;
 
-        AImage.ImageUrl := BASE_PROFILE_IMAGE_URL + '/' + Format('%d%s', [AImage.UserID, Extension]);
-
-        FS := TFileStream.Create(FilePath, fmCreate);
-        try
-          FileStream.Position := 0;
-          FS.CopyFrom(FileStream, FileStream.Size);
-        finally
-          FS.Free;
+        // Save physical file
+        LFileStream := TFileStream.Create(LFilePath, fmCreate);
+        Try
+            FileStream.Position := 0;
+            LFileStream.CopyFrom(FileStream, FileStream.Size);
+        Finally
+            LFileStream.Free;
         End;
 
-//        AImage.DeleteRQL<TImage>('UserID = ?' + AImage.UserID);
-//        AImage.Insert;
-    except
-        on E: Exception do
-        begin
-            if FileExists(FilePath) then
-              DeleteFile(FilePath);
+        // Save to database
+        AImage.Insert;
+    Except
+        On E: Exception Do
+        Begin
+            // Delete file if created
+            If FileExists(LFilePath) Then
+                DeleteFile(LFilePath);
+
             FreeAndNil(AImage);
-            raise;
+            Raise;
         End;
     End;
 End;
 //______________________________________________________________________________
-Procedure TUserImageService.DeleteProfileImage(const UserID: Int64);
+Procedure TUserImageService.UpdateImage(const AImage: TImage);
 var
-  Img: TImage;
-  FilePath: string;
-begin
-  Img := GetProfileImage(UserID);
-  if Assigned(Img) then
-  begin
-    FilePath := GenerateImagePath(UserID, ExtractFileExt(Img.ImageUrl.ValueOrDefault));
-    if FileExists(FilePath) then
-      DeleteFile(FilePath);
-    Img.Delete;
-    Img.Free;
-  End;
+  OldImage: TImage;
+Begin
+    OldImage := TMVCActiveRecord.GetByPK<TImage>(AImage.ID);
+    Try
+        If not Assigned(OldImage) then
+          raise Exception.Create('Image not found');
+
+        If not AImage.ContentType.IsNull then OldImage.ContentType := AImage.ContentType;
+        If not AImage.ImageUrl.IsNull then OldImage.ImageUrl := AImage.ImageUrl;
+
+        OldImage.Update;
+    Finally
+        OldImage.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TUserImageService.DeleteImage(const ImageID: Int64);
+Var
+    ImageToDelete: TImage;
+    LFilePath: string;
+Begin
+    ImageToDelete := TMVCActiveRecord.GetByPK<TImage>(ImageID);
+    Try
+        If Not Assigned(ImageToDelete) Then
+            Raise Exception.Create('Image not found');
+
+        LFilePath := ExtractFilePath(ParamStr(0)) + 'UserImages\' +
+                    ImageToDelete.ImageGuid.ToString +
+                    ExtractFileExt(ImageToDelete.ImageUrl.ValueOrDefault);
+
+        If FileExists(LFilePath) Then
+            DeleteFile(LFilePath);
+
+        ImageToDelete.Delete;
+    Finally
+        ImageToDelete.Free;
+    End;
+End;
+//______________________________________________________________________________
+Class Function TUserImageService.GenerateImageUrl(const AImage: TImage): string;
+Var
+    LExtension: string;
+    LBasePath: string;
+Begin
+    LBasePath := ExtractFilePath(ParamStr(0)) + 'UserImages';
+
+    If Not DirectoryExists(LBasePath) Then
+        ForceDirectories(LBasePath);
+
+    If AImage.ContentType.HasValue Then
+    Begin
+        If AImage.ContentType.Value.Contains('jpeg') Then
+            LExtension := '.jpg'
+        Else If AImage.ContentType.Value.Contains('png') Then
+            LExtension := '.png'
+        Else If AImage.ContentType.Value.Contains('gif') Then
+            LExtension := '.gif'
+        Else
+            LExtension := '.bin';
+    End
+    Else
+    Begin
+        LExtension := '.bin';
+    End;
+
+    Result := IncludeTrailingPathDelimiter(LBasePath) + AImage.ImageGuid.ToString + LExtension;
 End;
 //______________________________________________________________________________
 Class Procedure TUserImageService.SetImageDimensions(AImage: TImage; const FileStream: TStream);
 Var
-    Img: TGraphic;
-    Ext: string;
+    Image: TGraphic;
+    LExtension: string;
 Begin
-    FileStream.Position := 0;
-    Ext := ExtractFileExt(AImage.OriginalFileName.Value).ToLower;
-    if Ext = '.jpg' then
-      Img := TJPEGImage.Create
-    else if Ext = '.png' then
-      Img := TPngImage.Create
-    else
-      Exit;
+    Image := nil;
+    Try
+        FileStream.Position := 0;
 
-    try
-        Img.LoadFromStream(FileStream);
-        AImage.Width := Img.Width;
-        AImage.Height := Img.Height;
+        LExtension := ExtractFileExt(AImage.OriginalFileName.Value).ToLower;
 
-        if Ext = '.jpg' then
-            AImage.ContentType := 'image/jpeg'
-        else if Ext = '.png' then
-            AImage.ContentType := 'image/png';
-    finally
-        Img.Free;
+        // تشخیص نوع تصویر بر اساس پسوند
+        If (LExtension = '.jpg') Or (LExtension = '.jpeg') Then
+            Image := TJPEGImage.Create
+        Else If LExtension = '.png' Then
+            Image := TPngImage.Create;
+
+        If Assigned(Image) Then
+        Begin
+            Try
+                Image.LoadFromStream(FileStream);
+                AImage.Width := Image.Width;
+                AImage.Height := Image.Height;
+
+                If (LExtension = '.jpg') Or (LExtension = '.jpeg') Then
+                    AImage.ContentType := 'image/jpeg'
+                Else If LExtension = '.png' Then
+                    AImage.ContentType := 'image/png';
+            Except
+                On E: Exception Do
+                Begin
+                    FreeAndNil(Image);
+                    Raise; // یا هندل خطا به روش دیگر
+                End;
+            End;
+        End;
+    Finally
+        If Assigned(Image) Then
+            Image.Free;
     End;
 End;
 //______________________________________________________________________________
+
 End.
 

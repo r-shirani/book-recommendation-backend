@@ -107,21 +107,17 @@ Begin
         raise Exception.Create('Rate value must be between 1 and 5');
 
     Try
-        If (Temp.Count <> 0) then
+        if Temp.Count <> 0 then
         begin
-            ARate.Update;
+            Temp[0].Rate := ARate.Rate;
+            Temp[0].Update;
         end
         else
         begin
-            Try
-                ARate.Insert;
-            Except
-                ARate.Free;
-                raise;
-            End;
+            ARate.Insert;
         end;
     Finally
-        if Assigned(Temp) then
+        If Assigned(Temp) then
             Temp.Free;
     End;
 End;

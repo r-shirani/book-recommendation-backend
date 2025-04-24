@@ -25,17 +25,22 @@ Type
         Destructor Destroy; override;
 
         [MVCPath('')]
-        [MVCHTTPMethod([httpPOST])]
+        [MVCHTTPMethod([httpPUT])]
+        [MVCConsumes('application/json')]
+        [MVCDoc('Send a Genre like this {"userid": 10113, "genres": [32,35,38]} to update favorit genre of user')]
         Procedure UpdateUserGenres;
 
         [MVCPath('')]
         [MVCHTTPMethod([httpDelete])]
+        [MVCDoc('This API delete just one of the genre that user like with genre s id')]
         Procedure DeleteGenre;
 
-        [MVCPath('/($userid)')]
+        [MVCPath('')]
         [MVCHTTPMethod([httpGET])]
-        Procedure GetGenresByUser(userid: Int64);
-    End;
+        [MVCProduces('application/json')]
+        [MVCDoc('Return all of the genres that user like')]
+        Procedure GetGenresByUser([MVCFromQueryString('userid', 0)] userid: Int64);
+End;
 
 Implementation
 
@@ -64,21 +69,19 @@ Begin
     Render(Genres);
 End;
 //______________________________________________________________________________
-Procedure TUserGenreFavoritController.UpdateUserGenres;
+Procedure TUserGenreFavoritController.UpdateUserGenres();
 Var
     BodyJSON: TJsonObject;
     UserID: Int64;
     GenresArray: TJsonArray;
     GenreIDs: TArray<Integer>;
     I: Integer;
-
-  JSONValue: TJSONValue;
 Begin
     BodyJSON := TJsonObject.Create;
     Try
         BodyJSON.FromJSON(Context.Request.Body);
 
-        If Not BodyJSON.Contains('userid') Or Not BodyJSON.Contains('genres') Then
+        If (Not BodyJSON.Contains('userid')) OR (Not BodyJSON.Contains('genres')) Then
         Begin
             Render(HTTP_STATUS.NotAcceptable, 'Missing userID or genres field');
             Exit;
@@ -88,20 +91,15 @@ Begin
         GenresArray := BodyJSON.A['genres'];
 
         SetLength(GenreIDs, GenresArray.Count);
-    For I := 0 To GenresArray.Count - 1 Do
-    Begin
+        For I := 0 To GenresArray.Count - 1 Do
+        Begin
+            GenreIDs[I] := GenresArray.Items[I].Value.ToInteger;
+        End;
 
-        GenreIDs[I] := GenresArray.Items[I].Value.ToInteger;
-
-    End;
-
-
-
-        // Delete previous genres and add new ones
         FService.ClearUserGenres(UserID);
         FService.AddUserGenres(UserID, GenreIDs);
 
-        Render(HTTP_STATUS.Ok, 'Completed');
+        Render(HTTP_STATUS.OK, 'Updated');
     Finally
         BodyJSON.Free;
     End;
@@ -115,14 +113,14 @@ Begin
     BodyJSON := TJsonObject.Create;
     Try
         BodyJSON.FromJSON(Context.Request.Body);
-        If Not BodyJSON.Contains('userID') Or Not BodyJSON.Contains('genreID') Then
+        If Not BodyJSON.Contains('userid') Or Not BodyJSON.Contains('genreid') Then
         Begin
             Render(HTTP_STATUS.NotAcceptable, 'Missing userID or genreID');
             Exit;
         End;
 
-        UserID := BodyJSON.I['userID'];
-        GenreID := BodyJSON.I['genreID'];
+        UserID := BodyJSON.I['userid'];
+        GenreID := BodyJSON.I['genreid'];
 
         FService.DeleteGenreFavorit(UserID, GenreID);
         Render(HTTP_STATUS.Ok, 'Deleted');

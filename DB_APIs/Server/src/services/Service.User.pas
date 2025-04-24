@@ -93,6 +93,7 @@ Begin
         If AUser.DateOfBirth <> 0 Then OldUser.DateOfBirth := AUser.DateOfBirth;
         If Not AUser.Website.IsNull Then OldUser.Website := AUser.Website;
         If Not AUser.UserTypeID.IsNull Then OldUser.UserTypeID := AUser.UserTypeID;
+        If Not AUser.MBTI.IsNull Then OldUser.MBTI := AUser.MBTI;
 
         // ذخیره تغییرات
         OldUser.Update;

@@ -106,7 +106,7 @@ Begin
 
         // Generate URL and save
         LFilePath := GenerateImageUrl(AImage);
-        AImage.ImageUrl := BASE_Image + '/' + AImage.ImageGuid.ToString + ExtractFileExt(LFilePath);
+        AImage.ImageUrl := BASE_ImageBook + AImage.ImageGuid.ToString;
 
         // Save physical file
         LFileStream := TFileStream.Create(LFilePath, fmCreate);

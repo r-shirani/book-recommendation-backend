@@ -69,7 +69,7 @@ Begin
     Try
         WhereClause := 'BookID = ? AND CommentRefID IS NULL';
         If not IncludeBlocked then
-            WhereClause := WhereClause + ' AND (IsBlocked IS NULL OR IsBlocked = FALSE)';
+            WhereClause := WhereClause + ' AND (IsBlocked IS NULL OR IsBlocked = 0)';
 
         Result := TMVCActiveRecord.Where<TComment>(WhereClause, [BookID]);
     Except
@@ -85,7 +85,7 @@ Function TCommentService.GetCommentsByUser(UserID: Int64): TObjectList<TComment>
 Begin
     Try
         Result := TMVCActiveRecord.Where<TComment>(
-            'UserID = ? AND (IsBlocked IS NULL OR IsBlocked = FALSE)',
+            'UserID = ? AND ((IsBlocked IS NULL) OR (IsBlocked = 0))',
             [UserID]
         );
     Except
@@ -101,7 +101,7 @@ Function TCommentService.GetReplies(CommentID: Int64): TObjectList<TComment>;
 Begin
     Try
         Result := TMVCActiveRecord.Where<TComment>(
-            'CommentRefID = ? AND (IsBlocked IS NULL OR IsBlocked = FALSE)',
+            'CommentRefID = ? AND (IsBlocked IS NULL OR IsBlocked = 0)',
             [CommentID]
         );
     Except
@@ -118,7 +118,7 @@ Begin
     Try
         Result := TMVCActiveRecord.Select<TComment>(
             'SELECT * FROM Book.Comment ' +
-            'WHERE BookID = ? AND (IsBlocked IS NULL OR IsBlocked = FALSE) ' +
+            'WHERE BookID = ? AND (IsBlocked IS NULL OR IsBlocked = 0) ' +
             'ORDER BY (COALESCE(LikeCount,0) - (COALESCE(DisLikeCount,0)) DESC ' +
             'LIMIT ?', [BookID, Limit]);
     Except

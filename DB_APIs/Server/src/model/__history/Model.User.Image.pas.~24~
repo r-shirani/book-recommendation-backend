@@ -1,0 +1,63 @@
+﻿Unit Model.User.Image;
+
+Interface
+
+Uses
+    MVCFramework.ActiveRecord,
+    MVCFramework.Serializer.Commons,
+    MVCFramework.Nullables,
+    System.SysUtils;
+
+type
+    [MVCNameCase(ncLowerCase)]
+    [MVCTable('[User].[Image]')]
+    TImage = class(TMVCActiveRecord)
+    Private
+        [MVCTableField('ID', [foPrimaryKey])]
+        FID: Int64;
+
+        [MVCTableField('ImageGuid')]
+        FImageGuid: TGUID;
+
+        [MVCTableField('UserID')]
+        FUserID: Int64;
+
+        [MVCTableField('UploadDate')]
+        FUploadDate: NullableTDateTime;
+
+        [MVCTableField('FileSizeKB')]
+        FFileSizeKB: NullableInt32;
+
+        [MVCTableField('ContentType')]
+        FContentType: NullableString;
+
+        [MVCTableField('OriginalFileName')]
+        FOriginalFileName: NullableString;
+
+        [MVCTableField('ImageUrl')]
+        FImageUrl: NullableString;
+
+        [MVCTableField('Width')]
+        FWidth: NullableInt32;
+
+        [MVCTableField('Height')]
+        FHeight: NullableInt32;
+
+
+
+    Public
+        property ImageGuid: TGUID read fImageGuid write fImageGuid;
+        property UserID: Int64 read fUserID write fUserID;
+        property UploadDate: NullableTDateTime read fUploadDate write fUploadDate;
+        property FileSizeKB: NullableInt32 read fFileSizeKB write fFileSizeKB;
+        property ContentType: NullableString read fContentType write fContentType;
+        property OriginalFileName: NullableString read fOriginalFileName write fOriginalFileName;
+        property ImageUrl: NullableString read fImageUrl write fImageUrl;
+        property Width: NullableInt32 read fWidth write fWidth;
+        property Height: NullableInt32 read fHeight write fHeight;
+End;
+
+Implementation
+
+End.
+

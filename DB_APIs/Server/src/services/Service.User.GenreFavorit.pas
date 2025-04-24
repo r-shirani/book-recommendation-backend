@@ -92,13 +92,13 @@ Procedure TGenreFav.DeleteGenreFavorit(UserID, GenreID: Int64);
 Var
   GenreToDelete: TGenreFavorit;
 Begin
-  GenreToDelete := GetGenreFavorit(UserID, GenreID);
-  Try
-    if Assigned(GenreToDelete) then
-      GenreToDelete.Delete;
-  Finally
-    GenreToDelete.Free;
-  End;
+    GenreToDelete := GetGenreFavorit(UserID, GenreID);
+    Try
+        if Assigned(GenreToDelete) then
+          GenreToDelete.Delete;
+    Finally
+        GenreToDelete.Free;
+    End;
 End;
 //______________________________________________________________________________
 Procedure TGenreFav.ClearUserGenres(UserID: Int64);

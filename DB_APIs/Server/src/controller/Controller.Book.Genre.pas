@@ -22,25 +22,36 @@ Type
         Constructor Create; override;
         Destructor Destroy; override;
 
-        [MVCPath('')]
+        [MVCPath('/getAllGenres')]
         [MVCHTTPMethod([httpGET])]
+        [MVCProduces('application/json')]
+        [MVCDoc('Return all genres that stored in DB.')]
         Procedure GetAllGenres();
 
         [MVCPath('')]
         [MVCHTTPMethod([httpPOST])]
+        [MVCProduces('application/json')]
+        [MVCConsumes('application/json')]
+        [MVCDoc('Add new genre in to DB.')]
         Procedure CreateGenre([MVCFromBody] const AGenre: TGenre);
 
         [MVCPath('')]
         [MVCHTTPMethod([httpPUT])]
+        [MVCProduces('application/json')]
+        [MVCConsumes('application/json')]
+        [MVCDoc('update new genre in to DB.')]
         Procedure UpdateGenre([MVCFromBody] const AGenre: TGenre);
 
-        [MVCPath('/($id)')]
+        [MVCPath('')]
         [MVCHTTPMethod([httpGET])]
-        Procedure GetGenreByID(id: Integer);
+        [MVCProduces('application/json')]
+        [MVCDoc('get detail of genre via its id')]
+        Procedure GetGenreByID([MVCFromQueryString('genreid', 0)] Const genreid: Integer);
 
-        [MVCPath('/($id)')]
+        [MVCPath('')]
         [MVCHTTPMethod([httpDELETE])]
-        Procedure DeleteGenre(id: Integer);
+        [MVCDoc('Delete genre from DB via its ID')]
+        Procedure DeleteGenre([MVCFromQueryString('genreid', 0)] Const genreid: Integer);
 End;
 
 Implementation
@@ -74,16 +85,17 @@ Begin
         On E: Exception Do
         Begin
             Render(HTTP_STATUS.BadRequest, E.Message);
+
         End;
     End;
 End;
 //______________________________________________________________________________
-Procedure TGenreController.GetGenreByID(id: Integer);
+Procedure TGenreController.GetGenreByID(Const genreid: Integer);
 Var
     Genre: TGenre;
 Begin
     Try
-        Genre := FGenreService.GetGenreByID(id);
+        Genre := FGenreService.GetGenreByID(genreid);
         If Assigned(Genre) then
             Render(Genre)
         Else
@@ -122,10 +134,10 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Procedure TGenreController.DeleteGenre(id: Integer);
+Procedure TGenreController.DeleteGenre(Const genreid: Integer);
 Begin
     Try
-        FGenreService.DeleteGenre(id);
+        FGenreService.DeleteGenre(genreid);
         Render(HTTP_STATUS.OK, 'Delete Successfully');
     Except
         On E: Exception Do
