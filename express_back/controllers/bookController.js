@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 const { getUserByID } = require("../SQL/SQL-user-controller");
-const { bookImage, searchBook_controller } = require("../SQL/SQL-book-controller");
+const { bookImage, searchBook_controller, likeBook, deletelike } = require("../SQL/SQL-book-controller");
 const { Readable } = require('stream');
 
 exports.searchBook = async (req, res) => {
@@ -100,6 +100,76 @@ exports.searchBook_with_image = async (req, res) => {
         res.status(500).json({ message: "server error" });
     }
 };
+
+
+exports.like_book = async(req, res) =>{
+    const userID = req.user.id;
+    const {bookid}= req.body;
+    try {
+        const response = await likeBook(bookid , userID);
+        if(response === 1)
+        {
+            return res.status(200).send("liked");
+        }
+        else{
+            return res.status(500).json({ message: "server error" });
+        }
+    } catch (error) {
+        console.error("Error in liking book:", error);
+        res.status(500).json({ message: "server error" });
+    }
+}
+
+
+exports.dislike_book = async(req , res) => {
+    const userID = req.user.id;
+    const {bookid} = req.body;
+    try {
+
+        const response = await deletelike(bookid , userID);
+        if(response === 1){
+            return res.status(200).send("disliked");
+        }
+        else{
+            return res.status(500).json({ message: "server error" });
+        }
+
+        
+    } catch (error) {
+        console.error("Error in disliking book:", error);
+        res.status(500).json({ message: "server error" });
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Utility to convert stream to buffer
 const streamToBuffer = async (stream) => {

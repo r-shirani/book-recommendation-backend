@@ -1,6 +1,6 @@
 const express = require("express");
 const authMiddleware = require("../middlewares/authMiddleware");
-const { searchBook, getBookImage , popularBooks, searchBook_with_image } = require("../controllers/bookController");
+const { searchBook, getBookImage , popularBooks, searchBook_with_image, like_book, dislike_book } = require("../controllers/bookController");
 
 const router = express.Router();
 
@@ -8,5 +8,7 @@ router.get("/search", searchBook_with_image );
 router.get("/searchurl",searchBook)
 router.get("/image/:bookid",getBookImage);
 router.get("/popularBooks",popularBooks);
+router.post("/like" ,authMiddleware , like_book );
+router.delete("/dislike" ,authMiddleware , dislike_book );
 
 module.exports = router;

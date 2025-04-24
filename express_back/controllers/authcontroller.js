@@ -54,7 +54,7 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: "Please verify your email first!" });
     if(user>=0)//logged in
     {
-      const token = jwt.sign({ id: user }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      const token = jwt.sign({ id: user }, process.env.JWT_SECRET, { expiresIn: "48h" });
       res.status(201).json({ 
         message: "Logged in successfully", 
         token, 

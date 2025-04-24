@@ -44,7 +44,67 @@ const bookImage = async (bookid)=>{
     }
 }
 
+
+const likeBook =async (bookid_input , userid_input)=>{
+    const baseurl = "http://185.255.90.36:9547/api/v1/like";
+    try {
+        const response = await axios.post(baseurl ,{
+            bookid : bookid_input,
+            userid : userid_input
+         })
+
+        if(response.status === 200){
+            return 1;
+        }
+        else{
+            return -1;
+        }
+    } catch (error) {
+        console.log("SQL server error - (like-book)");
+        return -1
+    }
+    
+}
+
+
+
+
+const deletelike = async (bookid_input , userid_input) => {
+
+    const baseurl = "http://185.255.90.36:9547/api/v1/like";
+    try {
+        
+        const response = await axios.delete(baseurl ,{
+            params: {
+                userid: userid_input,
+                bookid : bookid_input
+            }
+        })
+        if(response.status === 200){
+            return 1;
+        }
+        else{
+            return -1;
+
+        }
+
+
+
+    } catch (error) {
+        console.log("SQL server error - (like-book)");
+        return -1
+    }
+}
+
+
+
+
+
+
+
 module.exports={
     searchBook_controller,
-    bookImage
+    bookImage,
+    likeBook,
+    deletelike
 }
