@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 const { getUserByID } = require("../SQL/SQL-user-controller");
-const { bookImage, searchBook_controller, likeBook, deletelike } = require("../SQL/SQL-book-controller");
+const { bookImage, searchBook_controller, likeBook, deletelike, favorit_books } = require("../SQL/SQL-book-controller");
 const { Readable } = require('stream');
 
 exports.searchBook = async (req, res) => {
@@ -143,7 +143,25 @@ exports.dislike_book = async(req , res) => {
 
 
 
-
+exports.favoritBooks = async (req , res) => {
+    const userID = req.user.id;
+    
+    try {
+        const response = await favorit_books(userID);
+        if(response === 0){
+            return res.status(204).send("no content");
+        }
+        else if(response === -1){
+            return res.status(500).json({ message: "server error" });
+        }
+        else{
+            return res.status(200).send(response.data);
+        }
+    } catch (error) {
+        console.error("Error in disliking book:", error);
+        res.status(500).json({ message: "server error" });
+    }
+}
 
 
 

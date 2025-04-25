@@ -91,13 +91,36 @@ const deletelike = async (bookid_input , userid_input) => {
 
 
     } catch (error) {
-        console.log("SQL server error - (like-book)");
+        console.log("SQL server error - (dislike-book)");
         return -1
     }
 }
 
 
-
+const favorit_books = async (userid_input) => {
+    const baseurl = "http://185.255.90.36:9547/api/v1/book/favorit";
+    try {
+        const response = await axios.get(baseurl ,{
+            params: {
+                userid: userid_input,
+            }
+        })
+        if(response.status === 200){
+            return response;
+        }
+        else if(response.status === 204)
+        {
+            return 0;
+        }
+        else{
+            return -1;
+        }
+        
+    } catch (error) {
+        console.log("SQL server error - (favorit-book)");
+        return -1
+    }
+}
 
 
 
@@ -106,5 +129,6 @@ module.exports={
     searchBook_controller,
     bookImage,
     likeBook,
-    deletelike
+    deletelike,
+    favorit_books
 }
