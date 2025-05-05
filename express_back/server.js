@@ -8,6 +8,7 @@ const commentRoutes = require("./routes/commentRoutes")
 const bookRoutes = require("./routes/bookRoutes")
 const updatePtofilePicRoutes = require("./routes/updatePtofilePicRoutes");
 const rateRoutes = require("./routes/rateRoutes")
+const collectionRoutes = require("./routes/collectionRoutes");
 const bodyParser = require('body-parser');
 
 
@@ -25,6 +26,7 @@ app.use("/api",commentRoutes);
 app.use("/api/book",bookRoutes);
 app.use("/api/profile/pic",updatePtofilePicRoutes);
 app.use("/api",rateRoutes);
+app.use("/api/collection",collectionRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port http://localhost:${PORT}`));
