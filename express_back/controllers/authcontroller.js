@@ -90,6 +90,31 @@ exports.verifyCode = async (req, res) => {
   }
 };
 
+
+exports.sendEmailPassCode = async (req , res) => {
+  try {
+    const { email } = req.body;
+    let user = await getUserData(email);
+    const verificationCode = Math.floor(100000 + Math.random() * 900000);
+
+
+
+
+
+
+
+
+
+
+
+
+    
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
 exports.getProfile = async (req, res) => {
   try {
     const userID = req.user.id; //"Data retrieved from middleware"
