@@ -27,7 +27,7 @@ exports.getUser_Collections = async (req , res)=>{
 
 exports.getAnotherUser_Collections = async (req , res)=>{
     try {
-        const {userid} =req.body;
+        const userid = req.params.userid;
         const response = await get_all_user_collections(userid);
         if(response===-1){
             res.status(500).json({ message: "server error(SQL)" });

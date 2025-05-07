@@ -2,7 +2,8 @@ const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
-const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut, updatePassword_controller, updateProfile_controller } = require("../SQL/SQL-user-controller");
+
+const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut, updatePassword_controller, updateProfile_controller, updateVerifycode_controller } = require("../SQL/SQL-user-controller");
 const { loginUser_controller } = require("../SQL/SQL-user-controller");
 const { getUserByID } = require("../SQL/SQL-user-controller");
 
@@ -96,24 +97,65 @@ exports.sendEmailPassCode = async (req , res) => {
     const { email } = req.body;
     let user = await getUserData(email);
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
+    console.log(`userID : ${user.userId} pass verify code : ${verificationCode}`);
+    let response = await updateVerifycode_controller(user.userId ,verificationCode);
+    if(response === 1)
+    {
+      await sendVerificationCode.sendVerificationCode_password(email, verificationCode)
+      .then(() => res.send('Verification code sent to email.'))
+      .catch((err) => res.status(500).send('error in sending the verification email!'));
+    }
+    else
+    {
+      console.log("server error(SQL)_sendemail _ passcode");
+      res.status(500).json({ message: "Server error" });
+    }
 
 
-
-
-
-
-
-
-
-
-
-
-    
   } catch (error) {
+    console.log("server error(SQL)_sendemail _ passcode");
     res.status(500).json({ message: "Server error" });
   }
 }
 
+
+exports.forgetPassword_code = async (req , res) =>{
+  try {
+    const {email , code} = req.body;
+    if(!code){
+      res.status(400).json({ message: "code field is empty" });
+    }
+    let user = await getUserData(email);
+    if (user.verificationCode == parseInt(code)) {
+      console.log(`this ${user.userId} changing password (verififed code)`);
+      res.status(200).json({ message: "User verified successfully" });
+    }
+    else{
+      res.status(400).json({ message: "try again wrong code" });
+    }
+  } catch (error) {
+    console.log(`server error(SQL)_forgetPassword _ passcode    error : ${error}`);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
+exports.settingNewPassword = async (req , res) => {
+  const {email , newpass} = req.body;
+  let user = await getUserData(email);
+  const hashedPassword = await bcrypt.hash(newpass, 10);
+  const response = await updatePassword_controller(user.userId ,hashedPassword);
+  if(response===-1){
+    res.status(500).json({ message: "SQL server error" })
+  }
+  else if(response === 1){
+    res.status(200).json({ message: "User password updated successfully" })
+  }
+  else if(response === 0){
+    res.status(400).json({ message: "User not found" })
+  }
+
+}
 
 exports.getProfile = async (req, res) => {
   try {

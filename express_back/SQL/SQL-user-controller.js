@@ -66,6 +66,7 @@ const EmailVerificationPut = async (userIdInput , EmailverificationInput) =>{
 
 const getUserData = async (email)=>{
   try {
+    console.log(email);
     let responses = await LoginUser(email);
     let response = responses[0];
     console.log(response.email+ " " + response.verificationCode + " " +"getUserDataMethod log");
@@ -215,7 +216,34 @@ const updatePassword_controller = async(userIdInput ,newPasswordInput) =>{
   }
 };
 
+const updateVerifycode_controller = async(userIdInput , verificationCodeValue) =>{
+  try {
+    const newVerifiedcode = String(verificationCodeValue);
+    const response = await newApi.put("/userSecurity", {
+      userid : userIdInput,
+      verificationcode : newVerifiedcode,
+    });
 
+    if (!response || response.length===0){
+      console.log("server Error(SQL-login)");
+      return -1;
+    }
+    const pure = response.data;
+      if(pure === "User_Security_Updated"){
+        console.log("User_Security_Updated");
+          return 1;
+      } else {
+          console.log("somethiing went wrong");
+          return 0;
+      }    
+
+
+  } catch (error) {
+    
+    console.log("Error:", error);
+    return -1;
+  }
+}
 
 
 
@@ -306,5 +334,6 @@ module.exports={
   updateProfile_controller,
   get_user_genres_controller,
   get_user_genres_name_controller,
-  update_genres
+  update_genres,
+  updateVerifycode_controller
 };
