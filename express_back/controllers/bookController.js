@@ -7,7 +7,8 @@ const { bookImage, searchBook_controller, likeBook, deletelike, favorit_books } 
 const { Readable } = require('stream');
 
 exports.searchBook = async (req, res) => {
-    const { pagenum, searchterm } = req.body;
+    const searchterm = req.params.searchterm;
+    const pagenum = 1;
     const count = 5;
     const baseUrl = "http://185.255.90.36:9547/api/v1/images/file/";
 

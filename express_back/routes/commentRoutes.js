@@ -6,8 +6,8 @@ const { validateComment } = require("../validators/commentValidator");
 const router = express.Router();
 
 router.post("/comment",authMiddleware ,validateComment , newComment );
-router.get("/comment/book",getAllCommentBook);
-router.get("/comment/ref",getRefComments);
+router.get("/comment/book/:bookid",getAllCommentBook);
+router.get("/comment/ref/:commentid",getRefComments);
 router.put("/comment/like",likeComment);
 router.put("/comment/dislike",dislikeComment);
 

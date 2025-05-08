@@ -5,7 +5,7 @@ const { searchBook, getBookImage , popularBooks, searchBook_with_image, like_boo
 const router = express.Router();
 
 router.get("/search", searchBook_with_image );
-router.get("/searchurl",searchBook)
+router.get("/searchurl/:searchterm",searchBook)
 router.get("/image/:bookid",getBookImage);
 router.get("/popularBooks",popularBooks);
 router.post("/like" ,authMiddleware , like_book );
