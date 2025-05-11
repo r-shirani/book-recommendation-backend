@@ -44,7 +44,6 @@ const bookImage = async (bookid)=>{
     }
 }
 
-
 const likeBook =async (bookid_input , userid_input)=>{
     const baseurl = "http://185.255.90.36:9547/api/v1/like";
     try {
@@ -65,9 +64,6 @@ const likeBook =async (bookid_input , userid_input)=>{
     }
     
 }
-
-
-
 
 const deletelike = async (bookid_input , userid_input) => {
 
@@ -96,7 +92,6 @@ const deletelike = async (bookid_input , userid_input) => {
     }
 }
 
-
 const favorit_books = async (userid_input) => {
     const baseurl = "http://185.255.90.36:9547/api/v1/book/favorit";
     try {
@@ -122,13 +117,27 @@ const favorit_books = async (userid_input) => {
     }
 }
 
-
-
+const GetBookByID = async(bookid_input)=> {
+    try {
+        const response = await api.get("/detail", null, {
+            params:
+            {
+                bookid : bookid_input,
+            }
+        })
+        return response.data;
+    } catch (error) {
+        console.log("Error:", error);
+        console.log("SQL server error - (get book by id)");
+        return -1
+    }
+}
 
 module.exports={
     searchBook_controller,
     bookImage,
     likeBook,
     deletelike,
-    favorit_books
+    favorit_books,
+    GetBookByID
 }
