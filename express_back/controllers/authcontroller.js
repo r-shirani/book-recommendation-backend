@@ -91,7 +91,6 @@ exports.verifyCode = async (req, res) => {
   }
 };
 
-
 exports.sendEmailPassCode = async (req , res) => {
   try {
     const { email } = req.body;
@@ -118,7 +117,6 @@ exports.sendEmailPassCode = async (req , res) => {
   }
 }
 
-
 exports.forgetPassword_code = async (req , res) =>{
   try {
     const {email , code} = req.body;
@@ -138,7 +136,6 @@ exports.forgetPassword_code = async (req , res) =>{
     res.status(500).json({ message: "Server error" });
   }
 }
-
 
 exports.settingNewPassword = async (req , res) => {
   const {email , newpass} = req.body;
