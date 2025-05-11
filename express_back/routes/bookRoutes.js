@@ -11,6 +11,6 @@ router.get("/popularBooks",popularBooks);
 router.post("/like" ,authMiddleware , like_book );
 router.delete("/dislike" ,authMiddleware , dislike_book );
 router.get("/favorit" , authMiddleware , favoritBooks);
-router.get('/api/v1/book/detail', bookController.getBookDetail);
+router.get('/detail', bookController.getBookDetail);
 
 module.exports = router;
