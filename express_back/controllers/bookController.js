@@ -102,7 +102,6 @@ exports.searchBook_with_image = async (req, res) => {
     }
 };
 
-
 exports.like_book = async(req, res) =>{
     const userID = req.user.id;
     const {bookid}= req.body;
@@ -120,7 +119,6 @@ exports.like_book = async(req, res) =>{
         res.status(500).json({ message: "server error" });
     }
 }
-
 
 exports.dislike_book = async(req , res) => {
     const userID = req.user.id;
@@ -142,8 +140,6 @@ exports.dislike_book = async(req , res) => {
     }
 }
 
-
-
 exports.favoritBooks = async (req , res) => {
     const userID = req.user.id;
     
@@ -164,31 +160,41 @@ exports.favoritBooks = async (req , res) => {
     }
 }
 
+exports.getBookDetail = async (req, res) => {
+    const bookid = req.query.bookid;
 
+    if (!bookid) {
+        return res.status(400).json({ error: 'enter bookid param' });
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    try {
+        let books = await GetBookByID(bookid);
+        if (!books){
+            return res.status(404).json({ message: "Book not found" });
+        }
+        const book = books[0];
+        res.json({
+            message: "Book Detail:",
+            book:{
+                BookID: book.BookID,
+                Title: book.Title,
+                AuthorName: book.AuthorName,
+                PublisherName: book.PublisherName,
+                GenreName1: book.GenreName1,
+                GenreName2: book.GenreName2,
+                GenreName3: book.GenreName3,
+                GenreExtra: book.GenreExtra,
+                Description: book.Description,
+                PublishedYear: book.PublishedYear,
+                LanguageName: book.LanguageName,
+                PageCount: book.PageCount,
+                ISBN: book.ISBN },
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'server error' });
+    }
+};
 
 // Utility to convert stream to buffer
 const streamToBuffer = async (stream) => {
