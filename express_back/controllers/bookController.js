@@ -169,7 +169,7 @@ exports.getBookDetail = async (req, res) => {
 
     try {
         let books = await GetBookByID(bookid);
-        if (!books){
+        if (!books || books.length===0){
             return res.status(404).json({ message: "Book not found" });
         }
         const book = books[0];

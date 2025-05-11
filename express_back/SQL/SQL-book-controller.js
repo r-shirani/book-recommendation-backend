@@ -119,7 +119,8 @@ const favorit_books = async (userid_input) => {
 
 const GetBookByID = async(bookid_input)=> {
     try {
-        const response = await api.get("/detail", null, {
+        const baseurl = "http://185.255.90.36:9547/api/v1/book/detail";
+        const response = await book.get(baseurl, {
             params:
             {
                 bookid : bookid_input,
