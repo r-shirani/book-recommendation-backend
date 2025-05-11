@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 const { getUserByID } = require("../SQL/SQL-user-controller");
-const { bookImage, searchBook_controller, likeBook, deletelike, favorit_books } = require("../SQL/SQL-book-controller");
+const { bookImage, searchBook_controller, likeBook, deletelike, favorit_books, GetBookByID } = require("../SQL/SQL-book-controller");
 const { Readable } = require('stream');
 
 exports.searchBook = async (req, res) => {
