@@ -14,32 +14,32 @@ Uses
 Type
     IBookService = interface
         ['{D4B5D8E0-5B44-4D1B-823F-6C9B3F6A8F6A}']
-        Function GetBookByID(const BookID: Int64): TBook;
+        Function GetBookByID(Const BookID: Int64): TBook;
         Function GetAllBooks: TObjectList<TBook>;
-        Function SearchBooks(const SearchTerm: string; Const PageNum: Integer;
+        Function SearchBooks(Const SearchTerm: string; Const PageNum: Integer;
             Const Count: Integer): TFDQuery;
-        Procedure AddBook(const ABook: TBook);
-        Procedure UpdateBook(const ABook: TBook);
-        Procedure DeleteBook(const BookID: Int64);
-        Function FavoritBook(const UserID: Int64): TFDQuery;
-        Function GetDetailByID(const BookID: Int64): TFDQuery;
+        Procedure AddBook(Const ABook: TBook);
+        Procedure UpdateBook(Const ABook: TBook);
+        Procedure DeleteBook(Const BookID: Int64);
+        Function FavoritBook(Const UserID: Int64): TFDQuery;
+        Function GetDetailByID(Const BookID, UserID: Int64): TFDQuery;
     End;
 
     TBookService = class(TInterfacedObject, IBookService)
     Public
-        Function GetBookByID(const BookID: Int64): TBook;
+        Function GetBookByID(Const BookID: Int64): TBook;
         Function GetAllBooks: TObjectList<TBook>;
-        Function SearchBooks(const SearchTerm: string; Const PageNum: Integer = 1;
+        Function SearchBooks(Const SearchTerm: string; Const PageNum: Integer = 1;
   Const Count: Integer = 10): TFDQuery;
-        Procedure AddBook(const ABook: TBook);
-        Procedure UpdateBook(const ABook: TBook);
-        Procedure DeleteBook(const BookID: Int64);
-        Function FavoritBook(const UserID: Int64): TFDQuery;
-        Function GetDetailByID(const BookID: Int64): TFDQuery;
+        Procedure AddBook(Const ABook: TBook);
+        Procedure UpdateBook(Const ABook: TBook);
+        Procedure DeleteBook(Const BookID: Int64);
+        Function FavoritBook(Const UserID: Int64): TFDQuery;
+        Function GetDetailByID(Const BookID, UserID: Int64): TFDQuery;
 
     Private
-        Procedure DeleteRelatedComments(const BookID: Int64);
-        Procedure DeleteRelatedRates(const BookID: Int64);
+        Procedure DeleteRelatedComments(Const BookID: Int64);
+        Procedure DeleteRelatedRates(Const BookID: Int64);
     End;
 
 Implementation
@@ -49,7 +49,7 @@ Uses UDMMain, FireDAC.Stan.Param, Data.DB;
 { TBookService }
 
 //______________________________________________________________________________
-Function TBookService.GetBookByID(const BookID: Int64): TBook;
+Function TBookService.GetBookByID(Const BookID: Int64): TBook;
 Begin
     Try
         Result := TMVCActiveRecord.GetByPK<TBook>(BookID);
@@ -58,21 +58,22 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Function TBookService.GetDetailByID(const BookID: Int64): TFDQuery;
+Function TBookService.GetDetailByID(Const BookID, UserID: Int64): TFDQuery;
 Var
     FDQuer: TFDQuery;
 Begin
     FDQuer := TFDQuery.Create(NIL);
     FDQuer.Connection := DMMain.GetConnection;
 
-    FDQuer.SQL.Text := 'Exec Book.spDetailOfBook :UserID';
-    FDQuer.Params.ParamByName('UserID').AsLargeInt := BookID;
+    FDQuer.SQL.Text := 'Exec Book.spDetailOfBook :BookID, :UserID';
+    FDQuer.Params.ParamByName('BookID').AsLargeInt := BookID;
+    FDQuer.Params.ParamByName('UserID').AsLargeInt := UserID;
     FDQuer.Open;
 
     Result := FDQuer;
 End;
 //______________________________________________________________________________
-Function TBookService.SearchBooks(const SearchTerm: string; Const PageNum: Integer = 1;
+Function TBookService.SearchBooks(Const SearchTerm: string; Const PageNum: Integer = 1;
   Const Count: Integer = 10): TFDQuery;
 Var
     FDQuer: TFDQuery;
@@ -98,12 +99,12 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Procedure TBookService.AddBook(const ABook: TBook);
+Procedure TBookService.AddBook(Const ABook: TBook);
 Begin
     ABook.Insert;
 End;
 //______________________________________________________________________________
-Procedure TBookService.UpdateBook(const ABook: TBook);
+Procedure TBookService.UpdateBook(Const ABook: TBook);
 Var
     OldBook: TBook;
 Begin
@@ -130,7 +131,7 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Procedure TBookService.DeleteBook(const BookID: Int64);
+Procedure TBookService.DeleteBook(Const BookID: Int64);
 Var
     Book: TBook;
 Begin
@@ -150,19 +151,19 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Procedure TBookService.DeleteRelatedComments(const BookID: Int64);
+Procedure TBookService.DeleteRelatedComments(Const BookID: Int64);
 Begin
     // Delete all comments related to this book
     TMVCActiveRecord.DeleteRQL(TComment, 'BookID=' + BookID.ToString);
 End;
 //______________________________________________________________________________
-Procedure TBookService.DeleteRelatedRates(const BookID: Int64);
+Procedure TBookService.DeleteRelatedRates(Const BookID: Int64);
 Begin
     // Delete all rates related to this book
     TMVCActiveRecord.DeleteRQL(TComment, 'BookID=' + BookID.ToString);
 End;
 //______________________________________________________________________________
-Function TBookService.FavoritBook(const UserID: Int64): TFDQuery;
+Function TBookService.FavoritBook(Const UserID: Int64): TFDQuery;
 Var
     FDQuer: TFDQuery;
 Begin

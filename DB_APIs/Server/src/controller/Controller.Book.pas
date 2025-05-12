@@ -33,11 +33,19 @@ Type
 
         [MVCPath('/favorit')]
         [MVCHTTPMethod([httpGET])]
-        procedure FavoritBook(Const [MVCFromQueryString('userid')] userID: Int64);
+        procedure FavoritBook(Const [MVCFromQueryString('userid')] UserID: Int64);
 
         [MVCPath('/detail')]
         [MVCHTTPMethod([httpGET])]
-        Procedure GetDetailByID(Const [MVCFromQueryString('bookid')] id: Int64);
+        Procedure GetDetailByID(Const [MVCFromQueryString('bookid')] BookID: Int64;
+          Const [MVCFromQueryString('userid', 0)] UserID: Int64);
+
+        [MVCPath('/mbti')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure SearchMBTIBook(Const [MVCFromQueryString('searchterm', '')] SearchTerm: Integer;
+          Const [MVCFromQueryString('userid')] UserID: Integer;
+          Const [MVCFromQueryString('pagenum', 1)] PageNum: Integer;
+          Const [MVCFromQueryString('count', 20)] Count: Integer);
 
         [MVCPath('')]
         [MVCHTTPMethod([httpPOST])]
@@ -109,16 +117,32 @@ Begin
         Render(HTTP_STATUS.NotFound);
 End;
 //______________________________________________________________________________
-Procedure TBookController.GetDetailByID(const id: Int64);
+Procedure TBookController.GetDetailByID(Const BookID: Int64; Const UserID: Int64);
 var
     SearchResult: TFDQuery;
 Begin
-    SearchResult := FBookService.GetDetailByID(id);
+    SearchResult := FBookService.GetDetailByID(BookID, UserID);
     Try
         If SearchResult.RecordCount = 0 then
             Render(HTTP_STATUS.NoContent, 'Empty')
         Else
             Render(HTTP_STATUS.OK, SearchResult);
+    Except
+        raise;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TBookController.SearchMBTIBook(Const SearchTerm: Integer;
+  Const UserID: Integer; Const PageNum: Integer; Const Count: Integer);
+Var
+    SearchResult: TFDQuery;
+Begin
+    SearchResult := FBookService.SearchMBTIBooks(searchterm, pageNum, count);
+    Try
+        If SearchResult.RecordCount = 0 then
+            Render(HTTP_STATUS.NoContent, 'Empty')
+        Else
+            Render(SearchResult);
     Except
         raise;
     End;
