@@ -1,0 +1,33 @@
+﻿unit Model.Book.CollectionDetail;
+
+interface
+
+uses
+  MVCFramework.Serializer.Commons,
+  MVCFramework.ActiveRecord,
+  MVCFramework.Nullables;
+
+type
+  [MVCNameCase(ncLowerCase)]
+  [MVCTable('Book.CollectionDetail')]
+  TCollectionDetail = class(TMVCActiveRecord)
+  private
+    [MVCTableField('ID', [foPrimaryKey])]
+    FID: Int64;
+
+    [MVCTableField('CollectionID')]
+    FCollectionID: NullableInt64;
+
+    [MVCTableField('BookID')]
+    FBookID: NullableInt64;
+
+  public
+    property ID: Int64 read FID write FID;
+    property CollectionID: NullableInt64 read FCollectionID write FCollectionID;
+    property BookID: NullableInt64 read FBookID write FBookID;
+  end;
+
+implementation
+
+end.
+

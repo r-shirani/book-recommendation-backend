@@ -13,11 +13,11 @@ Type
     IUserImageService = interface
         ['{F19D5B1C-9D50-444B-AC77-9A43E3B35125}']
         Function GetImageByID(const ImageID: Int64): TImage;
-        Function GetImagesByUserID(const UserID: Int64): TObjectList<TImage>;
+        Function GetImagesByUserID(const UserID: Int64): TImage;
         Function GetImageByGUID(const GUID: TGUID): TImage;
         Procedure AddImage(var AImage: TImage; const FileStream: TStream; const OriginalFileName: string);
         Procedure UpdateImage(const AImage: TImage);
-        Procedure DeleteImage(const ImageID: Int64);
+        Procedure DeleteImage(const UserID: Int64);
     End;
 
     TUserImageService = Class(TInterfacedObject, IUserImageService)
@@ -28,10 +28,10 @@ Type
     Public
         Function GetImageByGUID(const GUID: TGUID): TImage;
         Function GetImageByID(const ImageID: Int64): TImage;
-        Function GetImagesByUserID(const UserID: Int64): TObjectList<TImage>;
+        Function GetImagesByUserID(const UserID: Int64): TImage;
         Procedure AddImage(var AImage: TImage; const FileStream: TStream; const OriginalFileName: string);
         Procedure UpdateImage(const AImage: TImage);
-        Procedure DeleteImage(const ImageID: Int64);
+        Procedure DeleteImage(const UserID: Int64);
     End;
 
 Implementation
@@ -58,18 +58,42 @@ Begin
     Result := TMVCActiveRecord.GetByPK<TImage>(ImageID, False);
 End;
 //______________________________________________________________________________
-Function TUserImageService.GetImagesByUserID(const UserID: Int64): TObjectList<TImage>;
+Function TUserImageService.GetImagesByUserID(const UserID: Int64): TImage;
 Begin
-    Result := TMVCActiveRecord.Where<TImage>('UserID = ?', [UserID]);
+    Result := TMVCActiveRecord.GetOneByWhere<TImage>('UserID = ?', [UserID], False);
 End;
 //______________________________________________________________________________
 Procedure TUserImageService.AddImage(Var AImage: TImage; const FileStream: TStream; const OriginalFileName: string);
 Var
+    LUserID: Int64;
     LFileStream: TFileStream;
     LFilePath: string;
+    bExist: Boolean;
 Begin
-    If Not Assigned(AImage) Then
-        AImage := TImage.Create;
+    LUserID := AImage.UserID;
+    If (Assigned(AImage)) Then
+    Begin
+        AImage := GetImagesByUserID(AImage.UserID);
+        If (AImage = nil) then
+        Begin
+            AImage := TImage.Create;
+            AImage.UserID := LUserID;
+            bExist := False;
+        End
+        Else
+            bExist := True;
+    End
+    Else
+    Begin
+        raise Exception.Create('Error in server :| سرور رو خراب کردی');
+    End;
+
+    //Delete previos photo
+    If bExist then
+    Begin
+        LFilePath := GenerateImageUrl(AImage);
+        If FileExists(LFilePath) Then DeleteFile(LFilePath);
+    End;
 
     Try
         // Initialize image data
@@ -96,7 +120,8 @@ Begin
         End;
 
         // Save to database
-        AImage.Insert;
+        If bExist then AImage.Update
+        Else AImage.Insert;
     Except
         On E: Exception Do
         Begin
@@ -114,7 +139,7 @@ Procedure TUserImageService.UpdateImage(const AImage: TImage);
 var
   OldImage: TImage;
 Begin
-    OldImage := TMVCActiveRecord.GetByPK<TImage>(AImage.ID);
+    OldImage := GetImagesByUserID(AImage.UserID);
     Try
         If not Assigned(OldImage) then
           raise Exception.Create('Image not found');
@@ -128,12 +153,12 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Procedure TUserImageService.DeleteImage(const ImageID: Int64);
+Procedure TUserImageService.DeleteImage(const UserID: Int64);
 Var
     ImageToDelete: TImage;
     LFilePath: string;
 Begin
-    ImageToDelete := TMVCActiveRecord.GetByPK<TImage>(ImageID);
+    ImageToDelete := GetImagesByUserID(UserID);
     Try
         If Not Assigned(ImageToDelete) Then
             Raise Exception.Create('Image not found');

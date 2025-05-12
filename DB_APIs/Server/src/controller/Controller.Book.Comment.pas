@@ -75,6 +75,9 @@ Type
 
 Implementation
 
+uses
+  FireDAC.Comp.Client;
+
 { TCommentController }
 
 //______________________________________________________________________________
@@ -92,10 +95,10 @@ End;
 //______________________________________________________________________________
 Procedure TCommentController.GetCommentsByBook(Const bookID: Int64);
 Var
-    Comments: TObjectList<TComment>;
+    Comments: TFDQuery;
 Begin
     Comments := FCommentService.GetCommentsByBook(bookID);
-    If Comments.Count > 0 Then
+    If Comments.RecordCount > 0 Then
         Render(Comments)
     Else
         Render(HTTP_STATUS.NoContent);
@@ -103,10 +106,10 @@ End;
 //______________________________________________________________________________
 Procedure TCommentController.GetCommentsByUser(Const userID: Int64);
 Var
-    Comments: TObjectList<TComment>;
+    Comments: TFDQuery;
 Begin
     Comments := FCommentService.GetCommentsByUser(userID);
-    If Comments.Count > 0 Then
+    If Comments.RecordCount > 0 Then
         Render(Comments)
     Else
         Render(HTTP_STATUS.NoContent);
@@ -114,10 +117,10 @@ End;
 //______________________________________________________________________________
 Procedure TCommentController.GetPopularComments(Const bookID: Int64);
 Var
-    Comments: TObjectList<TComment>;
+    Comments: TFDQuery;
 Begin
     Comments := FCommentService.GetPopularComments(bookID);
-    If Comments.Count > 0 Then
+    If Comments.RecordCount > 0 Then
         Render(Comments)
     Else
         Render(HTTP_STATUS.NoContent);
@@ -125,10 +128,10 @@ End;
 //______________________________________________________________________________
 Procedure TCommentController.GetReplies(Const id: Int64);
 Var
-    Replies: TObjectList<TComment>;
+    Replies: TFDQuery;
 Begin
     Replies := FCommentService.GetReplies(id);
-    If Replies.Count > 0 Then
+    If Replies.RecordCount > 0 Then
         Render(Replies)
     Else
         Render(HTTP_STATUS.NoContent);

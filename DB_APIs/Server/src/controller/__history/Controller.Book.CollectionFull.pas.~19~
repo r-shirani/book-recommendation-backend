@@ -1,0 +1,109 @@
+﻿Unit Controller.Book.CollectionFull;
+
+Interface
+
+Uses
+    MVCFramework, MVCFramework.Commons, System.SysUtils,
+    JsonDataObjects,
+    Service.Book.CollectionFull;
+
+Type
+    [MVCPath('/collection')]
+    TBookCollectionFullController = class(TMVCController)
+    Private
+        FService: ICollectionFullService;
+    Public
+        Constructor Create; override;
+        Destructor Destroy; override;
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetCollectionsUser([MVCFromQueryString('userid', 0)] id: Int64);
+
+        [MVCPath('/full')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetCollectionFullByID([MVCFromQueryString('collectionid', 0)] id: Int64);
+
+        [MVCPath('/full')]
+        [MVCHTTPMethod([httpPOST])]
+        Procedure AddCollectionFull;
+
+        [MVCPath('/full')]
+        [MVCHTTPMethod([httpPUT])]
+        Procedure UpdateCollectionFull([MVCFromQueryString('collectionid', 0)] id: Int64);
+
+        [MVCPath('/full')]
+        [MVCHTTPMethod([httpDELETE])]
+        Procedure DeleteCollectionFull([MVCFromQueryString('collectionid', 0)] id: Int64);
+End;
+
+Implementation
+
+Uses
+    MVCFramework.Serializer.Commons,
+    System.Generics.Collections;
+
+//______________________________________________________________________________
+Constructor TBookCollectionFullController.Create();
+Begin
+    Inherited;
+    FService := TCollectionFullService.Create;
+End;
+//______________________________________________________________________________
+Destructor TBookCollectionFullController.Destroy();
+Begin
+    FService := nil;
+    Inherited;
+End;
+//______________________________________________________________________________
+Procedure TBookCollectionFullController.GetCollectionsUser(id: Int64);
+Begin
+    //Render(FService.GetAll);
+End;
+//______________________________________________________________________________
+Procedure TBookCollectionFullController.GetCollectionFullByID(id: Int64);
+Var
+    JSON: TJSONObject;
+Begin
+    JSON := FService.GetFullByID(id);
+    If Assigned(JSON) then
+      Render(JSON)
+    Else
+      Render(HTTP_STATUS.NotFound, 'Collection not found');
+End;
+//______________________________________________________________________________
+Procedure TBookCollectionFullController.AddCollectionFull;
+var
+  JSONBody: TJSONObject;
+  NewID: Int64;
+begin
+  JSONBody := ParseJSONObject(Request.Body);
+  try
+    NewID := FService.AddFull(JSONBody);
+    Render201('/collections/full/' + NewID.ToString, 'Created');
+  finally
+    JSONBody.Free;
+  end;
+end;
+
+Procedure TBookCollectionFullController.UpdateCollectionFull(id: Int64);
+var
+  JSONBody: TJSONObject;
+begin
+  JSONBody := ParseJSONObject(Request.Body);
+  try
+    FService.UpdateFull(id, JSONBody);
+    Render204;
+  finally
+    JSONBody.Free;
+  end;
+end;
+
+Procedure TBookCollectionFullController.DeleteCollectionFull(id: Int64);
+begin
+  FService.DeleteFull(id);
+  Render204;
+end;
+
+end.
+

@@ -19,7 +19,7 @@ Type
         function GetUserSecurityByUserID(const UserID: Int64): TUser_Security;
         procedure UpdateUserSecurity(const AUserSecurity: TUser_Security);
         procedure CreateUserSecurity(const AUserSecurity: TUser_Security);
-End;
+    End;
 
 Implementation
 

@@ -22,7 +22,7 @@ Type
         Procedure UpdateBook(const ABook: TBook);
         Procedure DeleteBook(const BookID: Int64);
         Function FavoritBook(const UserID: Int64): TFDQuery;
-        Function GetDetailByID(const UserID: Int64): TFDQuery;
+        Function GetDetailByID(const BookID: Int64): TFDQuery;
     End;
 
     TBookService = class(TInterfacedObject, IBookService)
@@ -35,7 +35,7 @@ Type
         Procedure UpdateBook(const ABook: TBook);
         Procedure DeleteBook(const BookID: Int64);
         Function FavoritBook(const UserID: Int64): TFDQuery;
-        Function GetDetailByID(const UserID: Int64): TFDQuery;
+        Function GetDetailByID(const BookID: Int64): TFDQuery;
 
     Private
         Procedure DeleteRelatedComments(const BookID: Int64);
@@ -58,7 +58,7 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Function TBookService.GetDetailByID(const UserID: Int64): TFDQuery;
+Function TBookService.GetDetailByID(const BookID: Int64): TFDQuery;
 Var
     FDQuer: TFDQuery;
 Begin
@@ -66,7 +66,7 @@ Begin
     FDQuer.Connection := DMMain.GetConnection;
 
     FDQuer.SQL.Text := 'Exec Book.spDetailOfBook :UserID';
-    FDQuer.Params.ParamByName('UserID').AsLargeInt := UserID;
+    FDQuer.Params.ParamByName('UserID').AsLargeInt := BookID;
     FDQuer.Open;
 
     Result := FDQuer;

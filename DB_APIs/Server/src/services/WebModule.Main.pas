@@ -51,7 +51,7 @@ uses
   Controller.Book.Author, Controller.Book.Comment, Controller.Book.Rate,
   Controller.Book.Hashtag, Controller.Book.Language, Controller.Book,
   Controller.Book.Image, Controller.Book.Genre, Controller.User.GenreFavorite,
-  Controller.User.Image, Controller.Book.Like;
+  Controller.User.Image, Controller.Book.Like, Controller.Book.Collection;
 
 
 Procedure TBookWorm.WebModuleCreate(Sender: TObject);
@@ -98,6 +98,7 @@ begin
     fMVC.AddController(TUserGenreFavoritController);
     fMVC.AddController(TUserImageController);
     fMVC.AddController(TBookLikeController);
+    fMVC.AddController(TCollectionController);
 
     // Middleware
     fMVC.AddMiddleware(TMVCCompressionMiddleware.Create);

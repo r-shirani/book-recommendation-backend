@@ -1,0 +1,92 @@
+﻿Unit Service.Book.CollectionDetail;
+
+Interface
+
+Uses
+    System.Generics.Collections,
+    System.SysUtils,
+    MVCFramework.ActiveRecord,
+    Model.Book.CollectionDetail;
+
+Type
+    ICollectionDetailService = interface
+    ['{3A3D69C5-BF45-4D7B-B37F-E18E907D4D28}']
+        Function GetDetailsByCollectionID(const CollectionID: Int64): TObjectList<TCollectionDetail>;
+        Procedure AddDetail(const Detail: TCollectionDetail);
+        Procedure UpdateDetail(const Detail: TCollectionDetail);
+        Procedure DeleteDetail(const DetailID: Int64);
+    End;
+
+    TCollectionDetailService = class(TInterfacedObject, ICollectionDetailService)
+    Public
+        Function GetDetailsByCollectionID(const CollectionID: Int64): TObjectList<TCollectionDetail>;
+        Procedure AddDetail(const Detail: TCollectionDetail);
+        Procedure UpdateDetail(const Detail: TCollectionDetail);
+        Procedure DeleteDetail(const DetailID: Int64);
+    End;
+
+Implementation
+
+{ TCollectionDetailService }
+
+
+//______________________________________________________________________________
+Function TCollectionDetailService.GetDetailsByCollectionID(const CollectionID: Int64): TObjectList<TCollectionDetail>;
+Begin
+    try
+      Result := TMVCActiveRecord.Where<TCollectionDetail>('CollectionID = ?', [CollectionID]);
+    except
+      on E: Exception do
+        Result := nil;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TCollectionDetailService.AddDetail(const Detail: TCollectionDetail);
+Begin
+  If Detail.BookID.IsNull then
+    raise Exception.Create('BookID is required');
+
+  If Detail.CollectionID.IsNull then
+    raise Exception.Create('CollectionID is required');
+
+  Detail.Insert;
+End;
+
+Procedure TCollectionDetailService.UpdateDetail(const Detail: TCollectionDetail);
+Var
+  Old: TCollectionDetail;
+Begin
+  Old := TMVCActiveRecord.GetByPK<TCollectionDetail>(Detail.ID);
+  try
+    If not Assigned(Old) then
+      raise Exception.Create('Collection detail not found');
+
+    If not Detail.BookID.IsNull then
+      Old.BookID := Detail.BookID;
+
+    If not Detail.CollectionID.IsNull then
+      Old.CollectionID := Detail.CollectionID;
+
+    Old.Update;
+  Finally
+    Old.Free;
+  End;
+End;
+
+Procedure TCollectionDetailService.DeleteDetail(const DetailID: Int64);
+Var
+  Rec: TCollectionDetail;
+Begin
+  Rec := TMVCActiveRecord.GetByPK<TCollectionDetail>(DetailID);
+  try
+    If not Assigned(Rec) then
+      raise Exception.Create('Detail not found');
+
+    Rec.Delete;
+  Finally
+    Rec.Free;
+  End;
+End;
+
+End.
+

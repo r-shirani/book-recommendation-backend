@@ -15,6 +15,7 @@ type
     public
       constructor Create(AOwner: TComponent); override;
       class function GetConnection: TFDConnection;
+      class function SelectQuery(SQL: String): TFDQuery;
 End;
 
 var
@@ -73,6 +74,14 @@ Begin
       DMMain.FDConn.Connected := True;
 
     Result := TFDConnection(DMMain.FDConn.CloneConnection);
+End;
+//______________________________________________________________________________
+Class function TDMMain.SelectQuery(SQL: String): TFDQuery;
+Begin
+    Result := TFDQuery.Create(Nil);
+    Result.Connection := DMMain.GetConnection;
+    Result.SQL.Text := SQL;
+    Result.Open;
 End;
 //______________________________________________________________________________
 

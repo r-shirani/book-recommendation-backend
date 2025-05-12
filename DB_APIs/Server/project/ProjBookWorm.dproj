@@ -139,6 +139,17 @@
         <DCCReference Include="..\src\model\Model.Book.BookLike.pas"/>
         <DCCReference Include="..\src\services\Service.Book.Like.pas"/>
         <DCCReference Include="..\src\controller\Controller.Book.Like.pas"/>
+        <DCCReference Include="..\src\model\Model.Book.CollectionType.pas"/>
+        <DCCReference Include="..\src\model\Model.Book.Collection.pas"/>
+        <DCCReference Include="..\src\model\Model.Book.CollectionDetail.pas"/>
+        <DCCReference Include="..\src\model\Model.Book.AccessibilityGroup.pas"/>
+        <DCCReference Include="..\src\model\Model.Book.AccessibilityDetail.pas"/>
+        <DCCReference Include="..\src\model\Model.Book.AccessibilityType.pas"/>
+        <DCCReference Include="..\src\services\Service.Book.Collection.pas"/>
+        <DCCReference Include="..\src\services\Service.Book.CollectionDetail.pas"/>
+        <DCCReference Include="..\src\services\Service.Book.CollectionType.pas"/>
+        <DCCReference Include="..\src\services\Service.Book.AccessibilityGroup.pas"/>
+        <DCCReference Include="..\src\controller\Controller.Book.Collection.pas"/>
         <None Include="ProjBookWorm.todo"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

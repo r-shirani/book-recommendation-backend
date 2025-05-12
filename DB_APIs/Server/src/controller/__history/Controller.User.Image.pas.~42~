@@ -1,0 +1,194 @@
+﻿Unit Controller.User.Image;
+
+Interface
+
+Uses
+    MVCFramework,
+    MVCFramework.Commons,
+    MVCFramework.Serializer.Commons,
+    Service.User.Image,
+    Model.User.Image, WebModule.Main;
+
+Type
+    [MVCPath(BASE_API_V1 + '/user/profile')]
+    TUserImageController = class(TMVCController)
+    Private
+        FImageService: IUserImageService;
+
+    Public
+        Procedure OnAfterAction(Context: TWebContext; Const AActionNAme: String); Override;
+        Procedure OnBeforeAction(Context: TWebContext; Const AActionNAme: String; Var Handled: Boolean); Override;
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetImagesByUserID([MVCFromQueryString('userid', '0')] UserID: Int64);
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPOST])]
+        Procedure UploadImage;
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPUT])]
+        Procedure UpdateImage([MVCFromQueryString('userid', '0')] ID: Int64);
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpDELETE])]
+        Procedure DeleteImage([MVCFromQueryString('userid', '0')] ID: Int64);
+
+        [MVCPath('/file')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetImageFile(Const [MVCFromQueryString('userid', '0')] UserID: Int64);
+    End;
+
+Implementation
+
+Uses
+    System.Classes,
+    System.SysUtils, System.Generics.Collections;
+
+{ TUserImageController }
+
+//______________________________________________________________________________
+Procedure TUserImageController.OnAfterAction(Context: TWebContext; Const AActionNAme: String);
+Begin
+    inherited;
+    FImageService := Nil;
+End;
+//______________________________________________________________________________
+Procedure TUserImageController.OnBeforeAction(Context: TWebContext; Const AActionNAme: String;
+    Var Handled: Boolean);
+Begin
+    inherited;
+    FImageService := TUserImageService.Create;
+End;
+//______________________________________________________________________________
+Procedure TUserImageController.GetImageFile(Const UserID: Int64);
+Var
+    GUID: TGUID;
+    LImage: TImage;
+    LImageStream: TStream;
+    LFilePath, LFileExt, LContentType, sGUID: String;
+Begin
+    sGUID := Context.Request.QueryStringParam('guid');
+    If Not (Context.Request.QueryStringParam('guid') = '') then
+    Begin
+        LImage := FImageService.GetImageByGUID(StrToGUID());
+        GUID := LImage.ImageGuid;
+    End
+    Else If (UserID.ToString <> '0') then
+    Begin
+        LImage := FImageService.GetImagesByUserID(UserID);
+        GUID := LImage.ImageGuid;
+    End
+    Else
+    Begin
+        Render(HTTP_STATUS.NotFound, 'خره بهم ID یا GUI بده');
+        Exit;
+    End;
+
+    Try
+        If Not Assigned(LImage) Then
+            Raise EMVCException.Create(HTTP_STATUS.NotFound, 'Image not found');
+
+        LFilePath := ExtractFilePath(ParamStr(0)) + 'UserImages\' + GUID.ToString +
+                     ExtractFileExt(LImage.OriginalFileName.ValueOrDefault);
+
+        If Not FileExists(LFilePath) Then
+            Raise EMVCException.Create(HTTP_STATUS.NotFound, 'Image file not found');
+
+        LFileExt := LowerCase(ExtractFileExt(LFilePath));
+
+        If (LFileExt = '.jpg') then LContentType := 'image/jpeg'
+        Else If (LFileExt = '.jpeg') then LContentType := 'image/jpeg'
+        Else If (LFileExt = '.png') then LContentType := 'image/png'
+        Else If (LFileExt = '.gif') then LContentType := 'image/gif'
+        Else If (LFileExt = '.bmp') then LContentType := 'image/bmp'
+        Else If (LFileExt = '.webp') then LContentType := 'image/webp'
+        Else LContentType := 'application/octet-stream';
+
+        LImageStream := TFileStream.Create(LFilePath, fmOpenRead or fmShareDenyWrite);
+        Try
+            // تنظیم هدر Content-Disposition برای نمایش در مرورگر
+            Context.Response.SetCustomHeader('Content-Disposition', 'inline; filename="' +
+                                          ExtractFileName(LImage.OriginalFileName.ValueOrDefault) + '"');
+
+            // ارسال استریم با پارامتر False برای عدم آزادسازی خودکار
+            Render(LImageStream, False);
+
+            // تنظیم نوع محتوا
+            Context.Response.ContentType := LContentType;
+        Finally
+            // حالا می‌توانیم استریم را آزاد کنیم چون Render کارش را انجام داده
+            LImageStream.Free;
+        End;
+    Finally
+        LImage.Free;
+    End;
+End;
+
+//______________________________________________________________________________
+Procedure TUserImageController.GetImagesByUserID(UserID: Int64);
+Var
+    LImages: TImage;
+Begin
+    LImages := FImageService.GetImagesByUserID(UserID);
+    If Assigned(LImages) Then
+        Render(LImages)
+    Else
+        Render(HTTP_STATUS.NotFound, 'No images found for this User');
+End;
+//______________________________________________________________________________
+Procedure TUserImageController.UploadImage;
+Var
+    LImage: TImage;
+    LFileStream: TStream;
+    LFileName: String;
+    LUserID: Int64;
+Begin
+    LFileStream := Context.Request.Files[0].Stream;
+    LFileName := Context.Request.Files[0].FileName;
+    LUserID := Context.Request.ParamsAsInteger['userid'];
+
+    LImage := TImage.Create;
+    Try
+        LImage.UserID := LUserID;
+        FImageService.AddImage(LImage, LFileStream, LFileName);
+        Render(HTTP_STATUS.Created, LImage);
+    Except
+        On E: Exception Do
+        Begin
+            Render(HTTP_STATUS.BadRequest, E.Message);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TUserImageController.UpdateImage(ID: Int64);
+Var
+    LImage: TImage;
+Begin
+    // دریافت داده‌های به روزرسانی
+    LImage := Context.Request.BodyAs<TImage>;
+    Try
+        LImage.ID := ID;
+        FImageService.UpdateImage(LImage);
+        Render(HTTP_STATUS.OK, LImage);
+    Finally
+        LImage.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TUserImageController.DeleteImage(ID: Int64);
+Begin
+    Try
+        FImageService.DeleteImage(ID);
+        Render(HTTP_STATUS.NoContent);
+    Except
+        On E: Exception Do
+        Begin
+            Render(HTTP_STATUS.BadRequest, E.Message);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+
+End.

@@ -56,7 +56,18 @@ uses
   Controller.User.Image in '..\src\controller\Controller.User.Image.pas',
   Model.Book.BookLike in '..\src\model\Model.Book.BookLike.pas',
   Service.Book.Like in '..\src\services\Service.Book.Like.pas',
-  Controller.Book.Like in '..\src\controller\Controller.Book.Like.pas';
+  Controller.Book.Like in '..\src\controller\Controller.Book.Like.pas',
+  Model.Book.CollectionType in '..\src\model\Model.Book.CollectionType.pas',
+  Model.Book.Collection in '..\src\model\Model.Book.Collection.pas',
+  Model.Book.CollectionDetail in '..\src\model\Model.Book.CollectionDetail.pas',
+  Model.Book.AccessibilityGroup in '..\src\model\Model.Book.AccessibilityGroup.pas',
+  Model.Book.AccessibilityDetail in '..\src\model\Model.Book.AccessibilityDetail.pas',
+  Model.Book.AccessibilityType in '..\src\model\Model.Book.AccessibilityType.pas',
+  Service.Book.Collection in '..\src\services\Service.Book.Collection.pas',
+  Service.Book.CollectionDetail in '..\src\services\Service.Book.CollectionDetail.pas',
+  Service.Book.CollectionType in '..\src\services\Service.Book.CollectionType.pas',
+  Service.Book.AccessibilityGroup in '..\src\services\Service.Book.AccessibilityGroup.pas',
+  Controller.Book.Collection in '..\src\controller\Controller.Book.Collection.pas';
 
 {$R *.res}
 

@@ -7,16 +7,17 @@ Uses
     System.SysUtils,
     MVCFramework.ActiveRecord,
     Model.Book.Comment,
-    Model.Book;
+    Model.Book,
+    FireDAC.Comp.Client;
 
 Type
     ICommentService = Interface
         ['{B2C3D4E5-F6A7-4891-B3C4-D5E6F7A8B9C0}']
-        Function GetCommentByID(CommentID: Int64): TComment;
-        Function GetCommentsByBook(BookID: Int64; IncludeBlocked: Boolean = False): TObjectList<TComment>;
-        Function GetCommentsByUser(UserID: Int64): TObjectList<TComment>;
-        Function GetReplies(CommentID: Int64): TObjectList<TComment>;
-        Function GetPopularComments(BookID: Int64; Limit: Integer = 5): TObjectList<TComment>;
+        Function GetCommentByID(CommentID: Int64): TFDQuery;
+        Function GetCommentsByBook(BookID: Int64; IncludeBlocked: Boolean = False): TFDQuery;
+        Function GetCommentsByUser(UserID: Int64): TFDQuery;
+        Function GetReplies(CommentID: Int64): TFDQuery;
+        Function GetPopularComments(BookID: Int64; Limit: Integer = 5): TFDQuery;
         Procedure AddComment(Comment: TComment);
         Procedure UpdateComment(Comment: TComment);
         Procedure DeleteComment(CommentID: Int64);
@@ -28,12 +29,15 @@ Type
     End;
 
     TCommentService = Class(TInterfacedObject, ICommentService)
+    Private
+        Function CommentByID(CommentID: Int64): TComment;
+
     Public
-        Function GetCommentByID(CommentID: Int64): TComment;
-        Function GetCommentsByBook(BookID: Int64; IncludeBlocked: Boolean = False): TObjectList<TComment>;
-        Function GetCommentsByUser(UserID: Int64): TObjectList<TComment>;
-        Function GetReplies(CommentID: Int64): TObjectList<TComment>;
-        Function GetPopularComments(BookID: Int64; Limit: Integer = 5): TObjectList<TComment>;
+        Function GetCommentByID(CommentID: Int64): TFDQuery;
+        Function GetCommentsByBook(BookID: Int64; IncludeBlocked: Boolean = False): TFDQuery;
+        Function GetCommentsByUser(UserID: Int64): TFDQuery;
+        Function GetReplies(CommentID: Int64): TFDQuery;
+        Function GetPopularComments(BookID: Int64; Limit: Integer = 5): TFDQuery;
         Procedure AddComment(Comment: TComment);
         Procedure UpdateComment(Comment: TComment);
         Procedure DeleteComment(CommentID: Int64);
@@ -48,8 +52,10 @@ Implementation
 
 { TCommentService }
 
+Uses UDMMain;
+
 //______________________________________________________________________________
-Function TCommentService.GetCommentByID(CommentID: Int64): TComment;
+Function TCommentService.CommentByID(CommentID: Int64): TComment;
 Begin
     Try
         Result := TMVCActiveRecord.GetByPK<TComment>(CommentID);
@@ -62,16 +68,29 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Function TCommentService.GetCommentsByBook(BookID: Int64; IncludeBlocked: Boolean = False): TObjectList<TComment>;
+Function TCommentService.GetCommentByID(CommentID: Int64): TFDQuery;
+Begin
+    Try
+        Result := DMMain.SelectQuery('SELECT * FROM Book.vwCommentDetail WHERE CommentID = ' + CommentID.ToString);
+    Except
+        On E: Exception Do
+        Begin
+            // Log error
+            Result := nil;
+        End;
+    End;
+End;
+//______________________________________________________________________________
+Function TCommentService.GetCommentsByBook(BookID: Int64; IncludeBlocked: Boolean = False): TFDQuery;
 Var
     WhereClause: String;
 Begin
-    Try
-        WhereClause := 'BookID = ? AND CommentRefID IS NULL';
-        If not IncludeBlocked then
-            WhereClause := WhereClause + ' AND (IsBlocked IS NULL OR IsBlocked = 0)';
+    WhereClause := ' WHERE (BookID = ' + BookID.ToString +') AND (CommentRefID IS NULL) ';
+    If (not IncludeBlocked) then
+        WhereClause := WhereClause + ' AND (IsBlocked IS NULL OR IsBlocked = 0)';
 
-        Result := TMVCActiveRecord.Where<TComment>(WhereClause, [BookID]);
+    Try
+        Result := DMMain.SelectQuery('SELECT * FROM Book.vwCommentDetail '+ WhereClause);
     Except
         On E: Exception Do
         Begin
@@ -81,13 +100,10 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Function TCommentService.GetCommentsByUser(UserID: Int64): TObjectList<TComment>;
+Function TCommentService.GetCommentsByUser(UserID: Int64): TFDQuery;
 Begin
     Try
-        Result := TMVCActiveRecord.Where<TComment>(
-            'UserID = ? AND ((IsBlocked IS NULL) OR (IsBlocked = 0))',
-            [UserID]
-        );
+        Result := DMMain.SelectQuery('SELECT * FROM Book.vwCommentDetail WHERE UserID = ' + UserID.ToString);
     Except
         On E: Exception Do
         Begin
@@ -97,13 +113,10 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Function TCommentService.GetReplies(CommentID: Int64): TObjectList<TComment>;
+Function TCommentService.GetReplies(CommentID: Int64): TFDQuery;
 Begin
     Try
-        Result := TMVCActiveRecord.Where<TComment>(
-            'CommentRefID = ? AND (IsBlocked IS NULL OR IsBlocked = 0)',
-            [CommentID]
-        );
+        Result := DMMain.SelectQuery('SELECT * FROM Book.vwCommentDetail WHERE CommentRefID = ' + CommentID.ToString);
     Except
         On E: Exception Do
         Begin
@@ -113,14 +126,12 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Function TCommentService.GetPopularComments(BookID: Int64; Limit: Integer = 5): TObjectList<TComment>;
+Function TCommentService.GetPopularComments(BookID: Int64; Limit: Integer = 5): TFDQuery;
 Begin
     Try
-        Result := TMVCActiveRecord.Select<TComment>(
-            'SELECT * FROM Book.Comment ' +
-            'WHERE BookID = ? AND (IsBlocked IS NULL OR IsBlocked = 0) ' +
-            'ORDER BY (COALESCE(LikeCount,0) - (COALESCE(DisLikeCount,0)) DESC ' +
-            'LIMIT ?', [BookID, Limit]);
+        Result := DMMain.SelectQuery('SELECT TOP '+Limit.ToString+
+          ' * FROM Book.vwCommentDetail WHERE BookID = ' + BookID.ToString +
+          ' ORDER BY (COALESCE(LikeCount,0) - (COALESCE(DisLikeCount,0)) DESC ');
     Except
         On E: Exception Do
         Begin
@@ -156,7 +167,7 @@ Procedure TCommentService.UpdateComment(Comment: TComment);
 Var
     OldComment: TComment;
 Begin
-    OldComment := GetCommentByID(Comment.CommentID);
+    OldComment := CommentByID(Comment.CommentID);
     If not Assigned(OldComment) then
         raise Exception.Create('Comment not found');
 
@@ -182,7 +193,7 @@ Procedure TCommentService.DeleteComment(CommentID: Int64);
 Var
     Comment: TComment;
 Begin
-    Comment := GetCommentByID(CommentID);
+    Comment := CommentByID(CommentID);
     If not Assigned(Comment) then
         raise Exception.Create('Comment not found');
 
@@ -198,7 +209,7 @@ Procedure TCommentService.BlockComment(CommentID: Int64);
 Var
     Comment: TComment;
 Begin
-    Comment := GetCommentByID(CommentID);
+    Comment := CommentByID(CommentID);
     If not Assigned(Comment) then
         raise Exception.Create('Comment not found');
 
@@ -214,7 +225,7 @@ Procedure TCommentService.ReportComment(CommentID: Int64; ReportID: Int64);
 Var
     Comment: TComment;
 Begin
-    Comment := GetCommentByID(CommentID);
+    Comment := CommentByID(CommentID);
     If not Assigned(Comment) then
         raise Exception.Create('Comment not found');
 
@@ -235,7 +246,7 @@ Procedure TCommentService.LikeComment(CommentID: Int64);
 Var
     Comment: TComment;
 Begin
-    Comment := GetCommentByID(CommentID);
+    Comment := CommentByID(CommentID);
     If not Assigned(Comment) then
         raise Exception.Create('Comment not found');
 
@@ -255,7 +266,7 @@ Procedure TCommentService.DislikeComment(CommentID: Int64);
 Var
     Comment: TComment;
 Begin
-    Comment := GetCommentByID(CommentID);
+    Comment := CommentByID(CommentID);
     If not Assigned(Comment) then
         raise Exception.Create('Comment not found');
 
@@ -275,7 +286,7 @@ Procedure TCommentService.MarkAsSpoiler(CommentID: Int64);
 Var
     Comment: TComment;
 Begin
-    Comment := GetCommentByID(CommentID);
+    Comment := CommentByID(CommentID);
     If not Assigned(Comment) then
         raise Exception.Create('Comment not found');
 

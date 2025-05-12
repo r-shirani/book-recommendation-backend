@@ -37,7 +37,7 @@ Type
 
         [MVCPath('/detail')]
         [MVCHTTPMethod([httpGET])]
-        Procedure GetDetailByID(Const [MVCFromQueryString('userid')] id: Int64);
+        Procedure GetDetailByID(Const [MVCFromQueryString('bookid')] id: Int64);
 
         [MVCPath('')]
         [MVCHTTPMethod([httpPOST])]
