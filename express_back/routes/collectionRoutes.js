@@ -8,4 +8,5 @@ router.get("/user", authMiddleware , getUser_Collections );
 router.get("/anotherUser/:userid" , getAnotherUser_Collections );
 router.post("/user", authMiddleware , postUser_Collection );
 
+
 module.exports = router;

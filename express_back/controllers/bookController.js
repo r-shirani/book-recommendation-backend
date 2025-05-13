@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 const { getUserByID } = require("../SQL/SQL-user-controller");
-const { bookImage, searchBook_controller, likeBook, deletelike, favorit_books, GetBookByID } = require("../SQL/SQL-book-controller");
+const { bookImage, searchBook_controller, likeBook, deletelike, favorit_books, GetBookByID, likeStatus } = require("../SQL/SQL-book-controller");
 const { Readable } = require('stream');
 
 exports.searchBook = async (req, res) => {
@@ -157,6 +157,31 @@ exports.favoritBooks = async (req , res) => {
     } catch (error) {
         console.error("Error in disliking book:", error);
         res.status(500).json({ message: "server error" });
+    }
+}
+
+exports.likeStatusController = async (req , res) => {
+    const userid = req.user.id;
+    const {bookid } = req.query; 
+
+    if (!bookid || !userid) {
+        return res.status(400).json({ error: 'enter bookid and userid' });
+    }
+
+    try {
+        let likeStatus_res = await likeStatus(bookid , userid);
+        if(likeStatus_res != -1){
+            res.status(200).json({
+                message : `the status is : ${likeStatus_res.isLiked}`,
+                status : likeStatus_res.isLiked
+            })
+        }else{
+            res.status(500).json({ error: 'server error' });
+        }
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'server error' });
     }
 }
 
