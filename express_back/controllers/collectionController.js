@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 const { getUserByID } = require("../SQL/SQL-user-controller");
 const { Readable } = require('stream');
-const { get_all_user_collections, post_user_collection } = require("../SQL/SQL-collection-controller");
+const { get_all_user_collections, post_user_collection, get_collection_details } = require("../SQL/SQL-collection-controller");
 
 
 exports.getUser_Collections = async (req , res)=>{
@@ -57,6 +57,30 @@ exports.postUser_Collection = async (req , res)=>{
         }
         else if(response===1) {
             res.status(201).send("collection added sucessfully");
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "server error" });
+    }
+}
+
+
+exports.details_collection = async (req , res) =>{
+    try {
+        const {collectionid} = req.query; 
+        if(!collectionid){
+            return res.status(400).json({ error: 'enter collectionid' });
+        }
+        const details = await get_collection_details(collectionid);
+        if (!details || details.length===0){
+            return res.status(404).json({ message: "collection not found" });
+        }
+        if(details != -1){
+            return res.status(200).send(details);
+        }
+        else{
+            console.error(error);
+            return res.status(500).json({ message: "server error" });
         }
     } catch (error) {
         console.error(error);
