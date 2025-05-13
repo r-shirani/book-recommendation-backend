@@ -51,7 +51,26 @@ const post_user_collection = async(ispublic_input , title_input ,userid_input)=>
 }
 
 
+const get_collection_details = async(collectionid_input) =>{
+  try {
+    const response = await api.get("/collections/detail",{
+      params: {collectionid : collectionid_input}
+    });
+    if (!response || response.length===0){
+      console.log("server Error(SQL-get-collection-details)");      
+      return -1;
+    }   
+    if(response.status == 200){
+      return response.data;
+    }
+  } catch (error) {
+    console.log("server Error(SQL-get-collection-details)");
+    return -1;
+  }
+}
+
 module.exports={
   get_all_user_collections,
-  post_user_collection
+  post_user_collection,
+  get_collection_details
 };
