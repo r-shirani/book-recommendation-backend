@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 
-const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut, updatePassword_controller, updateProfile_controller, updateVerifycode_controller } = require("../SQL/SQL-user-controller");
+const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut, updatePassword_controller, updateProfile_controller, updateVerifycode_controller, userProfileImage } = require("../SQL/SQL-user-controller");
 const { loginUser_controller } = require("../SQL/SQL-user-controller");
 const { getUserByID } = require("../SQL/SQL-user-controller");
 
@@ -233,6 +233,20 @@ exports.updateProfile = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getUserProfileImage = async (req, res) => {
+  const userid = req.params.userid;
+
+  try {
+      const { stream, contentType } = await userProfileImage(userid);
+      res.setHeader('Content-Type', contentType);
+      stream.pipe(res);
+      console.log(`User profile image sent successfully for userid: ${userid}`);
+  } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: "Server error - (error in fetching user profile image)" });
   }
 };
 

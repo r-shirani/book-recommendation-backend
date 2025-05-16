@@ -69,8 +69,23 @@ const get_collection_details = async(collectionid_input) =>{
   }
 }
 
+const getCollectionImage = async (collectionid) => {
+  const imageUrl = `http://185.255.90.36:9547/api/v1/collections/image?collectionid=${collectionid}`;
+
+  try {
+    const response = await axios.get(imageUrl, { responseType: 'stream' });
+    return {
+      stream: response.data,
+      contentType: response.headers['content-type'],
+    };
+  } catch (error) {
+    throw new Error('Failed to fetch collection image');
+  }
+};
+
 module.exports={
   get_all_user_collections,
   post_user_collection,
-  get_collection_details
+  get_collection_details,
+  getCollectionImage
 };

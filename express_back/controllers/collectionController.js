@@ -5,7 +5,8 @@ const sendVerificationCode = require('../Auth/mailer');
 const { getUserByID } = require("../SQL/SQL-user-controller");
 const { Readable } = require('stream');
 const { get_all_user_collections, post_user_collection, get_collection_details } = require("../SQL/SQL-collection-controller");
-
+const FormData = require('form-data');
+const axios = require('axios');
 
 exports.getUser_Collections = async (req , res)=>{
     try {
@@ -89,7 +90,64 @@ exports.details_collection = async (req , res) =>{
 }
 
 
+exports.proxyGetCollectionImage = async (req, res) => {
+    const collectionid = req.params.collectionid;
+  
+    if (!collectionid) {
+      return res.status(400).json({ message: 'collectionid is required' });
+    }
+  
+    try {
+      const { stream, contentType } = await getCollectionImage(collectionid);
+      res.setHeader('Content-Type', contentType);
+      stream.pipe(res);
+      console.log(`Collection image sent successfully. collectionid: ${collectionid}`);
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: 'Server error - (error in fetching collection image)' });
+    }
+};
 
+
+
+
+exports.proxyUploadCollectionImage = async (req, res) => {
+    try {
+        const collectionid = req.params.collectionid;
+  
+      if (!req.file || !collectionid) {
+        return res.status(400).json({ message: 'file or collectionid missing' });
+      }
+  
+      const fd = new FormData();
+      fd.append('file', req.file.buffer, {
+        filename: req.file.originalname,
+        contentType: req.file.mimetype
+      });
+      fd.append('collectionid', collectionid);
+  
+      const destURL = 'http://185.255.90.36:9547/api/v1/collections/image';
+      const uploadResp = await axios.post(destURL, fd, {
+        headers: fd.getHeaders(),
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
+        timeout: 15000
+      });
+  
+      res.status(201).json(uploadResp.data);
+    } catch (err) {
+      console.error(err);
+  
+      if (err.response) {
+        return res
+          .status(err.response.status === 400 ? 400 : 502)
+          .json(err.response.data);
+      }
+  
+      res.status(500).json({ message: 'proxy collection upload failed' });
+    }
+};
+  
 
 
 

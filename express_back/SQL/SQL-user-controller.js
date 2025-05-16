@@ -321,6 +321,21 @@ const update_genres = async (useridInput, genresID) => {
 };
 
 
+const userProfileImage = async (userid) => {
+  const image_file_url = `http://185.255.90.36:9547/api/v1/user/profile/file?userid=${userid}`;
+
+  try {
+      const response = await axios.get(image_file_url, { responseType: 'stream' });
+      return {
+          stream: response.data,
+          contentType: response.headers['content-type'],
+      };
+  } catch (error) {
+      throw new Error('Failed to fetch user profile image');
+  }
+};
+
+
 
 module.exports={
   registerUSer_controller,
@@ -335,5 +350,6 @@ module.exports={
   get_user_genres_controller,
   get_user_genres_name_controller,
   update_genres,
-  updateVerifycode_controller
+  updateVerifycode_controller,
+  userProfileImage
 };
