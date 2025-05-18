@@ -29,7 +29,11 @@ Type
 
         [MVCPath('/search')]
         [MVCHTTPMethod([httpGET])]
-        procedure SearchBook();
+        procedure SearchBook(
+          Const [MVCFromQueryString('searchterm', '')] ASearchTerm: String;
+          Const [MVCFromQueryString('userid', 0)] AUserID: Int64;
+          Const [MVCFromQueryString('pagenum', 0)] APageNum: Integer;
+          Const [MVCFromQueryString('count', 0)] ACount: Integer);
 
         [MVCPath('/favorit')]
         [MVCHTTPMethod([httpGET])]
@@ -37,15 +41,9 @@ Type
 
         [MVCPath('/detail')]
         [MVCHTTPMethod([httpGET])]
-        Procedure GetDetailByID(Const [MVCFromQueryString('bookid')] BookID: Int64;
+        Procedure GetDetailByID(
+          Const [MVCFromQueryString('bookid')] BookID: Int64;
           Const [MVCFromQueryString('userid', 0)] UserID: Int64);
-
-        [MVCPath('/mbti')]
-        [MVCHTTPMethod([httpGET])]
-        Procedure SearchMBTIBook(Const [MVCFromQueryString('searchterm', '')] SearchTerm: Integer;
-          Const [MVCFromQueryString('userid')] UserID: Integer;
-          Const [MVCFromQueryString('pagenum', 1)] PageNum: Integer;
-          Const [MVCFromQueryString('count', 20)] Count: Integer);
 
         [MVCPath('')]
         [MVCHTTPMethod([httpPOST])]
@@ -132,14 +130,14 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-Procedure TBookController.SearchMBTIBook(Const SearchTerm: Integer;
-  Const UserID: Integer; Const PageNum: Integer; Const Count: Integer);
+Procedure TBookController.SearchBook( Const ASearchTerm: String;
+  Const AUserID: Int64; Const APageNum: Integer; Const ACount: Integer);
 Var
-    SearchResult: TFDQuery;
+    SearchResult: TFDStoredProc;
 Begin
-    SearchResult := FBookService.SearchMBTIBooks(searchterm, pageNum, count);
+    SearchResult := FBookService.SearchBooks(ASearchTerm, AUserID, APageNum, ACount);
     Try
-        If SearchResult.RecordCount = 0 then
+        If (SearchResult.RecordCount = 0) then
             Render(HTTP_STATUS.NoContent, 'Empty')
         Else
             Render(SearchResult);
@@ -147,27 +145,6 @@ Begin
         raise;
     End;
 End;
-//______________________________________________________________________________
-procedure TBookController.SearchBook();
-var
-    SearchResult: TFDQuery;
-    SearchTerm: string;
-    PageNum, Count: Integer;
-Begin
-    SearchTerm := Context.Request.QueryStringParam('searchterm');
-    PageNum := StrToIntDef(Context.Request.QueryStringParam('pageNum'), 1);
-    Count := StrToIntDef(Context.Request.QueryStringParam('count'), 20);
-
-    SearchResult := FBookService.SearchBooks(searchterm, pageNum, count);
-    Try
-        If SearchResult.RecordCount = 0 then
-            Render(HTTP_STATUS.NoContent, 'Empty')
-        Else
-            Render(SearchResult);
-    Except
-        raise;
-    End;
-end;
 //______________________________________________________________________________
 Procedure TBookController.AddBook;
 Var

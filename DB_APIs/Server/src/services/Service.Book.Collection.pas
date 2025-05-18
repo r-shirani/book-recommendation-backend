@@ -20,7 +20,7 @@ Type
         Function GetCollection(userid: int64): TFDStoredProc;
         Function GetByID(const ACollectionID: Int64): Model.Book.TCollection;
         Function GetDetail(CollectionID: int64): TFDStoredProc;
-        Procedure Add(const ACollection: Model.Book.TCollection);
+        Function Add(const ACollection: Model.Book.TCollection): Int64;
         Procedure Update(const ACollection: Model.Book.TCollection);
         Procedure Delete(const ACollectionID: Int64);
         Procedure AddDetail(ACollectionID: Int64; ABookIDs: TArray<Int64>);
@@ -37,7 +37,7 @@ Type
         Function GetCollection(userid: int64): TFDStoredProc;
         Function GetByID(const ACollectionID: Int64): Model.Book.TCollection;
         Function GetDetail(CollectionID: int64): TFDStoredProc;
-        Procedure Add(const ACollection: Model.Book.TCollection);
+        Function Add(const ACollection: Model.Book.TCollection): Int64;
         Procedure Update(const ACollection: Model.Book.TCollection);
         Procedure Delete(const ACollectionID: Int64);
         Procedure AddDetail(ACollectionID: Int64; ABookIDs: TArray<Int64>);
@@ -55,9 +55,10 @@ Uses UDMMain;
 { TCollectionService }
 
 //______________________________________________________________________________
-Procedure TCollectionService.Add(const ACollection: Model.Book.TCollection);
+Function TCollectionService.Add(const ACollection: Model.Book.TCollection): Int64;
 Begin
     ACollection.Insert;
+    Result := ACollection.CollectionID;
 End;
 //______________________________________________________________________________
 Procedure TCollectionService.AddDetail(ACollectionID: Int64; ABookIDs: TArray<Int64>);

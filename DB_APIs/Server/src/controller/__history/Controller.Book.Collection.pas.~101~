@@ -1,0 +1,277 @@
+﻿Unit Controller.Book.Collection;
+
+Interface
+
+Uses
+    System.Classes,
+    MVCFramework,
+    MVCFramework.Commons,
+    MVCFramework.Serializer.Commons,
+    System.SysUtils,
+    System.Generics.Collections,
+    Service.Book.Collection,
+    Service.Book.CollectionDetail,  // تصحيح: اينجا صحيحش رو وارد کن
+    Model.Book.Collection,
+    Model.Book.CollectionDetail,
+    WebModule.Main;
+
+Type
+    TInt64Array = TArray<Int64>;
+
+Type
+    [MVCPath(BASE_API_V1 + '/collections')]
+    TCollectionController = class(TMVCController)
+    private
+        FCollectionService: ICollectionService;
+
+    public
+        constructor Create; override;
+        destructor Destroy; override;
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpGET])]
+        procedure GetCollectionByID([MVCFromQueryString('userid', '0')] userid: Int64);
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPOST])]
+        Procedure AddCollection();
+
+        [MVCPath('/image')]
+        [MVCHTTPMethod([httpPOST])]
+        procedure AddImage([MVCFromQueryString('collectionid', '0')] collectionid: Int64);
+
+        [MVCPath('/image')]
+        [MVCHTTPMethod([httpGET])]
+        procedure GetImage([MVCFromQueryString('collectionid', '0')] collectionid: Int64);
+
+        [MVCPath('/detail')]
+        [MVCHTTPMethod([httpPOST])]
+        procedure AddDetail([MVCFromBody] Const ACollectionDetailDTO: TCollectionDetailDTO);
+
+        [MVCPath('/detail')]
+        [MVCHTTPMethod([httpGet])]
+        procedure GetDetail([MVCFromQueryString('collectionid', '0')] collectionid: Int64);
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPUT])]
+        procedure UpdateCollection([MVCFromBody] const ACollection: TCollection);
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpDELETE])]
+        procedure DeleteCollection([MVCFromQueryString('collectionid', '0')] collectionid: Int64);
+End;
+
+Implementation
+
+uses
+  FireDAC.Comp.Client, JsonDataObjects, System.JSON;
+
+{ TCollectionController }
+
+//______________________________________________________________________________
+Constructor TCollectionController.Create;
+Begin
+    Inherited;
+    FCollectionService := TCollectionService.Create;
+End;
+//______________________________________________________________________________
+Destructor TCollectionController.Destroy;
+Begin
+    FCollectionService := nil;
+    Inherited;
+End;
+//______________________________________________________________________________
+procedure TCollectionController.AddDetail(Const ACollectionDetailDTO: TCollectionDetailDTO);
+Begin
+    FCollectionService.AddDetail(ACollectionDetailDTO.CollectionID, ACollectionDetailDTO.BookID);
+    Render(HTTP_STATUS.Created, 'Details added successfully');
+End;
+//______________________________________________________________________________
+Procedure TCollectionController.AddImage(collectionid: Int64);
+Var
+    LFileStream: TStream;
+    LFileName: String;
+Begin
+    LFileStream := Context.Request.Files[0].Stream;
+    LFileName := Context.Request.Files[0].FileName;
+
+    Try
+        FCollectionService.AddImage(LFileStream, LFileName, collectionid);
+        Render(HTTP_STATUS.Created, 'Image Updated');
+    Except
+        On E: Exception Do
+        Begin
+            Render(HTTP_STATUS.BadRequest, E.Message);
+        End;
+    End;
+End;
+//______________________________________________________________________________
+procedure TCollectionController.GetCollectionByID(userid: Int64);
+Var
+    FDSP: TFDStoredProc;
+Begin
+    FDSP := FCollectionService.GetCollection(userid);
+    If Assigned(FDSP) then
+        Render(HTTP_STATUS.OK, FDSP)
+    Else
+        Render(HTTP_STATUS.NotFound, 'Collection not found');
+End;
+//______________________________________________________________________________
+Procedure TCollectionController.GetDetail(collectionid: Int64);
+Var
+    FDSP: TFDStoredProc;
+Begin
+    FDSP := FCollectionService.GetDetail(collectionid);
+    If Assigned(FDSP) then
+        Render(HTTP_STATUS.OK, FDSP)
+    Else
+        Render(HTTP_STATUS.NotFound, 'Collection not found');
+End;
+//______________________________________________________________________________
+Procedure TCollectionController.GetImage(collectionid: Int64);
+Var
+    LCollection: TCollection;
+    LImageStream: TStream;
+    LContentType: String;
+Begin
+    If (CollectionID.ToString = '0') then
+    Begin
+        Render(HTTP_STATUS.NotFound, 'CollectionID not found');
+        Exit;
+    End
+    Else
+    Begin
+        LImageStream := FCollectionService.GetImageFile(collectionid, LContentType);
+        Try
+            Context.Response.ContentType := LContentType;
+            Render(LImageStream, False);
+        Finally
+            LImageStream.Free;
+        End;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TCollectionController.AddCollection();
+Var
+    sTemp: String;
+    bTemp: Boolean;
+    iTemp: Integer;
+    i64Temp: Int64;
+    LFileStream: TStream;
+    LFileName: String;
+    LCollection: TCollection;
+    LCollectionID: Int64;
+    LDetail: TInt64Array;
+    LFullCollection: System.JSON.TJSONObject;
+    LJSONValue: TJSONValue;
+Begin
+    // دریافت و بررسی JSON
+    LJSONValue := System.JSON.TJSONObject.ParseJSONValue(Context.Request.Params['data']);
+    if not Assigned(LJSONValue) or not (LJSONValue is TJSONObject) then
+    begin
+        Render(HTTP_STATUS.BadRequest, 'Invalid JSON data');
+        Exit;
+    end;
+
+    LFullCollection := TJSONObject(LJSONValue);
+    Try
+        // بررسی و خواندن فیلد detail
+        if not LFullCollection.TryGetValue<TInt64Array>('detail', LDetail) then
+        begin
+            Render(HTTP_STATUS.BadRequest, 'Missing required field: detail');
+            Exit;
+        end;
+
+        LCollection := TCollection.Create;
+        Try
+            // خواندن فیلدها با بررسی وجود
+            if LFullCollection.TryGetValue<Boolean>('ispublic', bTemp) then
+                LCollection.IsPublic := bTemp
+            else
+                LCollection.IsPublic := False; // مقدار پیش‌فرض
+
+            If not LFullCollection.TryGetValue<String>('title', sTemp) then
+            Begin
+                Render(HTTP_STATUS.BadRequest, 'Missing required field: title');
+                Exit;
+            End;
+
+            if LFullCollection.TryGetValue<String>('discription', sTemp) then
+                LCollection.Discription := sTemp
+            else
+                LCollection.Discription := '';
+
+            if LFullCollection.TryGetValue<Integer>('genreid1', iTemp) then
+                LCollection.GenreID1 := iTemp
+            else
+                LCollection.GenreID1 := 0;
+
+            if not LFullCollection.TryGetValue<Integer>('genreid2', iTemp) then
+                LCollection.GenreID2 := 0
+            else
+                LCollection.GenreID2 := 0;
+
+            if not LFullCollection.TryGetValue<Integer>('genreid3', iTemp) then
+                LCollection.GenreID3 := 0
+            else
+                LCollection.GenreID3 := 0;
+
+            If (not LFullCollection.TryGetValue<Int64>('userid', i64Temp)) then
+            Begin
+                Render(HTTP_STATUS.BadRequest, 'Missing required field: userid');
+                Exit;
+            End
+            Else
+            Begin
+                LCollection.UserID := i64Temp;
+            End;
+
+            LCollectionID := FCollectionService.Add(LCollection);
+        Finally
+            LCollection.Free;
+        End;
+
+        Try
+            FCollectionService.AddDetail(LCollectionID, LDetail);
+
+            // بررسی وجود فایل
+            if Context.Request.Files.Count = 0 then
+            begin
+                Render(HTTP_STATUS.BadRequest, 'No file uploaded');
+                Exit;
+            end;
+
+            LFileStream := Context.Request.Files[0].Stream;
+            LFileName := Context.Request.Files[0].FileName;
+            FCollectionService.AddImage(LFileStream, LFileName, LCollectionID);
+            Render(HTTP_STATUS.Created, 'Image Updated');
+        Except
+            On E: Exception Do
+            Begin
+                FCollectionService.Delete(LCollectionID);
+                Render(HTTP_STATUS.BadRequest, E.Message);
+                Exit;
+            End;
+        End;
+
+        Render(HTTP_STATUS.Created, 'Collection added successfully');
+    Finally
+        LFullCollection.Free;
+    End;
+end;
+//______________________________________________________________________________
+Procedure TCollectionController.UpdateCollection(const ACollection: TCollection);
+Begin
+    FCollectionService.Update(ACollection);
+    Render(HTTP_STATUS.OK, 'Collection updated successfully');
+End;
+//______________________________________________________________________________
+Procedure TCollectionController.DeleteCollection(collectionid: Int64);
+Begin
+    FCollectionService.Delete(collectionid);
+    Render(HTTP_STATUS.OK, 'Collection deleted successfully');
+End;
+//______________________________________________________________________________
+
+End.
+

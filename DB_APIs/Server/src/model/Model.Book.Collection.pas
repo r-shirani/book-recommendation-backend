@@ -5,7 +5,9 @@ interface
 uses
   MVCFramework.ActiveRecord,
   MVCFramework.Serializer.Commons,
-  MVCFramework.Nullables, System.Generics.Collections;
+  MVCFramework.Nullables,
+  System.Generics.Collections,
+  Model.Book.CollectionDetail;
 
 type
     [MVCNameCase(ncLowerCase)]
@@ -69,15 +71,50 @@ End;
 
 Type
     [MVCNameCase(ncLowerCase)]
+    TFullCollection  = Class
+    Private
+        FCollectionID: Int64;
+        FIsPublic: Boolean;
+        FAccessibilityGroupID: NullableInt64;
+        FTitle: NullableString;
+        FCreateDate: NullableTDate;
+        FDiscription: NullableString;
+        FGenreID1: NullableInt32;
+        FGenreID2: NullableInt32;
+        FGenreID3: NullableInt32;
+        FReportID: NullableInt64;
+        FUserID: NullableInt64;
+        FImageGUID: NullableTGUID;
+        FImageType: NullableString;
+        FDetail: TArray<Int64>;
+    Public
+        Property CollectionID: Int64 read FCollectionID write FCollectionID;
+        Property IsPublic: Boolean read FIsPublic write FIsPublic;
+        Property AccessibilityGroupID: NullableInt64 read FAccessibilityGroupID write FAccessibilityGroupID;
+        Property Title: NullableString read FTitle write FTitle;
+        Property CreateDate: NullableTDate read FCreateDate write FCreateDate;
+        Property Discription: NullableString read FDiscription write FDiscription;
+        Property GenreID1: NullableInt32 read FGenreID1 write FGenreID1;
+        Property GenreID2: NullableInt32 read FGenreID2 write FGenreID2;
+        Property GenreID3: NullableInt32 read FGenreID3 write FGenreID3;
+        Property ReportID: NullableInt64 read FReportID write FReportID;
+        Property UserID: NullableInt64 read FUserID write FUserID;
+        Property ImageGUID: NullableTGUID read FImageGUID write FImageGUID;
+        Property ImageType: NullableString read FImageType write FImageType;
+        Property Detail: TArray<Int64> Read FDetail Write FDetail;
+End;
+
+Type
+    [MVCNameCase(ncLowerCase)]
     TCollectionDetailDTO  = Class
     Private
         FCollectionID: Int64;
         FBookID: TArray<Int64>;
-
     Public
-        Property CollectionID: Int64 Read FCollectionID Write FCollectionID;
+        Property CollectionID: Int64 read FCollectionID write FCollectionID;
         Property BookID: TArray<Int64> Read FBookID Write FBookID;
 End;
+
 
 
 Implementation

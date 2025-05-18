@@ -16,12 +16,13 @@ Type
         ['{D4B5D8E0-5B44-4D1B-823F-6C9B3F6A8F6A}']
         Function GetBookByID(Const BookID: Int64): TBook;
         Function GetAllBooks: TObjectList<TBook>;
-        Function SearchBooks(Const SearchTerm: string; Const PageNum: Integer;
-            Const Count: Integer): TFDQuery;
+        Function SearchBooks(Const ASearchTerm: string; Const AUserID: Int64;
+            Const APageNum: Integer; Const ACount: Integer): TFDStoredProc;
         Procedure AddBook(Const ABook: TBook);
         Procedure UpdateBook(Const ABook: TBook);
         Procedure DeleteBook(Const BookID: Int64);
         Function FavoritBook(Const UserID: Int64): TFDQuery;
+
         Function GetDetailByID(Const BookID, UserID: Int64): TFDQuery;
     End;
 
@@ -29,8 +30,8 @@ Type
     Public
         Function GetBookByID(Const BookID: Int64): TBook;
         Function GetAllBooks: TObjectList<TBook>;
-        Function SearchBooks(Const SearchTerm: string; Const PageNum: Integer = 1;
-  Const Count: Integer = 10): TFDQuery;
+        Function SearchBooks(Const ASearchTerm: string; Const AUserID: Int64;
+            Const APageNum: Integer; Const ACount: Integer): TFDStoredProc;
         Procedure AddBook(Const ABook: TBook);
         Procedure UpdateBook(Const ABook: TBook);
         Procedure DeleteBook(Const BookID: Int64);
@@ -73,21 +74,18 @@ Begin
     Result := FDQuer;
 End;
 //______________________________________________________________________________
-Function TBookService.SearchBooks(Const SearchTerm: string; Const PageNum: Integer = 1;
-  Const Count: Integer = 10): TFDQuery;
-Var
-    FDQuer: TFDQuery;
+Function TBookService.SearchBooks(Const ASearchTerm: string; Const AUserID: Int64;
+    Const APageNum: Integer; Const ACount: Integer): TFDStoredProc;
 Begin
-    FDQuer := TFDQuery.Create(NIL);
-    FDQuer.Connection := DMMain.GetConnection;
-
-    FDQuer.SQL.Text := 'Exec Book.spSearchBook :Text, :PageNum, :Count';
-    FDQuer.Params.ParamByName('Text').AsWideString := SearchTerm;
-    FDQuer.Params.ParamByName('PageNum').AsInteger := PageNum;
-    FDQuer.Params.ParamByName('Count').AsInteger := Count;
-    FDQuer.Open;
-
-    Result := FDQuer;
+    Result := TFDStoredProc.Create(NIL);
+    Result.Connection := DMMain.GetConnection;
+    Result.StoredProcName := '[Book].[spSearchBook]';
+    Result.Prepare;
+    Result.ParamByName('@Text').AsString := ASearchTerm;
+    Result.ParamByName('@UserID').AsLargeInt := AUserID;
+    Result.ParamByName('@PageNum').AsInteger := APageNum;
+    Result.ParamByName('@Count').AsInteger := ACount;
+    Result.Open;
 End;
 //______________________________________________________________________________
 Function TBookService.GetAllBooks: TObjectList<TBook>;

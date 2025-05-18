@@ -167,7 +167,10 @@ Begin
             FUserService.UpdateUser(UpdatedUser);
             Render(HTTP_STATUS.Ok, 'User_Updated');
         Except
-            Render(HTTP_STATUS.BadRequest, 'Error');
+            On E: Exception do
+            Begin
+                Render(HTTP_STATUS.BadRequest, E.Message);
+            End;
         End;
     Finally
         UpdatedUser.Free;
