@@ -37,15 +37,11 @@ Type
         Procedure DeleteBook(Const BookID: Int64);
         Function FavoritBook(Const UserID: Int64): TFDQuery;
         Function GetDetailByID(Const BookID, UserID: Int64): TFDQuery;
-
-    Private
-        Procedure DeleteRelatedComments(Const BookID: Int64);
-        Procedure DeleteRelatedRates(Const BookID: Int64);
     End;
 
 Implementation
 
-Uses UDMMain, FireDAC.Stan.Param, Data.DB;
+Uses UDMMain, FireDAC.Stan.Param, Data.DB, Service.Book.Image, Model.Book.Image;
 
 { TBookService }
 
@@ -132,33 +128,29 @@ End;
 Procedure TBookService.DeleteBook(Const BookID: Int64);
 Var
     Book: TBook;
+    BookImage: TImage;
+    ListBookImage: TObjectList<TImage>;
+    LImageService: IImageService;
 Begin
+    LImageService := TImageService.Create;
     Book := TMVCActiveRecord.GetByPK<TBook>(BookID);
     Try
         If not Assigned(Book) then
             raise Exception.Create('Book Not Found');
 
-        // First delete related comments and rates
-        DeleteRelatedComments(BookID);
-        DeleteRelatedRates(BookID);
-
         // Then delete the book itself
+        ListBookImage := LImageService.GetImagesByBookID(BookID);
+        For BookImage in ListBookImage do
+        Begin
+            LImageService.DeleteImage(BookImage.ID);
+        End;
+
         Book.Delete;
     Finally
+        LImageService := Nil;
+        If (ListBookImage <> nil) then ListBookImage.Free;
         Book.Free;
     End;
-End;
-//______________________________________________________________________________
-Procedure TBookService.DeleteRelatedComments(Const BookID: Int64);
-Begin
-    // Delete all comments related to this book
-    TMVCActiveRecord.DeleteRQL(TComment, 'BookID=' + BookID.ToString);
-End;
-//______________________________________________________________________________
-Procedure TBookService.DeleteRelatedRates(Const BookID: Int64);
-Begin
-    // Delete all rates related to this book
-    TMVCActiveRecord.DeleteRQL(TComment, 'BookID=' + BookID.ToString);
 End;
 //______________________________________________________________________________
 Function TBookService.FavoritBook(Const UserID: Int64): TFDQuery;

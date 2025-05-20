@@ -1,0 +1,171 @@
+﻿Unit Service.Book;
+
+Interface
+
+Uses
+    System.Generics.Collections,
+    System.SysUtils,
+    MVCFramework.ActiveRecord,
+    Model.Book,
+    FireDAC.Comp.Client,
+    Model.Book.Comment,
+    Model.Book.Rate;
+
+Type
+    IBookService = interface
+        ['{D4B5D8E0-5B44-4D1B-823F-6C9B3F6A8F6A}']
+        Function GetBookByID(Const BookID: Int64): TBook;
+        Function GetAllBooks: TObjectList<TBook>;
+        Function SearchBooks(Const ASearchTerm: string; Const AUserID: Int64;
+            Const APageNum: Integer; Const ACount: Integer): TFDStoredProc;
+        Procedure AddBook(Const ABook: TBook);
+        Procedure UpdateBook(Const ABook: TBook);
+        Procedure DeleteBook(Const BookID: Int64);
+        Function FavoritBook(Const UserID: Int64): TFDQuery;
+
+        Function GetDetailByID(Const BookID, UserID: Int64): TFDQuery;
+    End;
+
+    TBookService = class(TInterfacedObject, IBookService)
+    Public
+        Function GetBookByID(Const BookID: Int64): TBook;
+        Function GetAllBooks: TObjectList<TBook>;
+        Function SearchBooks(Const ASearchTerm: string; Const AUserID: Int64;
+            Const APageNum: Integer; Const ACount: Integer): TFDStoredProc;
+        Procedure AddBook(Const ABook: TBook);
+        Procedure UpdateBook(Const ABook: TBook);
+        Procedure DeleteBook(Const BookID: Int64);
+        Function FavoritBook(Const UserID: Int64): TFDQuery;
+        Function GetDetailByID(Const BookID, UserID: Int64): TFDQuery;
+    End;
+
+Implementation
+
+Uses UDMMain, FireDAC.Stan.Param, Data.DB, Service.Book.Image, Model.Book.Image;
+
+{ TBookService }
+
+//______________________________________________________________________________
+Function TBookService.GetBookByID(Const BookID: Int64): TBook;
+Begin
+    Try
+        Result := TMVCActiveRecord.GetByPK<TBook>(BookID);
+    Except
+        Result := nil;
+    End;
+End;
+//______________________________________________________________________________
+Function TBookService.GetDetailByID(Const BookID, UserID: Int64): TFDQuery;
+Var
+    FDQuer: TFDQuery;
+Begin
+    FDQuer := TFDQuery.Create(NIL);
+    FDQuer.Connection := DMMain.GetConnection;
+
+    FDQuer.SQL.Text := 'Exec Book.spDetailOfBook :BookID, :UserID';
+    FDQuer.Params.ParamByName('BookID').AsLargeInt := BookID;
+    FDQuer.Params.ParamByName('UserID').AsLargeInt := UserID;
+    FDQuer.Open;
+
+    Result := FDQuer;
+End;
+//______________________________________________________________________________
+Function TBookService.SearchBooks(Const ASearchTerm: string; Const AUserID: Int64;
+    Const APageNum: Integer; Const ACount: Integer): TFDStoredProc;
+Begin
+    Result := TFDStoredProc.Create(NIL);
+    Result.Connection := DMMain.GetConnection;
+    Result.StoredProcName := '[Book].[spSearchBook]';
+    Result.Prepare;
+    Result.ParamByName('@Text').AsString := ASearchTerm;
+    Result.ParamByName('@UserID').AsLargeInt := AUserID;
+    Result.ParamByName('@PageNum').AsInteger := APageNum;
+    Result.ParamByName('@Count').AsInteger := ACount;
+    Result.Open;
+End;
+//______________________________________________________________________________
+Function TBookService.GetAllBooks: TObjectList<TBook>;
+Begin
+    Try
+        Result := TMVCActiveRecord.All<TBook>;
+    Except
+        Result := nil;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TBookService.AddBook(Const ABook: TBook);
+Begin
+    ABook.Insert;
+End;
+//______________________________________________________________________________
+Procedure TBookService.UpdateBook(Const ABook: TBook);
+Var
+    OldBook: TBook;
+Begin
+    OldBook := TMVCActiveRecord.GetByPK<TBook>(ABook.BookID);
+    Try
+        If not Assigned(OldBook) then
+          raise Exception.Create('Book Not Found');
+        If ABook.Title <> '' then OldBook.Title := ABook.Title;
+        If not ABook.AuthorID.IsNull then OldBook.AuthorID := ABook.AuthorID;
+        If not ABook.PublisherID.IsNull then OldBook.PublisherID := ABook.PublisherID;
+        If not ABook.GenreID1.IsNull then OldBook.GenreID1 := ABook.GenreID1;
+        If not ABook.GenreID2.IsNull then OldBook.GenreID2 := ABook.GenreID2;
+        If not ABook.GenreID3.IsNull then OldBook.GenreID3 := ABook.GenreID3;
+        If not ABook.GenreExtra.IsNull then OldBook.GenreExtra := ABook.GenreExtra;
+        If not ABook.Description.IsNull then OldBook.Description := ABook.Description;
+        If not ABook.PublishedYear.IsNull then OldBook.PublishedYear := ABook.PublishedYear;
+        If not ABook.LanguageID.IsNull then OldBook.LanguageID := ABook.LanguageID;
+        If not ABook.PageCount.IsNull then OldBook.PageCount := ABook.PageCount;
+        If not ABook.ISBN.IsNull then OldBook.ISBN := ABook.ISBN;
+        OldBook.UpdatedAt := Now;
+        OldBook.Update;
+    Finally
+        OldBook.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TBookService.DeleteBook(Const BookID: Int64);
+Var
+    Book: TBook;
+    BookImage: TImage;
+    ListBookImage: TObjectList<TImage>;
+    LImageService: IImageService;
+Begin
+    LImageService := TImageService.Create;
+    Book := TMVCActiveRecord.GetByPK<TBook>(BookID);
+    Try
+        If not Assigned(Book) then
+            raise Exception.Create('Book Not Found');
+
+        // Then delete the book itself
+        ListBookImage := LImageService.GetImagesByBookID(BookID);
+        For BookImage in ListBookImage do
+        Begin
+            LImageService.DeleteImage(BookImage.ID);
+        End;
+
+        Book.Delete;
+    Finally
+        LImageService := Nil;
+        If ListBookImage <> nil then ListBookImage.Free;
+        Book.Free;
+    End;
+End;
+//______________________________________________________________________________
+Function TBookService.FavoritBook(Const UserID: Int64): TFDQuery;
+Var
+    FDQuer: TFDQuery;
+Begin
+    FDQuer := TFDQuery.Create(NIL);
+    FDQuer.Connection := DMMain.GetConnection;
+
+    FDQuer.SQL.Text := 'Exec Book.spFavoritBook :UserID';
+    FDQuer.Params.ParamByName('UserID').AsLargeInt := UserID;
+    FDQuer.Open;
+
+    Result := FDQuer;
+End;
+//______________________________________________________________________________
+
+End.

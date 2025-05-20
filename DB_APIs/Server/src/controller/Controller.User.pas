@@ -292,7 +292,7 @@ Procedure TUserController.SignupNormalUser(Const Name, Password, Email, CEmailID
 Var
     FDStoredProc: TFDStoredProc;
 Begin
-    If (Name.IsEmpty) OR (Password.IsEmpty) OR (Email.IsEmpty) then
+    If (Email.IsEmpty) then
     Begin
         Raise EMVCException.Create(400, 'Name, Password, Email must have value!');
         Exit;

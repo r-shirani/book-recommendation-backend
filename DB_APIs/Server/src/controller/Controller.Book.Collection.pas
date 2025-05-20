@@ -52,6 +52,11 @@ Type
         [MVCHTTPMethod([httpGet])]
         procedure GetDetail([MVCFromQueryString('collectionid', '0')] collectionid: Int64);
 
+        [MVCPath('/detail')]
+        [MVCHTTPMethod([httpDELETE])]
+        procedure DeleteDetail([MVCFromQueryString('collectionid', '0')] CollectionID: Int64;
+          Const [MVCFromQueryString('bookid')] BookID: Int64);
+
         [MVCPath('')]
         [MVCHTTPMethod([httpPUT])]
         procedure UpdateCollection([MVCFromBody] const ACollection: TCollection);
@@ -271,6 +276,13 @@ Procedure TCollectionController.DeleteCollection(collectionid: Int64);
 Begin
     FCollectionService.Delete(collectionid);
     Render(HTTP_STATUS.OK, 'Collection deleted successfully');
+End;
+//______________________________________________________________________________
+Procedure TCollectionController.DeleteDetail(CollectionID: Int64;
+  const BookID: Int64);
+Begin
+    FCollectionService.DeleteBook(CollectionID, BookID);
+    Render(HTTP_STATUS.OK, 'Collection updated successfully');
 End;
 //______________________________________________________________________________
 

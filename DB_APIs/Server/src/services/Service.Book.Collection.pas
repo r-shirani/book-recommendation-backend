@@ -27,6 +27,7 @@ Type
         Function GetImageFile(CollectionID: int64; out AContentType: String): TStream;
         Function AddImage(const AFileStream: TStream;
           const AOriginalFileName: string; ACollectionID: Int64): TCollection;
+        Procedure DeleteBook(const CollectionID: Int64; const BookID: Int64);
     End;
 
     TCollectionService = class(TInterfacedObject, ICollectionService)
@@ -44,6 +45,7 @@ Type
         Function GetImageFile(CollectionID: int64; out AContentType: String): TStream;
         Function AddImage(const AFileStream: TStream;
           const AOriginalFileName: string; ACollectionID: Int64): TCollection;
+        Procedure DeleteBook(const CollectionID: Int64; const BookID: Int64);
 
         Class Function GenerateImageUrl(Const AImageGUID, ContentType: String): string;
     End;
@@ -94,7 +96,6 @@ Function TCollectionService.AddImage(const AFileStream: TStream;
 Var
     LFileStream: TFileStream;
     LFilePath: string;
-    bExist: Boolean;
 Begin
     Try
         Result := TMVCActiveRecord.GetByPK<TCollection>(ACollectionID);
@@ -146,6 +147,19 @@ Begin
         Collection.Delete;
     Finally
         Collection.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TCollectionService.DeleteBook(const CollectionID, BookID: Int64);
+Var
+    Detail: TCollectionDetail;
+Begin
+    Detail := TMVCActiveRecord.GetOneByWhere<TCollectionDetail>(
+      'CollectionID = ? AND BookID = ?', [CollectionID, BookID], True);
+    Try
+        Detail.Delete();
+    Finally
+        Detail.Free;
     End;
 End;
 //______________________________________________________________________________
@@ -246,8 +260,7 @@ Function TCollectionService.GetImageFile(CollectionID: int64; out AContentType: 
 Var
     LGUID: TGUID;
     LCollection: TCollection;
-    LImageStream: TStream;
-    LFilePath, sGUID: String;
+    LFilePath: String;
 Begin
     LCollection := TMVCActiveRecord.GetByPK<TCollection>(CollectionID);
     LGUID := LCollection.ImageGUID;

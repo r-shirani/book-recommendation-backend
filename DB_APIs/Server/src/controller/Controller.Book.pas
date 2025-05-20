@@ -53,9 +53,9 @@ Type
         [MVCHTTPMethod([httpPUT])]
         Procedure UpdateBook;
 
-        [MVCPath('/($id)')]
+        [MVCPath('')]
         [MVCHTTPMethod([httpDELETE])]
-        Procedure DeleteBook(Const id: Int64);
+        Procedure DeleteBook(Const [MVCFromQueryString('bookid', 0)] bookid: Int64);
 
         [MVCPath('/($id)')]
         [MVCHTTPMethod([httpGET])]
@@ -164,9 +164,9 @@ Begin
     Render(HTTP_STATUS.OK, 'Book updated successfully');
 End;
 //______________________________________________________________________________
-Procedure TBookController.DeleteBook(Const id: Int64);
+Procedure TBookController.DeleteBook(Const bookid: Int64);
 Begin
-    FBookService.DeleteBook(id);
+    FBookService.DeleteBook(bookid);
     Render(HTTP_STATUS.OK, 'Book deleted successfully');
 End;
 //______________________________________________________________________________
