@@ -7,7 +7,7 @@ const api = axios.create({
     },
   });
 
-const LoginUser = async (email) => {ٌُ
+const LoginUser = async (email) => {
   try {
     const response = await api.get("/login",{
       params:{email: email} 
