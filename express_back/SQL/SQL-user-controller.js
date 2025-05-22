@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const axios = require('axios');
 const api = axios.create({
-    baseURL: "https://185.173.104.228:9547/api/v1/user", 
+    baseURL: "http://185.173.104.228:9547/api/v1/user", 
     headers: {
       "Content-Type": "application/json",
     },
@@ -184,7 +184,7 @@ const updateProfile_controller = async (userID,new_firstName, new_lastName, new_
 
 // new apis in sql server
 const newApi = axios.create({
-  baseURL: "https://185.173.104.228:9547/api/v1", 
+  baseURL: "http://185.173.104.228:9547/api/v1", 
   headers: {
     "Content-Type": "application/json"
   }, 
@@ -322,7 +322,7 @@ const update_genres = async (useridInput, genresID) => {
 
 
 const userProfileImage = async (userid) => {
-  const image_file_url = `https://185.173.104.228:9547/api/v1/user/profile/file?userid=${userid}`;
+  const image_file_url = `http://185.173.104.228:9547/api/v1/user/profile/file?userid=${userid}`;
 
   try {
       const response = await axios.get(image_file_url, { responseType: 'stream' });

@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const axios = require('axios');
 
 const newApi = axios.create({
-    baseURL: "https://185.173.104.228:9547/api/v1", 
+    baseURL: "http://185.173.104.228:9547/api/v1", 
     headers: {
       "Content-Type": "application/json"
     }, 

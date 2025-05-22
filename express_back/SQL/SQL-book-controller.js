@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const axios = require('axios');
 const book = axios.create({
-    baseURL: "https://185.173.104.228:9547/api/v1/book", 
+    baseURL: "http://185.173.104.228:9547/api/v1/book", 
     headers: {
       "Content-Type": "application/json",
     },
@@ -26,7 +26,7 @@ const searchBook_controller = async (searchterm_input , pageNum_input ,count_inp
 }
 
 const bookImage = async (bookid)=>{
-    const baseurl = "https://185.173.104.228:9547/api/v1/images";
+    const baseurl = "http://185.173.104.228:9547/api/v1/images";
     const image_info = await axios.get(baseurl+`/book/${bookid}`);
     const{list} = image_info.data;
     const imageguid =list[0].imageguid;
@@ -45,7 +45,7 @@ const bookImage = async (bookid)=>{
 }
 
 const likeBook =async (bookid_input , userid_input)=>{
-    const baseurl = "https://185.173.104.228:9547/api/v1/like";
+    const baseurl = "http://185.173.104.228:9547/api/v1/like";
     try {
         const response = await axios.post(baseurl ,{
             bookid : bookid_input,
@@ -66,7 +66,7 @@ const likeBook =async (bookid_input , userid_input)=>{
 }
 
 const likeStatus = async (bookid_input , userid_input) =>{
-    const baseurl = "https://185.173.104.228:9547/api/v1/like/status";
+    const baseurl = "http://185.173.104.228:9547/api/v1/like/status";
     try {
         const response = await axios.get(baseurl , {
             params:
@@ -91,7 +91,7 @@ const likeStatus = async (bookid_input , userid_input) =>{
 
 const deletelike = async (bookid_input , userid_input) => {
 
-    const baseurl = "https://185.173.104.228:9547/api/v1/like";
+    const baseurl = "http://185.173.104.228:9547/api/v1/like";
     try {
         
         const response = await axios.delete(baseurl ,{
@@ -117,7 +117,7 @@ const deletelike = async (bookid_input , userid_input) => {
 }
 
 const favorit_books = async (userid_input) => {
-    const baseurl = "https://185.173.104.228:9547/api/v1/book/favorit";
+    const baseurl = "http://185.173.104.228:9547/api/v1/book/favorit";
     try {
         const response = await axios.get(baseurl ,{
             params: {
@@ -143,7 +143,7 @@ const favorit_books = async (userid_input) => {
 
 const GetBookByID = async(bookid_input)=> {
     try {
-        const baseurl = "https://185.173.104.228:9547/api/v1/book/detail";
+        const baseurl = "http://185.173.104.228:9547/api/v1/book/detail";
         const response = await book.get(baseurl, {
             params:
             {

@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const axios = require('axios');
 const api = axios.create({
-    baseURL: "https://185.173.104.228:9547/api/v1", 
+    baseURL: "http://185.173.104.228:9547/api/v1", 
     headers: {
       "Content-Type": "application/json",
     },
@@ -70,7 +70,7 @@ const get_collection_details = async(collectionid_input) =>{
 }
 
 const getCollectionImage = async (collectionid) => {
-  const imageUrl = `https://185.173.104.228:9547/api/v1/collections/image?collectionid=${collectionid}`;
+  const imageUrl = `http://185.173.104.228:9547/api/v1/collections/image?collectionid=${collectionid}`;
 
   try {
     const response = await axios.get(imageUrl, { responseType: 'stream' });

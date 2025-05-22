@@ -126,7 +126,7 @@ exports.proxyUploadCollectionImage = async (req, res) => {
       });
       fd.append('collectionid', collectionid);
   
-      const destURL = 'https://185.173.104.228:9547/api/v1/collections/image';
+      const destURL = 'http://185.173.104.228:9547/api/v1/collections/image';
       const uploadResp = await axios.post(destURL, fd, {
         headers: fd.getHeaders(),
         maxContentLength: Infinity,

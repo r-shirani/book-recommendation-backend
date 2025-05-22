@@ -10,7 +10,7 @@ exports.searchBook = async (req, res) => {
     const searchterm = req.params.searchterm;
     const pagenum = 1;
     const count = 5;
-    const baseUrl = "https://185.173.104.228:9547/api/v1/images/file/";
+    const baseUrl = "http://185.173.104.228:9547/api/v1/images/file/";
 
     const bookData = await searchBook_controller(searchterm, pagenum, count);
 

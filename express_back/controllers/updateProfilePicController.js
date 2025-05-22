@@ -18,7 +18,7 @@ exports.proxyUpload = async (req, res) => {
     fd.append('userid',      userID);
 
 
-    const destURL = 'https://185.173.104.228:9547/api/v1/user/profile';
+    const destURL = 'http://185.173.104.228:9547/api/v1/user/profile';
     const uploadResp = await axios.post(destURL, fd, {
       headers: fd.getHeaders(),      
       maxContentLength: Infinity,
