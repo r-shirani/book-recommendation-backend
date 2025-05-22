@@ -50,7 +50,7 @@ exports.postUser_Collection = async (req , res)=>{
         const userID = req.user.id; 
         const {ispublic , title } = req.body;
         if(title===null || ispublic ===null){
-            res.status(400).json({ message: "title and is public is empty" });
+            res.status(400).json({ message: "title or is public is empty" });
         }
         const response = await post_user_collection(ispublic, title, userID);
         if(response===-1){
@@ -126,7 +126,7 @@ exports.proxyUploadCollectionImage = async (req, res) => {
       });
       fd.append('collectionid', collectionid);
   
-      const destURL = 'http://185.255.90.36:9547/api/v1/collections/image';
+      const destURL = 'https://185.173.104.228:9547/api/v1/collections/image';
       const uploadResp = await axios.post(destURL, fd, {
         headers: fd.getHeaders(),
         maxContentLength: Infinity,
@@ -150,6 +150,48 @@ exports.proxyUploadCollectionImage = async (req, res) => {
   
 
 
+
+
+exports.proxyUploadCollection = async (req, res) => {
+  try {
+    const { file } = req;
+    const data = req.body.data;
+
+    if (!file || !data) {
+      return res.status(400).json({ message: 'file or data missing' });
+    }
+
+    const fd = new FormData();
+    fd.append('file', file.buffer, {
+      filename: file.originalname,
+      contentType: file.mimetype
+    });
+
+    fd.append('data', data); // JSON string - ensure frontend sends it as string
+
+    const destURL = 'https://185.173.104.228:9547/api/v1/collections';
+
+    const response = await axios.post(destURL, fd, {
+      headers: fd.getHeaders(),
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
+      timeout: 15000
+    });
+
+    res.status(201).json(response.data);
+
+  } catch (err) {
+    console.error(err);
+
+    if (err.response) {
+      return res
+        .status(err.response.status || 502)
+        .json(err.response.data);
+    }
+
+    res.status(500).json({ message: 'proxy upload failed' });
+  }
+};
 
 
 
