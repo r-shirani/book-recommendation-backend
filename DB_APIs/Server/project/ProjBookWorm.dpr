@@ -67,24 +67,35 @@ uses
   Service.Book.CollectionDetail in '..\src\services\Service.Book.CollectionDetail.pas',
   Service.Book.CollectionType in '..\src\services\Service.Book.CollectionType.pas',
   Service.Book.AccessibilityGroup in '..\src\services\Service.Book.AccessibilityGroup.pas',
-  Controller.Book.Collection in '..\src\controller\Controller.Book.Collection.pas';
+  Controller.Book.Collection in '..\src\controller\Controller.Book.Collection.pas',
+  IdGlobal,
+  IdSocketHandle;
 
 {$R *.res}
 
 Procedure RunServer(APort: Integer);
 Var
     LServer: TIdHTTPWebBrokerBridge;
+    LBinding: TIdSocketHandle;
 Begin
     LServer := TIdHTTPWebBrokerBridge.Create(nil);
     Try
         LServer.OnParseAuthentication := TMVCParseAuthentication.OnParseAuthentication;
-        LServer.DefaultPort := APort;
         LServer.KeepAlive := dotEnv.Env('dmvc.indy.keep_alive', True);
         LServer.MaxConnections := dotEnv.Env('dmvc.webbroker.max_connections', 0);
         LServer.ListenQueue := dotEnv.Env('dmvc.indy.listen_queue', 500);
+
+
+        LServer.Bindings.Clear;
+        LBinding := LServer.Bindings.Add; // یک binding اضافه کنید
+        LBinding.IP := '0.0.0.0';
+        LBinding.Port := APort;
+        LBinding.IPVersion := Id_IPv4; // ترتیب این سه خط مهم نیست، مادامی که روی LBinding اعمال شوند
+
         LServer.Active := True;
-        LogI('Listening on http://localhost:' + APort.ToString);
+        LogI('Listening on http://0.0.0.0:' + APort.ToString);
         LogI('Application started. Press Ctrl+C to shut down.');
+
         WaitForTerminationSignal;
         EnterInShutdownState;
         LServer.Active := False;
