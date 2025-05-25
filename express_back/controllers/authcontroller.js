@@ -181,6 +181,10 @@ exports.getProfile = async (req, res) => {
   }
 };
 
+
+
+
+
 exports.newPassword = async(req , res)=>{
   try {
     const {newPassword , oldPassword} = req.body;
@@ -238,12 +242,26 @@ exports.updateProfile = async (req, res) => {
 
 exports.getUserProfileImage = async (req, res) => {
   const userid = req.params.userid;
+  
 
   try {
       const { stream, contentType } = await userProfileImage(userid);
       res.setHeader('Content-Type', contentType);
       stream.pipe(res);
       console.log(`User profile image sent successfully for userid: ${userid}`);
+  } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: "Server error - (error in fetching user profile image)" });
+  }
+};
+
+exports.getUserProfileImage_token = async (req, res) => {
+  const userID = req.user.id;
+  try {
+      const { stream, contentType } = await userProfileImage(userID);
+      res.setHeader('Content-Type', contentType);
+      stream.pipe(res);
+      console.log(`User profile image sent successfully for userid: ${userID}`);
   } catch (error) {
       console.error(error.message);
       res.status(500).json({ message: "Server error - (error in fetching user profile image)" });
