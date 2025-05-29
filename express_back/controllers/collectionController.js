@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 const { getUserByID } = require("../SQL/SQL-user-controller");
 const { Readable } = require('stream');
-const { get_all_user_collections, post_user_collection, get_collection_details } = require("../SQL/SQL-collection-controller");
+const { get_all_user_collections, post_user_collection, get_collection_details, deleteCollection, deleteCollectionDetails } = require("../SQL/SQL-collection-controller");
 const FormData = require('form-data');
 const axios = require('axios');
 
@@ -169,7 +169,7 @@ exports.proxyUploadCollection = async (req, res) => {
 
     fd.append('data', data); // JSON string - ensure frontend sends it as string
 
-    const destURL = 'https://185.173.104.228:9547/api/v1/collections';
+    const destURL = 'http://185.173.104.228:9547/api/v1/collections';
 
     const response = await axios.post(destURL, fd, {
       headers: fd.getHeaders(),
@@ -192,6 +192,71 @@ exports.proxyUploadCollection = async (req, res) => {
     res.status(500).json({ message: 'proxy upload failed' });
   }
 };
+
+
+exports.deleteCollection_controller = async (req, res) => {
+  try {
+    
+    const collectionid = req.query.collectionid;
+    if(!collectionid){
+      return res.status(400).json({ error: 'enter collectionid' });
+    }
+    const response = await deleteCollection(collectionid);
+    if(response == 1){
+      res.status(200).send("collection deleted");
+    }
+    else{
+      res.status(500).json({ message: 'SQL server error' });
+    }
+
+  
+  } 
+  catch (error) {
+    console.error(error);
+
+    if (error.response) {
+      return res
+        .status(err.response.status || 500)
+        .json(err.response.data);
+    }
+
+    res.status(500).json({ message: 'SQL server error' });
+  }
+}
+  
+exports.deleteCollectionDetails_controller = async (req, res) => {
+  try {
+    
+    const collectionid = req.query.collectionid;
+    const bookid = req.query.bookid;
+    if(!collectionid || !bookid){
+      return res.status(400).json({ error: 'enter collectionid or bookid' });
+    }
+    const response = await deleteCollectionDetails(collectionid , bookid);
+    if(response == 1){
+      res.status(200).json({ message: "collection Details deleted",
+      bookid : bookid
+    });
+    }
+    else{
+      res.status(500).json({ message: 'SQL server error' });
+    }
+
+  
+  } 
+  catch (error) {
+    console.error(error);
+
+    if (error.response) {
+      return res
+        .status(err.response.status || 500)
+        .json(err.response.data);
+    }
+
+    res.status(500).json({ message: 'SQL server error' });
+  }
+}
+
 
 
 

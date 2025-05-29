@@ -83,9 +83,54 @@ const getCollectionImage = async (collectionid) => {
   }
 };
 
+const deleteCollection = async(collectionid_input) => {
+  try {
+    const response = await api.delete("/collections",{
+      params: {collectionid : collectionid_input}
+    });
+    if(response.status == 200){
+      return 1;
+    }
+    else{
+      return -1
+    }
+  } catch (error) {
+    console.log("server Error(SQL-deleting-collection)");
+    return -1;
+  }
+
+
+};
+
+const deleteCollectionDetails = async(collectionid_input , bookid_input) => {
+  try {
+    const response = await api.delete("/collections",{
+      params: {
+        collectionid : collectionid_input,
+        bookid : bookid_input
+
+        }
+    });
+    if(response.status == 200){
+      return 1;
+    }
+    else{
+      return -1
+    }
+  } catch (error) {
+    console.log("server Error(SQL-deleting-Details-collection)");
+    return -1;
+  }
+
+
+};
+
+
 module.exports={
   get_all_user_collections,
   post_user_collection,
   get_collection_details,
-  getCollectionImage
+  getCollectionImage,
+  deleteCollection,
+  deleteCollectionDetails
 };
