@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 
-const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut, updatePassword_controller, updateProfile_controller, updateVerifycode_controller, userProfileImage } = require("../SQL/SQL-user-controller");
+const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut, updatePassword_controller, updateProfile_controller, updateVerifycode_controller, userProfileImage,update_MBTI_controller } = require("../SQL/SQL-user-controller");
 const { loginUser_controller } = require("../SQL/SQL-user-controller");
 const { getUserByID } = require("../SQL/SQL-user-controller");
 
@@ -182,9 +182,6 @@ exports.getProfile = async (req, res) => {
 };
 
 
-
-
-
 exports.newPassword = async(req , res)=>{
   try {
     const {newPassword , oldPassword} = req.body;
@@ -239,6 +236,28 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.updateMBTI = async (req, res) => {
+  try {
+    const userID = req.user.id; // "Data retrieved from middleware"
+    const { new_MBTI } = req.body; // new MBTI type
+    if(!new_MBTI){
+      return res.status(400).json({message: "MBTI type is required"});
+    }
+    let response = await update_MBTI_controller(userID,new_MBTI);
+
+    console.log(`update MBTI response from update_MBTI_controller: ${response}`);
+
+    if (response === 1 ) {
+      res.status(200).json({ message: "MBTI updated successfully!" });
+    } else {
+      res.status(500).json({ message: "Something went wrong, try again later!" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
 
 exports.getUserProfileImage = async (req, res) => {
   const userid = req.params.userid;
