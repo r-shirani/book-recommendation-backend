@@ -181,7 +181,6 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-
 exports.newPassword = async(req , res)=>{
   try {
     const {newPassword , oldPassword} = req.body;
@@ -253,6 +252,26 @@ exports.updateMBTI = async (req, res) => {
     } else {
       res.status(500).json({ message: "Something went wrong, try again later!" });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.GetMBTI = async (req, res) => {
+  try {
+    const userID = req.user.id; //"Data retrieved from middleware"
+    let users = await getUserByID(userID);
+    if (!users) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const user = users[0];
+    res.json({
+      message: "User MBTI:",
+      user: {
+        id: user.userId,
+        MBTI: user.mbti},
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
