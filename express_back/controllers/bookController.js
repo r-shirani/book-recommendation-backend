@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 const { getUserByID } = require("../SQL/SQL-user-controller");
-const { bookImage, searchBook_controller, likeBook, deletelike, favorit_books, GetBookByID, likeStatus } = require("../SQL/SQL-book-controller");
+const { bookImage, searchBook_controller, likeBook, deletelike, favorit_books, GetBookByID, likeStatus , MBTIbooks} = require("../SQL/SQL-book-controller");
 const { Readable } = require('stream');
 
 exports.searchBook = async (req, res) => {
@@ -230,3 +230,27 @@ const streamToBuffer = async (stream) => {
         stream.on('error', reject);
     });
 };
+
+exports.MBTI_Books = async (req, res) => {
+    const userid = req.user.id;
+    const {searchterm,pagenum,count } = req.query;
+    //if (!searchterm) {searchterm = null;}
+    //if (!pagenum) {pagenum = 1;}
+    //if (!count) {count = 20;}
+
+    try {
+        let MBTIbooks_res = await MBTIbooks( searchterm, pagenum, count, userid);
+        if(MBTIbooks_res != -1){
+            res.status(200).json({
+                message: "MBTI Books fetched successfully",
+                books: MBTIbooks_res
+            })
+        }else{
+            res.status(500).json({ error: 'server error' });
+        }
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'server error' });
+    }
+}
