@@ -151,7 +151,7 @@ const getUserByID = async (userID) => {
   }
 };
 
-const updateProfile_controller = async (userID,new_firstName, new_lastName, new_userName, new_bio, new_gender, new_birthday, new_phoneNumber) => {
+const updateProfile_controller = async (userID,new_firstName, new_lastName, new_userName, new_bio, new_gender, new_birthday, new_phoneNumber,new_MBTI) => {
   try {
     const response = await newApi.put("/user", { 
       userid : userID,
@@ -161,7 +161,8 @@ const updateProfile_controller = async (userID,new_firstName, new_lastName, new_
       bio : new_bio,
       gender : new_gender,
       dateofbirth : new_birthday,
-      phonenumber : new_phoneNumber
+      phonenumber : new_phoneNumber,
+      nbti: new_MBTI
     });
 
     if (!response || response.length === 0) {
@@ -245,13 +246,6 @@ const updateVerifycode_controller = async(userIdInput , verificationCodeValue) =
   }
 }
 
-
-
-
-
-
-
-
 const get_user_genres_controller = async(useridInput) => {
   try {
       const response = await newApi.get("/user/genres", {
@@ -270,9 +264,6 @@ const get_user_genres_controller = async(useridInput) => {
     return [];
   }
 }
-
-
-
 
 const get_user_genres_name_controller = async (genreids) => {
   try {
@@ -293,10 +284,6 @@ const get_user_genres_name_controller = async (genreids) => {
     return [];
   }
 };
-
-
-
-
 
 const update_genres = async (useridInput, genresID) => {
   try {
@@ -320,7 +307,6 @@ const update_genres = async (useridInput, genresID) => {
   }
 };
 
-
 const userProfileImage = async (userid) => {
   const image_file_url = `http://185.173.104.228:9547/api/v1/user/profile/file?userid=${userid}`;
 
@@ -334,8 +320,6 @@ const userProfileImage = async (userid) => {
       throw new Error('Failed to fetch user profile image');
   }
 };
-
-
 
 module.exports={
   registerUSer_controller,
