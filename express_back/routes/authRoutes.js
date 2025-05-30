@@ -1,5 +1,5 @@
 const express = require("express");
-const { register, login, getProfile ,verifyCode, googleLogin, newPassword,updateProfile, sendEmailPassCode, forgetPassword_code, settingNewPassword, getUserProfileImage, getUserProfileImage_token, updateMBTI} = require("../controllers/authcontroller");
+const { register, login, getProfile ,verifyCode, googleLogin, newPassword,updateProfile, sendEmailPassCode, forgetPassword_code, settingNewPassword, getUserProfileImage, getUserProfileImage_token, updateMBTI,GetMBTI} = require("../controllers/authcontroller");
 const authMiddleware = require("../middlewares/authMiddleware");
 const { validateRegister, validateLogin } = require("../validators/authValidator");
 const { getUserGenres, updateUserGenres, getAllGenres } = require("../controllers/genresController");
@@ -22,5 +22,6 @@ router.put("/settingNewPassword" , settingNewPassword);
 router.get("/profilePic/:userid" ,getUserProfileImage);
 router.get("/profilePicToken" ,authMiddleware ,getUserProfileImage_token);
 router.put("/MBTI-update",authMiddleware,updateMBTI); // Update MBTI type for the user
+router.get("/MBTI",authMiddleware,GetMBTI); // Get MBTI type for the user
 
 module.exports = router;
