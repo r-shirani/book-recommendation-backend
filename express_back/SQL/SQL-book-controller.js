@@ -88,6 +88,30 @@ const likeStatus = async (bookid_input , userid_input) =>{
     }
 }
 
+const MBTIbooks = async (seachterm_input, pageNum_input, count_input,userid_input) => {
+    const baseurl = "http://185.173.104.228:9547/api/v1/book/search";
+    try {
+        const response = await axios.get(baseurl , {
+            params:
+            {
+                searchterm : seachterm_input,
+                userid : userid_input,
+                pageNum : pageNum_input,
+                count : count_input
+            }
+        })
+        if(response.status == 200){
+            return response.data
+        }
+        else{
+            console.log("SQL server error - (get MBTI Books)");
+            return -1
+        }
+    } catch (error) {
+        console.log("SQL server error - (get MBTI books)");
+        return -1
+    }
+}
 
 const deletelike = async (bookid_input , userid_input) => {
 
@@ -165,5 +189,6 @@ module.exports={
     deletelike,
     favorit_books,
     GetBookByID,
-    likeStatus
+    likeStatus,
+    MBTIbooks,
 }
