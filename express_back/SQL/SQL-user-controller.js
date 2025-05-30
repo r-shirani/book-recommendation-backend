@@ -183,6 +183,31 @@ const updateProfile_controller = async (userID,new_firstName, new_lastName, new_
   }
 };
 
+const update_MBTI_controller = async (userID, new_MBTI) => {
+  try {
+    const response = await newApi.put("/user", { 
+      userid : userID,
+      nbti : new_MBTI
+    });
+
+    if (!response || response.length === 0) {
+      console.log("server Error(SQL-updateUserProfile)");
+      return -1;
+    }
+
+    const pure = response.data;
+    if (pure === "User_Updated") {
+      console.log("User MBTI updated successfully");
+      return 1;
+    } else {
+      console.log("Something went wrong");
+      return 0;
+    }
+  } catch (error) {
+    console.error("Error updating user MBTI:", error);
+  }
+}
+
 // new apis in sql server
 const newApi = axios.create({
   baseURL: "http://185.173.104.228:9547/api/v1", 
@@ -335,5 +360,6 @@ module.exports={
   get_user_genres_name_controller,
   update_genres,
   updateVerifycode_controller,
-  userProfileImage
+  userProfileImage,
+  update_MBTI_controller
 };
