@@ -47,7 +47,7 @@ exports.getRefComments = async (req , res)=>{
         }
         else{
 
-            res.status(200).send(response.list);
+            res.status(200).send(response);
         }
     } catch (error) {
         console.error(error);

@@ -55,7 +55,7 @@ const getAllComment_book = async(bookid_input)=>{
         console.log("server Error(SQL-login)");
         return -1;
       }   
-      return response.data.list;
+      return response.data;
   
   
     } catch (error) {
