@@ -181,6 +181,31 @@ exports.getProfile = async (req, res) => {
   }
 };
 
+exports.getProfile_AnotherUser = async (req, res) => {
+  try {
+    const {userid } = req.query; 
+    let users = await getUserByID(userid);
+    if (!users) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const user = users[0];
+    res.json({
+      message: "public User info",
+      user: {
+        id: user.userId,
+        first_name: user.firstName,
+        last_name: user.lastName,
+        user_name: user.userName,
+        bio: user.bio,
+        mbti: user.mbti
+        },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 exports.newPassword = async(req , res)=>{
   try {
     const {newPassword , oldPassword} = req.body;

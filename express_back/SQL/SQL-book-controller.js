@@ -17,6 +17,9 @@ const searchBook_controller = async (searchterm_input , pageNum_input ,count_inp
                 count: count_input
             }
         })
+        if(response.status == 204){
+            return 0;
+        }
         return response.data;
     } catch (error) {
         console.log("Error:", error);

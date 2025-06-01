@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 const { getUserByID } = require("../SQL/SQL-user-controller");
 const { Readable } = require('stream');
-const { get_all_user_collections, post_user_collection, get_collection_details, deleteCollection, deleteCollectionDetails } = require("../SQL/SQL-collection-controller");
+const { get_all_user_collections, post_user_collection, get_collection_details, deleteCollection, deleteCollectionDetails, getCollectionImage } = require("../SQL/SQL-collection-controller");
 const FormData = require('form-data');
 const axios = require('axios');
 

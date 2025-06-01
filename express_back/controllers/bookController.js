@@ -8,13 +8,18 @@ const { Readable } = require('stream');
 
 exports.searchBook = async (req, res) => {
     const searchterm = req.params.searchterm;
+    if(!searchterm){
+        return res.status(400).send("enter searchterm");
+    }
     const pagenum = 1;
     const count = 5;
     const baseUrl = "http://185.173.104.228:9547/api/v1/images/file/";
-
-    const bookData = await searchBook_controller(searchterm, pagenum, count);
-
-    if (bookData !== -1) {
+    try {
+        const bookData = await searchBook_controller(searchterm, pagenum, count);
+        if(bookData == 0){
+            return res.status(204).send("book not found");
+        }
+        if (bookData !== -1) {
         const updatedBookData = bookData.map(book => {
             return {
                 ...book,
@@ -26,8 +31,13 @@ exports.searchBook = async (req, res) => {
             updatedBookData
         });
        
-    } else {
+        } else {
         res.status(500).json({ message: "server error" });
+        }
+    } 
+    catch (error) {
+        console.error('Error fetching top-rated books:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 

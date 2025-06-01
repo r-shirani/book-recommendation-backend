@@ -1,5 +1,5 @@
 const express = require("express");
-const { register, login, getProfile ,verifyCode, googleLogin, newPassword,updateProfile, sendEmailPassCode, forgetPassword_code, settingNewPassword, getUserProfileImage, getUserProfileImage_token, updateMBTI,GetMBTI} = require("../controllers/authcontroller");
+const { register, login, getProfile ,verifyCode, googleLogin, newPassword,updateProfile, sendEmailPassCode, forgetPassword_code, settingNewPassword, getUserProfileImage, getUserProfileImage_token, updateMBTI,GetMBTI, getProfile_AnotherUser} = require("../controllers/authcontroller");
 const authMiddleware = require("../middlewares/authMiddleware");
 const { validateRegister, validateLogin } = require("../validators/authValidator");
 const { getUserGenres, updateUserGenres, getAllGenres } = require("../controllers/genresController");
@@ -9,6 +9,7 @@ const router = express.Router();
 router.post("/register",validateRegister ,register);
 router.post("/login",validateLogin ,login);
 router.get("/profile", authMiddleware, getProfile);  // protected with token 
+router.get("/profile-another-user" , getProfile_AnotherUser);
 router.put("/newPassword",authMiddleware, newPassword);  
 router.post('/verify-code', verifyCode);
 router.post("/google-login",googleLogin);
