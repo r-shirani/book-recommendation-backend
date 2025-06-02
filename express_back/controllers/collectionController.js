@@ -157,16 +157,23 @@ exports.proxyUploadCollection = async (req, res) => {
     const { file } = req;
     const data = req.body.data;
 
-    if (!file || !data) {
+    if (!data) {
       return res.status(400).json({ message: 'file or data missing' });
     }
-
     const fd = new FormData();
-    fd.append('file', file.buffer, {
-      filename: file.originalname,
-      contentType: file.mimetype
-    });
-
+   
+    if (file) {
+      fd.append('file', file.buffer, {
+        filename: file.originalname,
+        contentType: file.mimetype
+      });
+    } 
+    else {
+      fd.append('file', Buffer.from(''), {
+        filename: '',
+        contentType: 'application/octet-stream'
+      });
+    }
     fd.append('data', data); // JSON string - ensure frontend sends it as string
 
     const destURL = 'http://185.173.104.228:9547/api/v1/collections';

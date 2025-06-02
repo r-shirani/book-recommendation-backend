@@ -79,6 +79,7 @@ const getCollectionImage = async (collectionid) => {
       contentType: response.headers['content-type'],
     };
   } catch (error) {
+    console.log(error);
     throw new Error('Failed to fetch collection image');
   }
 };
