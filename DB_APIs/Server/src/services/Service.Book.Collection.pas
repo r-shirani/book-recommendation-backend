@@ -15,9 +15,8 @@ Uses
     FireDAC.Comp.Client;
 
 Type
-    ICollectionService = interface
-    ['{F52A6C7A-8BE4-4FC7-94DF-33E4E1C775E4}']
-        Function GetCollection(userid: int64): TFDStoredProc;
+    ICollectionService = Interface['{F52A6C7A-8BE4-4FC7-94DF-33E4E1C775E4}']
+        Function GetCollection(Const aUserID: int64; Const aPageNum: Integer; Const aCount: Integer): TFDStoredProc;
         Function GetByID(const ACollectionID: Int64): Model.Book.TCollection;
         Function GetDetail(CollectionID: int64): TFDStoredProc;
         Function Add(const ACollection: Model.Book.TCollection): Int64;
@@ -35,7 +34,7 @@ Type
         Function GetAll: TObjectList<Model.Book.TCollection>;
 
     Public
-        Function GetCollection(userid: int64): TFDStoredProc;
+        Function GetCollection(Const aUserID: int64; Const aPageNum: Integer; Const aCount: Integer): TFDStoredProc;
         Function GetByID(const ACollectionID: Int64): Model.Book.TCollection;
         Function GetDetail(CollectionID: int64): TFDStoredProc;
         Function Add(const ACollection: Model.Book.TCollection): Int64;
@@ -173,14 +172,16 @@ Begin
     Result := TMVCActiveRecord.GetByPK<TCollection>(ACollectionID);
 End;
 //______________________________________________________________________________
-Function TCollectionService.GetCollection(UserID: Int64): TFDStoredProc;
+Function TCollectionService.GetCollection(Const aUserID: int64; Const aPageNum: Integer; Const aCount: Integer): TFDStoredProc;
 Begin
     Result := TFDStoredProc.Create(nil);
     Try
         Result.Connection := DMMain.GetConnection;
         Result.StoredProcName := '[Book].[spCollection]';
         Result.Prepare;
-        Result.ParamByName('@UserID').AsLargeInt := UserID;
+        Result.ParamByName('@UserID').AsLargeInt := aUserID;
+        Result.ParamByName('@PageNum').AsInteger := aPageNum;
+        Result.ParamByName('@Count').AsInteger := aCount;
         Result.Open;
     Except
         FreeAndNil(Result);

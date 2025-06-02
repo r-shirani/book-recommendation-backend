@@ -30,7 +30,9 @@ Type
 
         [MVCPath('')]
         [MVCHTTPMethod([httpGET])]
-        procedure GetCollectionByID([MVCFromQueryString('userid', '0')] userid: Int64);
+        procedure GetCollectionByID(Const [MVCFromQueryString('userid', '0')] aUserID: Int64;
+          Const [MVCFromQueryString('pagenum', 0)] aPageNum: Integer;
+          Const [MVCFromQueryString('count', 0)] aCount: Integer);
 
         [MVCPath('')]
         [MVCHTTPMethod([httpPOST])]
@@ -111,11 +113,12 @@ Begin
     End;
 End;
 //______________________________________________________________________________
-procedure TCollectionController.GetCollectionByID(userid: Int64);
+Procedure TCollectionController.GetCollectionByID(Const aUserID: Int64;
+  Const aPageNum: Integer; Const aCount: Integer);
 Var
     FDSP: TFDStoredProc;
 Begin
-    FDSP := FCollectionService.GetCollection(userid);
+    FDSP := FCollectionService.GetCollection(aUserID, aPageNum, aCount);
     If Assigned(FDSP) then
         Render(HTTP_STATUS.OK, FDSP)
     Else
@@ -177,14 +180,8 @@ Begin
         Exit;
     end;
 
+    sTemp := LJSONValue.ToString;
     LFullCollection := TJSONObject(LJSONValue);
-
-    // بررسی و خواندن فیلد detail
-    If not LFullCollection.TryGetValue<TInt64Array>('detail', LDetail) then
-    begin
-        Render(HTTP_STATUS.BadRequest, 'Missing required field: detail');
-        Exit;
-    end;
 
     LCollection := TCollection.Create;
     Try
@@ -194,14 +191,15 @@ Begin
         Else
             LCollection.IsPublic := False; // مقدار پیش‌فرض
 
-        If (not LFullCollection.TryGetValue<String>('title', sTemp)) then
+        If (LFullCollection.TryGetValue<String>('title', sTemp)) then
         Begin
-            Render(HTTP_STATUS.BadRequest, 'Missing required field: title');
-            Exit;
+            LCollection.Title := sTemp;
+
         End
         Else
         Begin
-            LCollection.Title := sTemp;
+            Render(HTTP_STATUS.BadRequest, 'Missing required field: title');
+            Exit;
         End;
 
         If LFullCollection.TryGetValue<String>('discription', sTemp) then
@@ -234,31 +232,44 @@ Begin
             LCollection.UserID := i64Temp;
         End;
 
-        LCollectionID := FCollectionService.Add(LCollection);
+        Try
+            LCollectionID := FCollectionService.Add(LCollection);
+
+            Try
+                If LFullCollection.TryGetValue<TInt64Array>('detail', LDetail) then
+                Begin
+                    FCollectionService.AddDetail(LCollectionID, LDetail);
+                End;
+            Except
+                On E: EMVCException do
+                Begin
+                    FCollectionService.Delete(LCollectionID);
+                    Render(HTTP_STATUS.BadRequest, E.Message);
+                    Exit;
+                End;
+            End;
+        Except
+            Exit;
+        End;
     Finally
         LCollection.Free;
     End;
 
-    Try
-        FCollectionService.AddDetail(LCollectionID, LDetail);
 
-        // بررسی وجود فایل
-        If Context.Request.Files.Count = 0 then
-        begin
-            Render(HTTP_STATUS.BadRequest, 'No file uploaded');
-            Exit;
-        end;
-
-        LFileStream := Context.Request.Files[0].Stream;
-        LFileName := Context.Request.Files[0].FileName;
-        FCollectionService.AddImage(LFileStream, LFileName, LCollectionID);
-        Render(HTTP_STATUS.Created, 'Image Updated');
-    Except
-        On E: Exception Do
-        Begin
-            FCollectionService.Delete(LCollectionID);
-            Render(HTTP_STATUS.BadRequest, E.Message);
-            Exit;
+    If (Context.Request.Files.Count <> 0) then
+    begin
+        Try
+            LFileStream := Context.Request.Files[0].Stream;
+            LFileName := Context.Request.Files[0].FileName;
+            FCollectionService.AddImage(LFileStream, LFileName, LCollectionID);
+            Render(HTTP_STATUS.Created, 'Image Updated');
+        Except
+            On E: Exception Do
+            Begin
+                FCollectionService.Delete(LCollectionID);
+                Render(HTTP_STATUS.BadRequest, E.Message);
+                Exit;
+            End;
         End;
     End;
 

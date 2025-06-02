@@ -1,0 +1,312 @@
+﻿Unit Service.Book.Collection;
+
+Interface
+Uses
+    System.SysUtils,
+    System.Classes,
+    System.Generics.Collections,
+    MVCFramework,
+    MVCFramework.ActiveRecord,
+    MVCFramework.Commons,
+    MVCFramework.Nullables,
+    Model.Book.Collection,
+    Model.Book.CollectionDetail,
+    FireDAC.Stan.Param,
+    FireDAC.Comp.Client;
+
+Type
+    ICollectionService = Interface['{F52A6C7A-8BE4-4FC7-94DF-33E4E1C775E4}']
+        Function GetAllCollection(Const aPageNum: Integer; Const aCount: Integer): TFDStoredProc;
+        Function GetCollection(userid: int64): TFDStoredProc;
+        Function GetByID(const ACollectionID: Int64): Model.Book.TCollection;
+        Function GetDetail(CollectionID: int64): TFDStoredProc;
+        Function Add(const ACollection: Model.Book.TCollection): Int64;
+        Procedure Update(const ACollection: Model.Book.TCollection);
+        Procedure Delete(const ACollectionID: Int64);
+        Procedure AddDetail(ACollectionID: Int64; ABookIDs: TArray<Int64>);
+        Function GetImageFile(CollectionID: int64; out AContentType: String): TStream;
+        Function AddImage(const AFileStream: TStream;
+          const AOriginalFileName: string; ACollectionID: Int64): TCollection;
+        Procedure DeleteBook(const CollectionID: Int64; const BookID: Int64);
+    End;
+
+    TCollectionService = class(TInterfacedObject, ICollectionService)
+    Private
+        Function GetAll: TObjectList<Model.Book.TCollection>;
+
+    Public
+        Function GetAllCollection(Const aPageNum: Integer; Const aCount: Integer): TFDStoredProc;
+        Function GetCollection(userid: int64): TFDStoredProc;
+        Function GetByID(const ACollectionID: Int64): Model.Book.TCollection;
+        Function GetDetail(CollectionID: int64): TFDStoredProc;
+        Function Add(const ACollection: Model.Book.TCollection): Int64;
+        Procedure Update(const ACollection: Model.Book.TCollection);
+        Procedure Delete(const ACollectionID: Int64);
+        Procedure AddDetail(ACollectionID: Int64; ABookIDs: TArray<Int64>);
+        Function GetImageFile(CollectionID: int64; out AContentType: String): TStream;
+        Function AddImage(const AFileStream: TStream;
+          const AOriginalFileName: string; ACollectionID: Int64): TCollection;
+        Procedure DeleteBook(const CollectionID: Int64; const BookID: Int64);
+
+        Class Function GenerateImageUrl(Const AImageGUID, ContentType: String): string;
+    End;
+
+Implementation
+
+Uses UDMMain;
+
+{ TCollectionService }
+
+//______________________________________________________________________________
+Function TCollectionService.Add(const ACollection: Model.Book.TCollection): Int64;
+Begin
+    ACollection.Insert;
+    Result := ACollection.CollectionID;
+End;
+//______________________________________________________________________________
+Procedure TCollectionService.AddDetail(ACollectionID: Int64; ABookIDs: TArray<Int64>);
+Var
+    BookID: Int64;
+    Detail: TCollectionDetail;
+    FDQ: TFDQuery;
+Begin
+    FDQ := TFDQuery.Create(NIL);
+    Try
+        FDQ.Connection := DMMain.GetConnection;
+        FDQ.SQL.Text := 'DELETE FROM bOOK.CollectionDetail WHERE '+Format('CollectionID=%d', [ACollectionID]);
+        FDQ.ExecSQL;
+    Finally
+        FDQ.Free;
+    End;
+
+    For BookID in ABookIDs do
+    Begin
+        Detail := TCollectionDetail.Create;
+        Try
+            Detail.CollectionID := ACollectionID;
+            Detail.BookID := BookID;
+            Detail.Insert;
+        Finally
+            Detail.Free;
+        End;
+    End;
+End;
+//______________________________________________________________________________
+Function TCollectionService.AddImage(const AFileStream: TStream;
+          const AOriginalFileName: string; ACollectionID: Int64): TCollection;
+Var
+    LFileStream: TFileStream;
+    LFilePath: string;
+Begin
+    Try
+        Result := TMVCActiveRecord.GetByPK<TCollection>(ACollectionID);
+    Except
+        raise Exception.Create('Collection Not Found Idiot!');
+    End;
+
+    Result.ImageType := ExtractFileExt(AOriginalFileName).ToLower;
+    If Not ((Result.ImageGUID.IsNull) OR (Result.ImageGUID = TGUID.Empty)) then
+    Begin
+        LFilePath := GenerateImageUrl(GUIDToString(Result.ImageGUID), Result.ImageType);
+        If FileExists(LFilePath) Then DeleteFile(LFilePath);
+    End
+    Else
+    Begin
+        Result.ImageGUID := TGUID.NewGuid;
+        LFilePath := GenerateImageUrl(GUIDToString(Result.ImageGUID), Result.ImageType);
+    End;
+
+    Try
+        Result.Update();
+        LFileStream := TFileStream.Create(LFilePath, fmCreate);
+        Try
+            AFileStream.Position := 0;
+            LFileStream.CopyFrom(AFileStream, AFileStream.Size);
+        Finally
+            LFileStream.Free;
+        End;
+
+    Except
+        On E: Exception Do
+        Begin
+            // Delete file if created
+            If FileExists(LFilePath) Then
+                DeleteFile(LFilePath);
+            Raise;
+        End;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TCollectionService.Delete(const ACollectionID: Int64);
+Var
+    Collection: Model.Book.TCollection;
+Begin
+    Collection := TMVCActiveRecord.GetByPK<TCollection>(ACollectionID);
+    If not Assigned(Collection) then
+        Raise EMVCActiveRecord.Create('Collection not found');
+    Try
+        Collection.Delete;
+    Finally
+        Collection.Free;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TCollectionService.DeleteBook(const CollectionID, BookID: Int64);
+Var
+    Detail: TCollectionDetail;
+Begin
+    Detail := TMVCActiveRecord.GetOneByWhere<TCollectionDetail>(
+      'CollectionID = ? AND BookID = ?', [CollectionID, BookID], True);
+    Try
+        Detail.Delete();
+    Finally
+        Detail.Free;
+    End;
+End;
+//______________________________________________________________________________
+Function TCollectionService.GetAll: TObjectList<Model.Book.TCollection>;
+Begin
+    Result := TMVCActiveRecord.All<TCollection>;
+End;
+//______________________________________________________________________________
+Function TCollectionService.GetAllCollection(const aPageNum,
+  aCount: Integer): TFDStoredProc;
+Begin
+    Result := TFDStoredProc.Create(nil);
+    Try
+        Result.Connection := DMMain.GetConnection;
+        Result.StoredProcName := '[Book].[spCollection]';
+        Result.Prepare;
+        Result.ParamByName('@UserID').AsLargeInt := 0;
+        Result.ParamByName('@PageNum').AsInteger := aPageNum;
+        Result.ParamByName('@Count').AsInteger := aCount;
+        Result.Open;
+    Except
+        FreeAndNil(Result);
+        raise;
+    End;
+End;
+//______________________________________________________________________________
+Function TCollectionService.GetByID(const ACollectionID: Int64): Model.Book.TCollection;
+Begin
+    Result := TMVCActiveRecord.GetByPK<TCollection>(ACollectionID);
+End;
+//______________________________________________________________________________
+Function TCollectionService.GetCollection(UserID: Int64): TFDStoredProc;
+Begin
+    Result := TFDStoredProc.Create(nil);
+    Try
+        Result.Connection := DMMain.GetConnection;
+        Result.StoredProcName := '[Book].[spCollection]';
+        Result.Prepare;
+        Result.ParamByName('@UserID').AsLargeInt := UserID;
+        Result.ParamByName('@PageNum').AsInteger := 0;
+        Result.ParamByName('@Count').AsInteger := 0;
+        Result.Open;
+    Except
+        FreeAndNil(Result);
+        raise;
+    End;
+End;
+//______________________________________________________________________________
+function TCollectionService.GetDetail(CollectionID: int64): TFDStoredProc;
+Begin
+    Result := TFDStoredProc.Create(nil);
+    Try
+        Result.Connection := DMMain.GetConnection;
+        Result.StoredProcName := '[Book].[spDetailCollection]';
+        Result.Prepare;
+        Result.ParamByName('@CollectionID').AsLargeInt := CollectionID;
+        Result.Open;
+    Except
+        FreeAndNil(Result);
+        raise;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TCollectionService.Update(const ACollection: Model.Book.TCollection);
+var
+  Existing: Model.Book.TCollection;
+Begin
+  Existing := TMVCActiveRecord.GetByPK<TCollection>(ACollection.CollectionID);
+  If not Assigned(Existing) then
+    raise EMVCActiveRecord.Create('Collection not found');
+  Try
+    If not ACollection.Title.IsNull then
+      Existing.Title := ACollection.Title;
+    If not ACollection.Discription.IsNull then
+      Existing.Discription := ACollection.Discription;
+    If not ACollection.CreateDate.IsNull then
+      Existing.CreateDate := ACollection.CreateDate;
+    If not ACollection.AccessibilityGroupID.IsNull then
+      Existing.AccessibilityGroupID := ACollection.AccessibilityGroupID;
+    If not ACollection.GenreID1.IsNull then
+      Existing.GenreID1 := ACollection.GenreID1;
+    If not ACollection.GenreID2.IsNull then
+      Existing.GenreID2 := ACollection.GenreID2;
+    If not ACollection.GenreID3.IsNull then
+      Existing.GenreID3 := ACollection.GenreID3;
+    If not ACollection.ReportID.IsNull then
+      Existing.ReportID := ACollection.ReportID;
+    If not ACollection.UserID.IsNull then
+      Existing.UserID := ACollection.UserID;
+
+    Existing.IsPublic := ACollection.IsPublic;
+
+    Existing.Update;
+  Finally
+    Existing.Free;
+  End;
+End;
+//______________________________________________________________________________
+Class Function TCollectionService.GenerateImageUrl(Const AImageGUID, ContentType: String): string;
+Var
+    LExtension: string;
+    LBasePath: string;
+Begin
+    LBasePath := ExtractFilePath(ParamStr(0)) + 'CollectionImages';
+
+    If Not DirectoryExists(LBasePath) Then
+        ForceDirectories(LBasePath);
+
+    If (ContentType = '') Then
+        LExtension := '.bin'
+    Else
+        LExtension := ContentType;
+
+    Result := IncludeTrailingPathDelimiter(LBasePath) + AImageGUID + LExtension;
+End;
+//______________________________________________________________________________
+Function TCollectionService.GetImageFile(CollectionID: int64; out AContentType: String): TStream;
+Var
+    LGUID: TGUID;
+    LCollection: TCollection;
+    LFilePath: String;
+Begin
+    LCollection := TMVCActiveRecord.GetByPK<TCollection>(CollectionID);
+    LGUID := LCollection.ImageGUID;
+
+
+    If Not Assigned(LCollection) Then
+        Raise EMVCException.Create(HTTP_STATUS.NotFound, 'Collection not found');
+
+    LFilePath := ExtractFilePath(ParamStr(0)) + 'CollectionImages\' + LGUID.ToString +
+                 LCollection.ImageType;
+
+    If Not FileExists(LFilePath) Then
+        Raise EMVCException.Create(HTTP_STATUS.NotFound, 'Image file not found');
+
+
+    If (LCollection.ImageType = '.jpg') then AContentType := 'image/jpeg'
+    Else If (LCollection.ImageType = '.jpeg') then AContentType := 'image/jpeg'
+    Else If (LCollection.ImageType = '.png') then AContentType := 'image/png'
+    Else If (LCollection.ImageType = '.gif') then AContentType := 'image/gif'
+    Else If (LCollection.ImageType = '.bmp') then AContentType := 'image/bmp'
+    Else If (LCollection.ImageType = '.webp') then AContentType := 'image/webp'
+    Else AContentType := 'application/octet-stream';
+
+    Result := TFileStream.Create(LFilePath, fmOpenRead or fmShareDenyWrite);
+End;
+
+End.
+
