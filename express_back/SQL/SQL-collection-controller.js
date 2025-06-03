@@ -7,6 +7,26 @@ const api = axios.create({
     },
 });
 
+const get_all_collections_SQL = async(pagenum_input, count_input)=>{
+  try {
+    const response = await api.get("/collections",{
+      params : {
+        count : count_input ,
+        pagenum : pagenum_input
+      }
+    });
+    if(response.status == 200){
+      return response.data;
+    }
+    else{
+      return -1;
+    }
+  } catch (error) {
+    console.log("server Error(SQL-get-all-collection)");
+    return -1;
+  }
+}
+
 const get_all_user_collections = async(userid_input)=>{
   try {
     
@@ -20,7 +40,7 @@ const get_all_user_collections = async(userid_input)=>{
     return response.data;
 
   } catch (error) {
-    console.log("server Error(SQL-get-collection)");
+    console.log("server Error(SQL-get-user-collection)");
     return -1;
   }
 }
@@ -137,5 +157,6 @@ module.exports={
   get_collection_details,
   getCollectionImage,
   deleteCollection,
-  deleteCollectionDetails
+  deleteCollectionDetails,
+  get_all_collections_SQL
 };

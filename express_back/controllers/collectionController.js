@@ -4,25 +4,51 @@ const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 const { getUserByID } = require("../SQL/SQL-user-controller");
 const { Readable } = require('stream');
-const { get_all_user_collections, post_user_collection, get_collection_details, deleteCollection, deleteCollectionDetails, getCollectionImage } = require("../SQL/SQL-collection-controller");
+const { get_all_user_collections, post_user_collection, get_collection_details, deleteCollection, deleteCollectionDetails, getCollectionImage, get_all_collections_SQL } = require("../SQL/SQL-collection-controller");
 const FormData = require('form-data');
 const axios = require('axios');
+const { Collection } = require("mongoose");
+
+exports.getAllCollections = async(req , res)=>{
+  try {
+    const {pagenum=1 , count=10} = req.query;
+    
+
+    const collections = await get_all_collections_SQL(pagenum , count);
+    if(!collections){
+      return res.status(204).send();
+    }
+    const pure_collections = collections.filter(item => item.IsOwner === 1 && item.IsPublic===true).map(item =>({
+        title: item.Title,
+        username: item.UserName,
+        fullname: item.FullName,
+        discription : item.Discription,
+        collectionid : item.CollectionID,       
+    }));
+    return res.status(200).send(pure_collections);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "server error" });
+  }
+}
 
 exports.getUser_Collections = async (req , res)=>{
-    try {
-        const userID = req.user.id; 
-        const response = await get_all_user_collections(userID);
-        if(response===-1){
-            res.status(500).json({ message: "server error(SQL)" });
-        }
-        else {
-
-            res.status(200).send(response);
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "server error" });
+  try {
+    const userID = req.user.id; 
+    const response = await get_all_user_collections(userID);
+    if(response===-1){
+      res.status(500).json({ message: "server error(SQL)" });
     }
+    else {
+
+      res.status(200).send(response);
+    }
+  } 
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "server error" });
+  }
 }
 
 
