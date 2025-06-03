@@ -62,16 +62,27 @@ Type
         [MVCPath('')]
         [MVCHTTPMethod([httpPUT])]
         procedure UpdateCollection([MVCFromBody] const ACollection: TCollection);
-
         [MVCPath('')]
         [MVCHTTPMethod([httpDELETE])]
         procedure DeleteCollection([MVCFromQueryString('collectionid', '0')] collectionid: Int64);
+
+        [MVCPath('/access')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetAccessibility([MVCFromQueryString('collectionid', '0')] aCollectionID: Int64);
+
+        [MVCPath('/access')]
+        [MVCHTTPMethod([httpPUT])]
+        Procedure UpdateAccessibility([MVCFromQueryString('accessibilitygroup', '0')] aAccessibilityGroup: Int64);
+
+        [MVCPath('/access')]
+        [MVCHTTPMethod([httpDELETE])]
+        Procedure DeleteAccessibility([MVCFromQueryString('accessibilitygroup', '0')] aAccessibilityGroup: Int64);
 End;
 
 Implementation
 
 uses
-  FireDAC.Comp.Client, JsonDataObjects, System.JSON;
+  FireDAC.Comp.Client, JsonDataObjects, System.JSON, Service.Book.AccessibilityGroup;
 
 { TCollectionController }
 
@@ -249,7 +260,11 @@ Begin
                 End;
             End;
         Except
-            Exit;
+            On E: EMVCException do
+            Begin
+                Render(HTTP_STATUS.BadRequest, E.Message);
+                Exit;
+            End;
         End;
     Finally
         LCollection.Free;
@@ -294,6 +309,68 @@ Procedure TCollectionController.DeleteDetail(CollectionID: Int64;
 Begin
     FCollectionService.DeleteBook(CollectionID, BookID);
     Render(HTTP_STATUS.OK, 'Collection updated successfully');
+End;
+//______________________________________________________________________________
+procedure TCollectionController.DeleteAccessibility(aAccessibilityGroup: Int64);
+Var
+    lAccessibilityService: IAccessibilityGroupService;
+    lJSONBody: System.JSON.TJSONObject;
+    lUserIDList: TInt64Array;
+Begin
+    lAccessibilityService := TAccessibilityGroupService.Create;
+    Try
+        lJSONBody := System.JSON.TJSONObject.ParseJSONValue(Context.Request.Body) AS System.JSON.TJSONObject;
+        If lJSONBody.TryGetValue<TInt64Array>('userid', lUserIDList) then
+        Begin
+            lAccessibilityService.Delete(aAccessibilityGroup, lUserIDList);
+            Render(HTTP_STATUS.OK, 'Updated');
+        End
+        Else
+        Begin
+            Render(HTTP_STATUS.NoContent, 'userid list needed! like thie=  {"userid": [13,54,85]}');
+        End;
+
+
+    Finally
+        lAccessibilityService := Nil;
+    End;
+End;
+//______________________________________________________________________________
+procedure TCollectionController.UpdateAccessibility(aAccessibilityGroup: Int64);
+Var
+    lAccessibilityService: IAccessibilityGroupService;
+    lJSONBody: System.JSON.TJSONObject;
+    lUserIDList: TInt64Array;
+Begin
+    lAccessibilityService := TAccessibilityGroupService.Create;
+    Try
+        lJSONBody := System.JSON.TJSONObject.ParseJSONValue(Context.Request.Body) AS System.JSON.TJSONObject;
+        If lJSONBody.TryGetValue<TInt64Array>('userid', lUserIDList) then
+        Begin
+            lAccessibilityService.Update(aAccessibilityGroup, lUserIDList);
+            Render(HTTP_STATUS.OK, 'Updated');
+        End
+        Else
+        Begin
+            Render(HTTP_STATUS.NoContent, 'userid list needed! like thie=  {"userid": [13,54,85]}');
+        End;
+
+
+    Finally
+        lAccessibilityService := Nil;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TCollectionController.GetAccessibility(aCollectionID: Int64);
+Var
+    lAccessibilityService: IAccessibilityGroupService;
+Begin
+    lAccessibilityService := TAccessibilityGroupService.Create;
+    try
+        Render(lAccessibilityService.GetAll(aCollectionID));
+    finally
+        lAccessibilityService := Nil;
+    end;
 End;
 //______________________________________________________________________________
 

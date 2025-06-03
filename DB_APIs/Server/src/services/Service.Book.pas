@@ -22,8 +22,9 @@ Type
         Procedure UpdateBook(Const ABook: TBook);
         Procedure DeleteBook(Const BookID: Int64);
         Function FavoritBook(Const UserID: Int64): TFDQuery;
-
         Function GetDetailByID(Const BookID, UserID: Int64): TFDQuery;
+        Function SuggestionBook(Const aUserID: Int64;
+            Const aPageNum: Integer; Const aCount: Integer): TFDStoredProc;
     End;
 
     TBookService = class(TInterfacedObject, IBookService)
@@ -37,6 +38,8 @@ Type
         Procedure DeleteBook(Const BookID: Int64);
         Function FavoritBook(Const UserID: Int64): TFDQuery;
         Function GetDetailByID(Const BookID, UserID: Int64): TFDQuery;
+        Function SuggestionBook(Const aUserID: Int64; Const aPageNum: Integer;
+          Const aCount: Integer): TFDStoredProc;
     End;
 
 Implementation
@@ -81,6 +84,20 @@ Begin
     Result.ParamByName('@UserID').AsLargeInt := AUserID;
     Result.ParamByName('@PageNum').AsInteger := APageNum;
     Result.ParamByName('@Count').AsInteger := ACount;
+    Result.Open;
+End;
+//______________________________________________________________________________
+Function TBookService.SuggestionBook(const aUserID: Int64; const aPageNum,
+  aCount: Integer): TFDStoredProc;
+Begin
+    Result := TFDStoredProc.Create(NIL);
+    Result.Connection := DMMain.GetConnection;
+
+    Result.StoredProcName := 'Book.spSuggestionBook';
+    Result.Prepare;
+    Result.Params.ParamByName('@UserID').AsLargeInt := aUserID;
+    Result.Params.ParamByName('@PageNum').AsInteger := aPageNum;
+    Result.Params.ParamByName('@Count').AsInteger := aCount;
     Result.Open;
 End;
 //______________________________________________________________________________

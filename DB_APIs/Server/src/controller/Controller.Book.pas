@@ -30,20 +30,27 @@ Type
         [MVCPath('/search')]
         [MVCHTTPMethod([httpGET])]
         procedure SearchBook(
-          Const [MVCFromQueryString('searchterm', '')] ASearchTerm: String;
-          Const [MVCFromQueryString('userid', 0)] AUserID: Int64;
-          Const [MVCFromQueryString('pagenum', 0)] APageNum: Integer;
-          Const [MVCFromQueryString('count', 0)] ACount: Integer);
+          Const [MVCFromQueryString('searchterm', '')] aSearchTerm: String;
+          Const [MVCFromQueryString('userid', 0)] aUserID: Int64;
+          Const [MVCFromQueryString('pagenum', 0)] aPageNum: Integer;
+          Const [MVCFromQueryString('count', 0)] aCount: Integer);
 
         [MVCPath('/favorit')]
         [MVCHTTPMethod([httpGET])]
         procedure FavoritBook(Const [MVCFromQueryString('userid')] UserID: Int64);
 
+        [MVCPath('/suggestion')]
+        [MVCHTTPMethod([httpGET])]
+        procedure SuggestionBook(
+          Const [MVCFromQueryString('userid', 0)] aUserID: Int64;
+          Const [MVCFromQueryString('pagenum', 1)] aPageNum: Integer;
+          Const [MVCFromQueryString('count', 20)] aCount: Integer);
+
         [MVCPath('/detail')]
         [MVCHTTPMethod([httpGET])]
         Procedure GetDetailByID(
-          Const [MVCFromQueryString('bookid')] BookID: Int64;
-          Const [MVCFromQueryString('userid', 0)] UserID: Int64);
+          Const [MVCFromQueryString('bookid')] aBookID: Int64;
+          Const [MVCFromQueryString('userid', 0)] aUserID: Int64);
 
         [MVCPath('')]
         [MVCHTTPMethod([httpPOST])]
@@ -55,11 +62,11 @@ Type
 
         [MVCPath('')]
         [MVCHTTPMethod([httpDELETE])]
-        Procedure DeleteBook(Const [MVCFromQueryString('bookid', 0)] bookid: Int64);
+        Procedure DeleteBook(Const [MVCFromQueryString('bookid', 0)] aBookID: Int64);
 
-        [MVCPath('/($id)')]
+        [MVCPath('/($aBookID)')]
         [MVCHTTPMethod([httpGET])]
-        Procedure GetBookByID(Const id: Int64);
+        Procedure GetBookByID(Const aBookID: Int64);
     End;
 
 Implementation
@@ -82,7 +89,7 @@ Begin
     Inherited;
 End;
 //______________________________________________________________________________
-procedure TBookController.FavoritBook(Const userID: Int64);
+Procedure TBookController.FavoritBook(Const userID: Int64);
 Var
     Books: TFDQuery;
 Begin
@@ -104,22 +111,22 @@ Begin
         Render(HTTP_STATUS.NoContent);
 End;
 //______________________________________________________________________________
-Procedure TBookController.GetBookByID(Const id: Int64);
+Procedure TBookController.GetBookByID(Const aBookID: Int64);
 Var
     Book: TBook;
 Begin
-    Book := FBookService.GetBookByID(id);
+    Book := FBookService.GetBookByID(aBookID);
     If Assigned(Book) Then
         Render(HTTP_STATUS.OK, Book)
     Else
         Render(HTTP_STATUS.NotFound);
 End;
 //______________________________________________________________________________
-Procedure TBookController.GetDetailByID(Const BookID: Int64; Const UserID: Int64);
+Procedure TBookController.GetDetailByID(Const aBookID: Int64; Const aUserID: Int64);
 var
     SearchResult: TFDQuery;
 Begin
-    SearchResult := FBookService.GetDetailByID(BookID, UserID);
+    SearchResult := FBookService.GetDetailByID(aBookID, aUserID);
     Try
         If SearchResult.RecordCount = 0 then
             Render(HTTP_STATUS.NoContent, 'Empty')
@@ -146,6 +153,18 @@ Begin
     End;
 End;
 //______________________________________________________________________________
+Procedure TBookController.SuggestionBook(const aUserID: Int64; const aPageNum,
+  aCount: Integer);
+Var
+    Books: TFDStoredProc;
+Begin
+    Books := FBookService.SuggestionBook(aUserID, aPageNum, aCount);
+    If Books.RecordCount > 0 Then
+        Render(HTTP_STATUS.OK, Books)
+    Else
+        Render(HTTP_STATUS.NoContent);
+End;
+//______________________________________________________________________________
 Procedure TBookController.AddBook;
 Var
     Book: TBook;
@@ -164,9 +183,9 @@ Begin
     Render(HTTP_STATUS.OK, 'Book updated successfully');
 End;
 //______________________________________________________________________________
-Procedure TBookController.DeleteBook(Const bookid: Int64);
+Procedure TBookController.DeleteBook(Const aBookID: Int64);
 Begin
-    FBookService.DeleteBook(bookid);
+    FBookService.DeleteBook(aBookID);
     Render(HTTP_STATUS.OK, 'Book deleted successfully');
 End;
 //______________________________________________________________________________

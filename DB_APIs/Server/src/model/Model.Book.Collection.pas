@@ -18,7 +18,7 @@ type
         FCollectionID: Int64;
 
         [MVCTableField('IsPublic')]
-        FIsPublic: Boolean;
+        FIsPublic: NullableBoolean;
 
         [MVCTableField('AccessibilityGroupID')]
         FAccessibilityGroupID: NullableInt64;
@@ -55,7 +55,7 @@ type
 
     Public
         Property CollectionID: Int64 read FCollectionID write FCollectionID;
-        Property IsPublic: Boolean read FIsPublic write FIsPublic;
+        Property IsPublic: NullableBoolean read FIsPublic write FIsPublic;
         Property AccessibilityGroupID: NullableInt64 read FAccessibilityGroupID write FAccessibilityGroupID;
         Property Title: NullableString read FTitle write FTitle;
         Property CreateDate: NullableTDate read FCreateDate write FCreateDate;

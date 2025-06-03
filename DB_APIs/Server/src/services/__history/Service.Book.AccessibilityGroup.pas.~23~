@@ -1,0 +1,135 @@
+﻿unit Service.Book.AccessibilityGroup;
+
+interface
+
+uses
+  System.Generics.Collections, System.SysUtils, MVCFramework.ActiveRecord,
+  FireDAC.Comp.Client, Model.Book.AccessibilityGroup,
+  Controller.Book.Collection;
+
+type
+  IAccessibilityGroupService = interface
+    ['{D3DA0A6E-8C1F-4E3F-BCE8-2A7AD77A8F01}']
+    function GetByID(const ID: Int64): TAccessibilityGroup;
+    function GetAll(const aCollectionID: Int64): TFDStoredProc;
+    procedure Add(const Group: TAccessibilityGroup);
+    procedure Update(const aAccessibilityGroupID: Int64; const aUserIDList: TInt64Array);
+    procedure Delete(const aAccessibilityGroupID: Int64; const aUserIDList: TInt64Array);
+  end;
+
+  TAccessibilityGroupService = class(TInterfacedObject, IAccessibilityGroupService)
+  public
+    function GetByID(const ID: Int64): TAccessibilityGroup;
+    function GetAll(const aCollectionID: Int64): TFDStoredProc;
+    procedure Add(const Group: TAccessibilityGroup);
+    procedure Update(const aAccessibilityGroupID: Int64; const aUserIDList: TInt64Array);
+    procedure Delete(const aAccessibilityGroupID: Int64; const aUserIDList: TInt64Array);
+  end;
+
+implementation
+
+uses
+   UDMMain, Model.Book.AccessibilityDetail, Model.Book.Collection;
+
+function TAccessibilityGroupService.GetByID(const ID: Int64): TAccessibilityGroup;
+begin
+  Result := TMVCActiveRecord.GetByPK<TAccessibilityGroup>(ID);
+end;
+//______________________________________________________________________________
+function TAccessibilityGroupService.GetAll(const aCollectionID: Int64): TFDStoredProc;
+Begin
+    Result := TFDStoredProc.Create(NIL);
+    Result.Connection := DMMain.GetConnection;
+    Result.StoredProcName := '[Book].[spAccesilibilityOfCollction]';
+    Result.Prepare;
+    Result.ParamByName('@CollectionID').AsLargeInt := aCollectionID;
+    Result.Open;
+End;
+//______________________________________________________________________________
+procedure TAccessibilityGroupService.Add(const Group: TAccessibilityGroup);
+begin
+  Group.Insert;
+End;
+//______________________________________________________________________________
+procedure TAccessibilityGroupService.Update(const aCollectionID: Int64;
+  const aUserIDList: TInt64Array);
+Var
+    lItem: Integer;
+    lAccessgroup: TCollection;
+    lAccess: TObjectList<TAccessibilityDetail>;
+    lAccessDetail: TAccessibilityDetail;
+    I: Integer;
+    lListAccessUserID: TList<Integer>;
+begin
+    lAccessgroup := TMVCActiveRecord.GetByPK<TCollection>(aCollectionID);
+
+    Try
+        lAccess := TMVCActiveRecord.Where<TAccessibilityDetail>('AccessibilityGroupID = ?', [lAccessgroup.AccessibilityGroupID]);
+    Except
+        lAccess := TObjectList<TAccessibilityDetail>.Create;
+    End;
+
+    lListAccessUserID := TList<Integer>.Create;
+    Try
+        For I := 0 to Length(aUserIDList) do
+        Begin
+            lListAccessUserID.Add(aUserIDList[I]);
+        End;
+
+        For lAccessDetail in lAccess do
+        Begin
+            For I in lListAccessUserID do
+            Begin
+                If I = lAccessDetail.UserID then
+                Begin
+                    lListAccessUserID.Remove(I);
+                End;
+            End;
+        End;
+
+        For I in lListAccessUserID do
+        Begin
+            lAccessDetail := TAccessibilityDetail.Create;
+            Try
+                lAccessDetail.UserID := I;
+                lAccessDetail.Insert;
+            Finally
+                lAccessDetail.Free;
+            End;
+        End;
+    Finally
+
+    End;
+End;
+//______________________________________________________________________________
+procedure TAccessibilityGroupService.Delete(const aAccessibilityGroupID: Int64;
+  const aUserIDList: TInt64Array);
+Var
+    lItem: Integer;
+    lAccessgroup: TCollection;
+    lAccess: TObjectList<TAccessibilityDetail>;
+    lAccessDetail: TAccessibilityDetail;
+    lListAccessUserID: TList<Integer>;
+    I: Integer;
+begin
+    Try
+        lAccess := TMVCActiveRecord.Where<TAccessibilityDetail>('AccessibilityGroupID = ?', [aAccessibilityGroupID]);
+    Except
+        Exit;
+    End;
+
+    For I := 0 to Length(aUserIDList) do
+    Begin
+           lAccess := TMVCActiveRecord.Where<TAccessibilityDetail>('AccessibilityGroupID = ? AND UserID = ?', [aAccessibilityGroupID, aUserIDList[I]]);
+        Try
+            lAccessDetail.UserID := aUserIDList[I];
+            lAccessDetail.Delete(False);
+        Finally
+            lAccessDetail.Free;
+        End;
+    End;
+End;
+//______________________________________________________________________________
+
+end.
+

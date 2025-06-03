@@ -230,8 +230,8 @@ Begin
       Existing.ReportID := ACollection.ReportID;
     If not ACollection.UserID.IsNull then
       Existing.UserID := ACollection.UserID;
-
-    Existing.IsPublic := ACollection.IsPublic;
+    If not ACollection.IsPublic.IsNull then
+      Existing.IsPublic := ACollection.IsPublic;
 
     Existing.Update;
   Finally

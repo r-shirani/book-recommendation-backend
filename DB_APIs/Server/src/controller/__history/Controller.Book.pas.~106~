@@ -1,0 +1,194 @@
+﻿Unit Controller.Book;
+
+Interface
+
+Uses
+    System.JSON,
+    System.Variants,
+    System.Generics.Collections,
+    MVCFramework,
+    MVCFramework.Commons,
+    MVCFramework.ActiveRecord,
+    Model.Book,
+    Service.Book,
+    WebModule.Main;
+
+Type
+    [MVCPath(BASE_API_V1 + '/book')]
+    TBookController = class(TMVCController)
+    Private
+        FBookService: IBookService;
+
+    Public
+        Constructor Create; override;
+        Destructor Destroy; override;
+
+        [MVCPath('/getAllBooks')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetAllBooks;
+
+        [MVCPath('/search')]
+        [MVCHTTPMethod([httpGET])]
+        procedure SearchBook(
+          Const [MVCFromQueryString('searchterm', '')] aSearchTerm: String;
+          Const [MVCFromQueryString('userid', 0)] aUserID: Int64;
+          Const [MVCFromQueryString('pagenum', 0)] aPageNum: Integer;
+          Const [MVCFromQueryString('count', 0)] aCount: Integer);
+
+        [MVCPath('/favorit')]
+        [MVCHTTPMethod([httpGET])]
+        procedure FavoritBook(Const [MVCFromQueryString('userid')] UserID: Int64);
+
+        [MVCPath('/suggestion')]
+        [MVCHTTPMethod([httpGET])]
+        procedure SuggestionBook(
+          Const [MVCFromQueryString('userid', 0)] aUserID: Int64;
+          Const [MVCFromQueryString('pagenum', 0)] aPageNum: Integer;
+          Const [MVCFromQueryString('count', 0)] aCount: Integer);
+
+        [MVCPath('/detail')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetDetailByID(
+          Const [MVCFromQueryString('bookid')] aBookID: Int64;
+          Const [MVCFromQueryString('userid', 0)] aUserID: Int64);
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPOST])]
+        Procedure AddBook;
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpPUT])]
+        Procedure UpdateBook;
+
+        [MVCPath('')]
+        [MVCHTTPMethod([httpDELETE])]
+        Procedure DeleteBook(Const [MVCFromQueryString('bookid', 0)] aBookID: Int64);
+
+        [MVCPath('/($aBookID)')]
+        [MVCHTTPMethod([httpGET])]
+        Procedure GetBookByID(Const aBookID: Int64);
+    End;
+
+Implementation
+
+uses
+  FireDAC.Comp.Client, System.SysUtils;
+
+{ TBookController }
+
+//______________________________________________________________________________
+Constructor TBookController.Create;
+Begin
+    Inherited;
+    FBookService := TBookService.Create;
+End;
+//______________________________________________________________________________
+Destructor TBookController.Destroy;
+Begin
+    FBookService := nil;
+    Inherited;
+End;
+//______________________________________________________________________________
+Procedure TBookController.FavoritBook(Const userID: Int64);
+Var
+    Books: TFDQuery;
+Begin
+    Books := FBookService.FavoritBook(userID);
+    If Books.RecordCount > 0 Then
+        Render(HTTP_STATUS.OK, Books)
+    Else
+        Render(HTTP_STATUS.NoContent);
+End;
+//______________________________________________________________________________
+Procedure TBookController.GetAllBooks;
+Var
+    Books: TObjectList<TBook>;
+Begin
+    Books := FBookService.GetAllBooks;
+    If Books.Count > 0 Then
+        Render(HTTP_STATUS.OK, Books)
+    Else
+        Render(HTTP_STATUS.NoContent);
+End;
+//______________________________________________________________________________
+Procedure TBookController.GetBookByID(Const aBookID: Int64);
+Var
+    Book: TBook;
+Begin
+    Book := FBookService.GetBookByID(aBookID);
+    If Assigned(Book) Then
+        Render(HTTP_STATUS.OK, Book)
+    Else
+        Render(HTTP_STATUS.NotFound);
+End;
+//______________________________________________________________________________
+Procedure TBookController.GetDetailByID(Const aBookID: Int64; Const aUserID: Int64);
+var
+    SearchResult: TFDQuery;
+Begin
+    SearchResult := FBookService.GetDetailByID(aBookID, aUserID);
+    Try
+        If SearchResult.RecordCount = 0 then
+            Render(HTTP_STATUS.NoContent, 'Empty')
+        Else
+            Render(HTTP_STATUS.OK, SearchResult);
+    Except
+        raise;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TBookController.SearchBook( Const ASearchTerm: String;
+  Const AUserID: Int64; Const APageNum: Integer; Const ACount: Integer);
+Var
+    SearchResult: TFDStoredProc;
+Begin
+    SearchResult := FBookService.SearchBooks(ASearchTerm, AUserID, APageNum, ACount);
+    Try
+        If (SearchResult.RecordCount = 0) then
+            Render(HTTP_STATUS.NoContent, 'Empty')
+        Else
+            Render(SearchResult);
+    Except
+        raise;
+    End;
+End;
+//______________________________________________________________________________
+Procedure TBookController.SuggestionBook(const aUserID: Int64; const aPageNum,
+  aCount: Integer);
+Var
+    Books: TFDStoredProc;
+Begin
+    Books := FBookService.SuggestionBook(aUserID, aPageNum, aCount);
+    If Books.RecordCount > 0 Then
+        Render(HTTP_STATUS.OK, Books)
+    Else
+        Render(HTTP_STATUS.NoContent);
+End;
+//______________________________________________________________________________
+Procedure TBookController.AddBook;
+Var
+    Book: TBook;
+Begin
+    Book := Context.Request.BodyAs<TBook>;
+    FBookService.AddBook(Book);
+    Render(HTTP_STATUS.Created, 'Book added successfully');
+End;
+//______________________________________________________________________________
+Procedure TBookController.UpdateBook;
+Var
+    Book: TBook;
+Begin
+    Book := Context.Request.BodyAs<TBook>;
+    FBookService.UpdateBook(Book);
+    Render(HTTP_STATUS.OK, 'Book updated successfully');
+End;
+//______________________________________________________________________________
+Procedure TBookController.DeleteBook(Const aBookID: Int64);
+Begin
+    FBookService.DeleteBook(aBookID);
+    Render(HTTP_STATUS.OK, 'Book deleted successfully');
+End;
+//______________________________________________________________________________
+
+
+End.
