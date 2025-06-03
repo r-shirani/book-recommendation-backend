@@ -98,7 +98,14 @@ exports.proxyGetCollectionImage = async (req, res) => {
     }
   
     try {
+      const response = await getCollectionImage(collectionid);
+      console.log(`response from sql server = ${response}`);
+      if(response == 0)
+      {
+        return res.status(404).json({ message: 'image not found' });
+      }
       const { stream, contentType } = await getCollectionImage(collectionid);
+      
       res.setHeader('Content-Type', contentType);
       stream.pipe(res);
       console.log(`Collection image sent successfully. collectionid: ${collectionid}`);

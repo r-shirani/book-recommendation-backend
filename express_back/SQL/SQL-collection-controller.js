@@ -74,13 +74,17 @@ const getCollectionImage = async (collectionid) => {
 
   try {
     const response = await axios.get(imageUrl, { responseType: 'stream' });
+    if(response.status==404){
+      return 0;
+    }
     return {
       stream: response.data,
       contentType: response.headers['content-type'],
     };
+    
   } catch (error) {
-    console.log(error);
-    throw new Error('Failed to fetch collection image');
+    console.log(error.message + "  SQL server for collection image");
+    return 0;
   }
 };
 

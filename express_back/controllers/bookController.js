@@ -50,7 +50,7 @@ exports.popularBooks = async (req , res)=>{
             return res.status(204).send(); // No Content
         }
         const popularBooks= books.map(book=>({
-            author: `${book.firstname} ${book.lastname}`,
+            author: book.fullauthorname,
             avgrate: book.avgrate,
             bookid: book.bookid,
             title : book.title
