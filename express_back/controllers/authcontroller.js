@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 
-const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut, updatePassword_controller, updateProfile_controller, updateVerifycode_controller, userProfileImage,update_MBTI_controller } = require("../SQL/SQL-user-controller");
+const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut, updatePassword_controller, updateProfile_controller, updateVerifycode_controller, userProfileImage,update_MBTI_controller, DeleteProfilePic } = require("../SQL/SQL-user-controller");
 const { loginUser_controller } = require("../SQL/SQL-user-controller");
 const { getUserByID } = require("../SQL/SQL-user-controller");
 
@@ -330,6 +330,23 @@ exports.getUserProfileImage_token = async (req, res) => {
       res.status(500).json({ message: "Server error - (error in fetching user profile image)" });
   }
 };
+
+exports.deleteProfilePic_controller = async (req , res) => {
+  const userID = req.user.id;
+  try {
+    const response = await DeleteProfilePic(userID);
+    if(response == 0){
+      res.status(400).json({ message: "image not found" });
+    
+    }
+    else if( response == 1){
+      res.status(200).json({ message: "image deleted successfully" });
+    }
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: "Server error - (error in deleting user profile image)" });
+  }
+}
 
 exports.googleLogin = async (req , res)=>{
   try {

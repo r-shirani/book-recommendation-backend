@@ -48,6 +48,25 @@ const DeleteUser = async (emailInput) => {
   }
 };
 
+const DeleteProfilePic = async (userid) => {
+  try {
+    const response = await api.delete("/profile" ,{
+      params: {
+        userid: userid
+      }
+    })
+    console.log(`Response from server: ${response.data} SQL delete profile pic`);
+    if(response.status==400){
+      return 0;
+    }
+    else if(response.status==204){
+      return 1;
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
 const EmailVerificationPut = async (userIdInput , EmailverificationInput) =>{
   try {
       const response = await api.put("/EmailVerification",{} , {
@@ -352,6 +371,10 @@ const userProfileImage = async (userid) => {
   }
 };
 
+
+
+
+
 module.exports={
   registerUSer_controller,
   loginUser_controller,
@@ -367,5 +390,6 @@ module.exports={
   update_genres,
   updateVerifycode_controller,
   userProfileImage,
-  update_MBTI_controller
+  update_MBTI_controller,
+  DeleteProfilePic
 };
