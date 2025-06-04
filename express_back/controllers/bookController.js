@@ -243,7 +243,7 @@ const streamToBuffer = async (stream) => {
 
 exports.MBTI_Books = async (req, res) => {
     const userid = req.user.id;
-    const {searchterm,pagenum,count } = req.query;
+    const {searchterm,pagenum=1,count=10 } = req.query;
     //if (!searchterm) {searchterm = null;}
     //if (!pagenum) {pagenum = 1;}
     //if (!count) {count = 20;}
