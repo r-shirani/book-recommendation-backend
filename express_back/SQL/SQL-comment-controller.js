@@ -9,10 +9,13 @@ const api = axios.create({
 
 const postComment_controller = async (userid_input,bookid_input,text_input,commentrefid_input)=>{
     try {
+
+      
+        const commentrefid = parseInt(commentrefid_input, 10);
         const response = await api.post("/comment" , {
             userid: userid_input,
             bookid: bookid_input,
-            commentrefid: commentrefid_input,
+            commentrefid: commentrefid,
             text: text_input
         })
         if (!response || response.length===0){

@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 const { getUserByID } = require("../SQL/SQL-user-controller");
 const { Readable } = require('stream');
-const { get_all_user_collections, post_user_collection, get_collection_details, deleteCollection, deleteCollectionDetails, getCollectionImage, get_all_collections_SQL } = require("../SQL/SQL-collection-controller");
+const { get_all_user_collections, post_user_collection, get_collection_details, deleteCollection, deleteCollectionDetails, getCollectionImage, get_all_collections_SQL, saveCollection_SQL, deleteCollection_SQL, getCollections_user_SQL } = require("../SQL/SQL-collection-controller");
 const FormData = require('form-data');
 const axios = require('axios');
 const { Collection } = require("mongoose");
@@ -298,7 +298,74 @@ exports.deleteCollectionDetails_controller = async (req, res) => {
 }
 
 
+exports.saveCollection_controller = async (req, res) => {
+  try {
+    const userID = req.user.id; 
+    const { accessibilitygroup } = req.body;
 
+    
+    const response = await saveCollection_SQL(accessibilitygroup, userID);
+
+    if (response === 1) {
+      return res.status(200).json({ message: `collection saved for user : ${userID}` });
+    } else if (response === 0) {
+      return res.status(400).json({ message: `Failed to save collection: Invalid UserID or AccessibilityGroupID for user ${userID}` });
+    } else if (response === -1) {
+      return res.status(500).json({ message: `Server error while saving collection for user ${userID}` });
+    }
+  } catch (error) {
+    
+    console.error("Unexpected error in saveCollection_controller:", error);
+    return res.status(500).json({ message: "server error" });
+  }
+};
+
+
+exports.deleteCollectionSaved_controller = async (req, res) => {
+  try {
+    const userID = req.user.id; 
+    const { accessibilitygroup } = req.body;
+
+   
+    const response = await deleteCollection_SQL(accessibilitygroup, userID);
+
+    if (response === 1) {
+      return res.status(200).json({ message: `Collection deleted for user: ${userID}` });
+    } else if (response === 0) {
+      return res.status(404).json({ message: `No collection found to delete for user: ${userID} with accessibilitygroup: ${accessibilitygroup}` });
+    } else if (response === -1) {
+      return res.status(500).json({ message: `Server error while deleting collection for user: ${userID}` });
+    }
+  } catch (error) {
+   
+    console.error("Unexpected error in deleteCollection_controller:", error);
+    return res.status(500).json({ message: " server error" });
+  }
+};
+
+exports.getCollectionsUser_controller = async (req, res) => {
+  try {
+    const userID = req.user.id; 
+    const { count = 20, pagenum = 1 } = req.query; 
+
+    
+    const collections = await getCollections_user_SQL(count, pagenum, userID);
+
+   
+    const filteredCollections = collections.filter(collection => collection.IsOwner === 0);
+
+   
+    return res.status(200).json({
+      message: `Collections retrieved for user: ${userID}`,
+      data: filteredCollections,
+      total: filteredCollections.length
+    });
+  } catch (error) {
+
+    console.error("Error in getCollections_controller:", error);
+    return res.status(500).json({ message: "Server error " });
+  }
+};
 
 
 

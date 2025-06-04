@@ -8,8 +8,8 @@ const { postComment_controller, getAllComment_book, get_ref_comments, like_comme
 exports.newComment = async (req , res)=>{
     try {
         const userID = req.user.id; //"Data retrieved from middleware"
-        const {bookid , text , Commentrefid} = req.body;
-        const response = await postComment_controller(userID , bookid , text ,Commentrefid);
+        const {bookid , text , commentrefid} = req.body;
+        const response = await postComment_controller(userID ,bookid , text ,commentrefid);
         if(response===-1){
             res.status(500).json({ message: "server error(SQL)" });
         }

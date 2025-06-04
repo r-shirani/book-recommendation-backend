@@ -27,6 +27,28 @@ const get_all_collections_SQL = async(pagenum_input, count_input)=>{
   }
 }
 
+const getCollections_user_SQL = async (count_input, pagenum_input, userid_input) => {
+  try {
+    const response = await api.get(
+      "/collections",
+      {
+        params: {
+          count: count_input,
+          pagenum: pagenum_input,
+          userid: userid_input
+        }
+      }
+    );
+
+    if (response.status === 200) {
+      return response.data; 
+    }
+  } catch (error) {
+    console.log("server Error(SQL-getting-collections)");
+    throw error; 
+  }
+};
+
 const get_all_user_collections = async(userid_input)=>{
   try {
     
@@ -150,7 +172,65 @@ const deleteCollectionDetails = async(collectionid_input , bookid_input) => {
 
 };
 
-// const saveCollection = async ()
+const saveCollection_SQL = async (accessibilitygroup_input, userid_input) => {
+  try {
+    const response = await api.put(
+      "/collections/access",
+      {
+        userid: [userid_input]
+      },
+      {
+        params: {
+          accessibilitygroup: accessibilitygroup_input
+        }
+      }
+    );
+    if (response.status == 200) {
+      return 1;
+    }
+  } catch (error) {
+
+    if (error.response && error.response.data && error.response.data.message) {
+      const errorMessage = error.response.data.message;
+      if (errorMessage.includes("UserID") || errorMessage.includes("AccessibilityGroupID")) {
+        return 0;
+      }
+    }
+ 
+    console.log("server Error(SQL-saving-collection)");
+    return -1;
+  }
+};
+
+const deleteCollection_SQL = async (accessibilitygroup_input, userid_input) => {
+  try {
+    const response = await api.delete(
+      "/collections/access",
+      {
+        params: {
+          accessibilitygroup: accessibilitygroup_input
+        },
+        data: {
+          userid: [userid_input]
+        }
+      }
+    );
+
+    if (response.status === 200) {
+      return 1;
+    }
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      
+      if (error.response.data && error.response.data.message && error.response.data.message.includes("Got 0 rows when exactly 1 was expected")) {
+        return 0; 
+      }
+    }
+
+    console.log("server Error(SQL-deleting-collection)");
+    return -1;
+  }
+};
 
 module.exports={
   get_all_user_collections,
@@ -159,5 +239,8 @@ module.exports={
   getCollectionImage,
   deleteCollection,
   deleteCollectionDetails,
-  get_all_collections_SQL
+  get_all_collections_SQL,
+  saveCollection_SQL,
+  deleteCollection_SQL,
+  getCollections_user_SQL
 };
