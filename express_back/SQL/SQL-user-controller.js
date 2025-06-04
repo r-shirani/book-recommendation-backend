@@ -357,6 +357,26 @@ const update_genres = async (useridInput, genresID) => {
   }
 };
 
+
+
+const checkUserProfileImageExists = async (userid) => {
+  const profile_url = `/user/profile?userid=${userid}`;
+
+  try {
+      const response = await newApi.get(profile_url);
+     
+      return true;
+  } catch (error) {
+      if (error.response && error.response.status === 404) {
+          
+          return false;
+      }
+      
+      console.log("Error checking user profile image existence:", error.message);
+      throw error;
+  }
+};
+
 const userProfileImage = async (userid) => {
   const image_file_url = `http://185.173.104.228:9547/api/v1/user/profile/file?userid=${userid}`;
 
@@ -367,10 +387,21 @@ const userProfileImage = async (userid) => {
           contentType: response.headers['content-type'],
       };
   } catch (error) {
-      throw new Error('Failed to fetch user profile image');
+      if (error.response && error.response.data && error.response.data.classname === "EAccessViolation") {
+          return 0; 
+      }
+      if (error.response && error.response.status === 500) {
+          
+          return {
+              error: true,
+              status: 500,
+              message: error.response.data.message || "Unknown server error"
+          };
+      }
+      console.log("Error fetching user profile image:", error.message);
+      return -1; 
   }
 };
-
 
 
 
@@ -391,5 +422,6 @@ module.exports={
   updateVerifycode_controller,
   userProfileImage,
   update_MBTI_controller,
-  DeleteProfilePic
+  DeleteProfilePic,
+  checkUserProfileImageExists
 };

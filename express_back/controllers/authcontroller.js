@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 
-const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut, updatePassword_controller, updateProfile_controller, updateVerifycode_controller, userProfileImage,update_MBTI_controller, DeleteProfilePic } = require("../SQL/SQL-user-controller");
+const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut, updatePassword_controller, updateProfile_controller, updateVerifycode_controller, userProfileImage,update_MBTI_controller, DeleteProfilePic, checkUserProfileImageExists } = require("../SQL/SQL-user-controller");
 const { loginUser_controller } = require("../SQL/SQL-user-controller");
 const { getUserByID } = require("../SQL/SQL-user-controller");
 
@@ -305,29 +305,73 @@ exports.GetMBTI = async (req, res) => {
 
 exports.getUserProfileImage = async (req, res) => {
   const userid = req.params.userid;
-  
 
   try {
-      const { stream, contentType } = await userProfileImage(userid);
-      res.setHeader('Content-Type', contentType);
-      stream.pipe(res);
-      console.log(`User profile image sent successfully for userid: ${userid}`);
+    
+    const imageExists = await checkUserProfileImageExists(userid);
+    if (!imageExists) {
+      return res.status(204).end(); 
+    }
+
+    
+    const result = await userProfileImage(userid);
+
+    
+    if (result === 0) {
+      
+      return res.status(400).json({ message: `Unable to fetch profile image for userid: ${userid} due to access violation` });
+    } else if (result === -1) {
+      
+      return res.status(500).json({ message: `Server error - (error in fetching user profile image for userid: ${userid})` });
+    } else if (result.error && result.status === 500) {
+      
+      return res.status(500).json({ message: result.message });
+    }
+
+    
+    const { stream, contentType } = result;
+    res.setHeader('Content-Type', contentType);
+    stream.pipe(res);
+    console.log(`User profile image sent successfully for userid: ${userid}`);
   } catch (error) {
-      console.error(error.message);
-      res.status(500).json({ message: "Server error - (error in fetching user profile image)" });
+    console.error("Unexpected error in getUserProfileImage:", error.message);
+    res.status(500).json({ message: "Unexpected server error while fetching user profile image" });
   }
 };
 
 exports.getUserProfileImage_token = async (req, res) => {
   const userID = req.user.id;
+
   try {
-      const { stream, contentType } = await userProfileImage(userID);
-      res.setHeader('Content-Type', contentType);
-      stream.pipe(res);
-      console.log(`User profile image sent successfully for userid: ${userID}`);
+    
+    const imageExists = await checkUserProfileImageExists(userID);
+    if (!imageExists) {
+      return res.status(204).end(); 
+    }
+
+    
+    const result = await userProfileImage(userID);
+
+   
+    if (result === 0) {
+      
+      return res.status(400).json({ message: `Unable to fetch profile image for userid: ${userID} due to access violation` });
+    } else if (result === -1) {
+      
+      return res.status(500).json({ message: `Server error - (error in fetching user profile image for userid: ${userID})` });
+    } else if (result.error && result.status === 500) {
+     
+      return res.status(500).json({ message: result.message });
+    }
+
+   
+    const { stream, contentType } = result;
+    res.setHeader('Content-Type', contentType);
+    stream.pipe(res);
+    console.log(`User profile image sent successfully for userid: ${userID}`);
   } catch (error) {
-      console.error(error.message);
-      res.status(500).json({ message: "Server error - (error in fetching user profile image)" });
+    console.error("Unexpected error in getUserProfileImage_token:", error.message);
+    res.status(500).json({ message: "Unexpected server error while fetching user profile image" });
   }
 };
 
