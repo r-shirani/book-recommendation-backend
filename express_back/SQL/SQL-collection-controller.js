@@ -151,7 +151,7 @@ const deleteCollection = async(collectionid_input) => {
 
 const deleteCollectionDetails = async(collectionid_input , bookid_input) => {
   try {
-    const response = await api.delete("/collections",{
+    const response = await api.delete("/collections/detail",{
       params: {
         collectionid : collectionid_input,
         bookid : bookid_input
@@ -168,9 +168,29 @@ const deleteCollectionDetails = async(collectionid_input , bookid_input) => {
     console.log("server Error(SQL-deleting-Details-collection)");
     return -1;
   }
-
-
 };
+
+const addCollectionDetail = async(collectionid_input , bookid_input) => {
+  try {
+    const bookid = [parseInt(bookid_input, 10)];
+    const response = await api.post("/collections/detail",{        
+      collectionid : collectionid_input,
+      bookid : bookid       
+    });
+    
+    if(response.status == 201){
+      return 1;
+    }
+    else{
+      return -1
+    }
+  } catch (error) {
+    console.log(error.response.data);
+    console.log("server Error(SQL-deleting-Details-collection)");
+    return -1;
+  }
+};
+
 
 const saveCollection_SQL = async (accessibilitygroup_input, userid_input) => {
   try {
@@ -242,5 +262,6 @@ module.exports={
   get_all_collections_SQL,
   saveCollection_SQL,
   deleteCollection_SQL,
-  getCollections_user_SQL
+  getCollections_user_SQL,
+  addCollectionDetail
 };

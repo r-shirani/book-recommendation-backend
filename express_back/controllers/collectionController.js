@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 const { getUserByID } = require("../SQL/SQL-user-controller");
 const { Readable } = require('stream');
-const { get_all_user_collections, post_user_collection, get_collection_details, deleteCollection, deleteCollectionDetails, getCollectionImage, get_all_collections_SQL, saveCollection_SQL, deleteCollection_SQL, getCollections_user_SQL } = require("../SQL/SQL-collection-controller");
+const { get_all_user_collections, post_user_collection, get_collection_details, deleteCollection, deleteCollectionDetails, getCollectionImage, get_all_collections_SQL, saveCollection_SQL, deleteCollection_SQL, getCollections_user_SQL, addCollectionDetail } = require("../SQL/SQL-collection-controller");
 const FormData = require('form-data');
 const axios = require('axios');
 const { Collection } = require("mongoose");
@@ -100,7 +100,7 @@ exports.details_collection = async (req , res) =>{
         }
         const details = await get_collection_details(collectionid);
         if (!details || details.length===0){
-            return res.status(404).json({ message: "collection not found" });
+            return res.status(404).json({ message: "no details in this collection" });
         }
         if(details != -1){
             return res.status(200).send(details);
@@ -297,6 +297,38 @@ exports.deleteCollectionDetails_controller = async (req, res) => {
   }
 }
 
+exports.addCollectionDetails_controller = async (req, res) => {
+  try {
+    
+    const collectionid = req.body.collectionid;
+    const bookid = req.body.bookid;
+    if(!collectionid || !bookid){
+      return res.status(400).json({ error: 'enter collectionid or bookid' });
+    }
+    const response = await addCollectionDetail(collectionid , bookid);
+    if(response == 1){
+      res.status(201).json({ message: "collection Details updated",
+      bookid : bookid
+    });
+    }
+    else{
+      res.status(500).json({ message: 'SQL server error' });
+    }
+
+  
+  } 
+  catch (error) {
+    console.error(error);
+
+    if (error.response) {
+      return res
+        .status(err.response.status || 500)
+        .json(err.response.data);
+    }
+
+    res.status(500).json({ message: 'SQL server error' });
+  }
+}
 
 exports.saveCollection_controller = async (req, res) => {
   try {
