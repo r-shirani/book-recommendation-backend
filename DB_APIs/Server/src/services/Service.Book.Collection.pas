@@ -40,7 +40,7 @@ Type
         Function Add(const ACollection: Model.Book.TCollection): Int64;
         Procedure Update(const ACollection: Model.Book.TCollection);
         Procedure Delete(const ACollectionID: Int64);
-        Procedure AddDetail(ACollectionID: Int64; ABookIDs: TArray<Int64>);
+        Procedure AddDetail(aCollectionID: Int64; aBookIDs: TArray<Int64>);
         Function GetImageFile(CollectionID: int64; out AContentType: String): TStream;
         Function AddImage(const AFileStream: TStream;
           const AOriginalFileName: string; ACollectionID: Int64): TCollection;
@@ -62,31 +62,42 @@ Begin
     Result := ACollection.CollectionID;
 End;
 //______________________________________________________________________________
-Procedure TCollectionService.AddDetail(ACollectionID: Int64; ABookIDs: TArray<Int64>);
+Procedure TCollectionService.AddDetail(aCollectionID: Int64; aBookIDs: TArray<Int64>);
 Var
-    BookID: Int64;
+    lDetails, lCollectionID, lBooks: String;
     Detail: TCollectionDetail;
     FDQ: TFDQuery;
+    i: Integer;
 Begin
+    lCollectionID := aCollectionID.ToString;
+    lBooks := '(';
+    For i := 0 to High(aBookIDs) do
+    Begin
+        lBooks := lBooks + aBookIDs[i].ToString;
+        lDetails := lDetails + '(' + lCollectionID + ',' + aBookIDs[i].ToString + ')';
+        If (i < High(aBookIDs)) then
+        Begin
+            lDetails := lDetails + ',';
+            lBooks := lBooks + ',';
+        End;
+    End;
+    lBooks := lBooks + ')';
+
     FDQ := TFDQuery.Create(NIL);
     Try
         FDQ.Connection := DMMain.GetConnection;
-        FDQ.SQL.Text := 'DELETE FROM bOOK.CollectionDetail WHERE '+Format('CollectionID=%d', [ACollectionID]);
+
+        FDQ.SQL.Text :=
+          'DELETE FROM Book.CollectionDetail WHERE (CollectionID =' +
+          aCollectionID.ToString + ') AND (BookID IN '+ lBooks + ')';
+        FDQ.ExecSQL;
+
+        FDQ.SQL.Text :=
+          'INSERT INTO Book.CollectionDetail(CollectionID, BookID) '+
+          'VALUES'+ lDetails;
         FDQ.ExecSQL;
     Finally
         FDQ.Free;
-    End;
-
-    For BookID in ABookIDs do
-    Begin
-        Detail := TCollectionDetail.Create;
-        Try
-            Detail.CollectionID := ACollectionID;
-            Detail.BookID := BookID;
-            Detail.Insert;
-        Finally
-            Detail.Free;
-        End;
     End;
 End;
 //______________________________________________________________________________
@@ -287,6 +298,7 @@ Begin
 
     Result := TFileStream.Create(LFilePath, fmOpenRead or fmShareDenyWrite);
 End;
+//______________________________________________________________________________
 
 End.
 
