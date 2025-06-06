@@ -3,13 +3,13 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const sendVerificationCode = require('../Auth/mailer');
 const { getUserByID } = require("../SQL/SQL-user-controller");
-const { bookImage, searchBook_controller, likeBook, deletelike, favorit_books, GetBookByID, likeStatus , MBTIbooks} = require("../SQL/SQL-book-controller");
+const { bookImage, searchBook_controller, likeBook, deletelike, favorit_books, GetBookByID, likeStatus , MBTIbooks, GetSuggestionsBook} = require("../SQL/SQL-book-controller");
 const { Readable } = require('stream');
 
 exports.searchBook = async (req, res) => {
     const searchterm = req.params.searchterm;
-    if(!searchterm){
-        return res.status(400).send("enter searchterm");
+    if (!searchterm || searchterm.trim() === '') {
+        return res.status(400).send('enter searchterm');
     }
     const pagenum = 1;
     const count = 5;
@@ -53,7 +53,9 @@ exports.popularBooks = async (req , res)=>{
             author: book.fullauthorname,
             avgrate: book.avgrate,
             bookid: book.bookid,
-            title : book.title
+            title : book.title,
+            RatingCount : book.ratingcount
+            
         }));
         res.status(200).json(popularBooks);
     }catch(error){
@@ -214,6 +216,7 @@ exports.getBookDetail = async (req, res) => {
                 BookID: book.BookID,
                 Title: book.Title,
                 AuthorName: book.AuthorName,
+                RatingCount: book.RatingCount,
                 PublisherName: book.PublisherName,
                 GenreName1: book.GenreName1,
                 GenreName2: book.GenreName2,
@@ -230,6 +233,25 @@ exports.getBookDetail = async (req, res) => {
         res.status(500).json({ error: 'server error' });
     }
 };
+
+exports.getSuggestionBook_controller = async(req , res)=>{
+    const userid = req.user.id;
+    const {pagenum=1} = req.query;
+    try {
+        const books = await GetSuggestionsBook(userid,pagenum,10);
+        if(books===-1){
+            res.status(500).json({ error: 'server error' });
+        }
+        if (!books || books.length===0 || books ===0){
+            return res.status(404).json({ message: "Book not found" });
+        }
+        else{
+            res.status(200).json(books);
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'server error' });
+    }
+}
 
 // Utility to convert stream to buffer
 const streamToBuffer = async (stream) => {

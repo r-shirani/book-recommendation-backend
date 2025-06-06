@@ -185,6 +185,34 @@ const GetBookByID = async(bookid_input)=> {
     }
 }
 
+const GetSuggestionsBook = async(userid_input , pageNum_input , count_input) =>{
+    try {
+        
+    
+        const baseurl = "http://185.173.104.228:9547/api/v1/book/suggestion";
+        const response = await book.get(baseurl, {
+            params:
+            {
+                userid : userid_input,
+                pagenum : pageNum_input,
+                count : count_input
+            }
+        })
+        if(response.status==204){
+            return 0;
+        }
+        else{
+            return response.data;
+        }
+    }
+    catch (error) {
+        console.log("Error:", error);
+        console.log("SQL server error - (get GetSuggestionsBook by userid)");
+        return -1
+    }
+    
+}
+
 module.exports={
     searchBook_controller,
     bookImage,
@@ -194,4 +222,5 @@ module.exports={
     GetBookByID,
     likeStatus,
     MBTIbooks,
+    GetSuggestionsBook
 }

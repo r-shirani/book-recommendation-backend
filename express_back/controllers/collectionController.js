@@ -23,7 +23,8 @@ exports.getAllCollections = async(req , res)=>{
         username: item.UserName,
         fullname: item.FullName,
         discription : item.Discription,
-        collectionid : item.CollectionID,       
+        collectionid : item.CollectionID,     
+        accessibilityGroupID : item.AccessibilityGroupID  
     }));
     return res.status(200).send(pure_collections);
 
@@ -110,7 +111,7 @@ exports.details_collection = async (req , res) =>{
             return res.status(500).json({ message: "server error" });
         }
     } catch (error) {
-        console.error(error);
+        console.error(error.message);
         res.status(500).json({ message: "server error" });
     }
 }
