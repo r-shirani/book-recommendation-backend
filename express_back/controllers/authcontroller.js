@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
-const sendVerificationCode = require('../Auth/mailer');
+const { sendVerificationCode , sendVerificationCode_password } = require('../Auth/mailer');
 
 const { registerUSer_controller, getUserData, DeleteUser, EmailVerificationPut, updatePassword_controller, updateProfile_controller, updateVerifycode_controller, userProfileImage,update_MBTI_controller, DeleteProfilePic, checkUserProfileImageExists } = require("../SQL/SQL-user-controller");
 const { loginUser_controller } = require("../SQL/SQL-user-controller");
@@ -100,7 +100,7 @@ exports.sendEmailPassCode = async (req , res) => {
     let response = await updateVerifycode_controller(user.userId ,verificationCode);
     if(response === 1)
     {
-      await sendVerificationCode.sendVerificationCode_password(email, verificationCode)
+      await sendVerificationCode_password(email, verificationCode)
       .then(() => res.send('Verification code sent to email.'))
       .catch((err) => res.status(500).send('error in sending the verification email!'));
     }
